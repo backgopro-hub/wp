@@ -390,46 +390,42 @@
         <button class="btn btn-secondary" onclick="handleAction('install')" style="margin-bottom: 20px;">Открыть инструкцию</button>
     </div>
 
-    <script>
+   <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.setHeaderColor('#000000');
         tg.setBackgroundColor('#000000');
 
-        // Читаем параметры из ссылки
+        // Читаем параметры
         const urlParams = new URLSearchParams(window.location.search);
         
-        // --- 1. Название и Поддержка (Исправлено) ---
         const appTitle = urlParams.get('title');
         const linkSupport = urlParams.get('support');
-        
-        if (appTitle) {
-            document.querySelector('.app-title').textContent = appTitle;
-        }
+        if (appTitle) document.querySelector('.app-title').textContent = appTitle;
 
-        // Данные юзера и ключи
         const tgUser = tg.initDataUnsafe.user;
         const userName = tgUser ? tgUser.first_name : 'Guest';
         const userId = urlParams.get('user_id') || (tgUser ? tgUser.id : '000000');
         const vpnKey = urlParams.get('vpn_key'); 
         
-        // Ссылки на инструкции
+        // --- ВОТ ТУТ НОВАЯ ЛОГИКА ---
+        // Читаем, какой экран просил открыть бот
+        const startScreen = urlParams.get('screen');
+
         const linkIos = urlParams.get('ios');
         const linkAndroid = urlParams.get('android');
         const linkWin = urlParams.get('windows');
 
-        // Инициализация UI
+        // UI Setup
         document.getElementById('user-name-el').textContent = userName;
         document.getElementById('user-id-el').textContent = `ID: ${userId}`;
 
-        // Метка платформы
         let platformName = 'Device';
         if (tg.platform === 'ios') platformName = 'iOS';
         else if (tg.platform === 'android') platformName = 'Android';
         else if (tg.platform === 'tdesktop' || tg.platform === 'weba') platformName = 'Windows';
         document.getElementById('platform-lbl').textContent = platformName;
 
-        // Показ ключа
         if (vpnKey) {
             document.getElementById('vpn-key-section').style.display = 'block';
             document.getElementById('vpn-key-val').textContent = vpnKey;
@@ -437,32 +433,43 @@
             document.getElementById('status-text').textContent = 'Active';
         }
 
-        // Навигация
         const screenMain = document.getElementById('screen-main');
         const screenProfile = document.getElementById('screen-profile');
 
         function switchScreen(screenName) {
             haptic();
+            // Убираем класс active у всех
+            screenMain.classList.remove('active');
+            screenProfile.classList.remove('active');
+
+            // Включаем нужный
             if (screenName === 'profile') {
-                screenMain.classList.remove('active');
                 screenProfile.classList.add('active');
                 tg.BackButton.show();
             } else {
-                screenProfile.classList.remove('active');
                 screenMain.classList.add('active');
                 tg.BackButton.hide();
             }
         }
+        
         tg.BackButton.onClick(() => switchScreen('main'));
 
-        // ОБРАБОТЧИК КНОПОК
+        // --- АВТОМАТИЧЕСКОЕ ПЕРЕКЛЮЧЕНИЕ ---
+        // Если бот сказал открыть профиль — делаем это сразу
+        if (startScreen === 'profile') {
+            // Вызываем переключение БЕЗ анимации или сразу подменяем классы
+            screenMain.classList.remove('active');
+            screenProfile.classList.add('active');
+            tg.BackButton.show();
+        }
+
+        // Обработчики кнопок
         function handleAction(action) {
             haptic();
             if (action === 'buy') {
                 tg.sendData("action_buy");
             } 
             else if (action === 'support') {
-                // Если ссылка передана - открываем её, иначе шлем эвент боту
                 if (linkSupport) tg.openTelegramLink(linkSupport);
                 else tg.sendData("action_support");
             } 
