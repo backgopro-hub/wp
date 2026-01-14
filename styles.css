@@ -1,1 +1,183 @@
+/* --- 1. ПЕРЕМЕННЫЕ (ЦВЕТА ELUSION) --- */
+:root {
+    /* Тот самый мятный зеленый */
+    --accent-color: #00d68f; 
+    
+    /* Темно-серый фон для кнопок (iOS style) */
+    --surface-color: #1c1c1e;
+    --surface-press: #2c2c2e;
+    
+    /* Фон страницы (почти черный) */
+    --bg-color: #000000;
+    
+    --text-primary: #ffffff;
+    --text-secondary: #8e8e93;
+    
+    /* Убираем лишние тени, делаем стиль плоским */
+    --btn-radius: 14px; 
+}
 
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+/* --- 2. БАЗА --- */
+body {
+    margin: 0; padding: 0;
+    width: 100%; height: 100vh;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-color);
+}
+
+/* Фон: Темный, с легким зеленым свечением сверху (как на скрине) */
+.fixed-background {
+    position: fixed; top: 0; left: 0; width: 100%; height: 120vh;
+    z-index: -1;
+    background: radial-gradient(circle at 50% -20%, #0a2e23 0%, #000000 60%);
+    background-size: cover;
+    pointer-events: none;
+}
+
+/* --- 3. СТРУКТУРА --- */
+.screen { display: none; width: 100%; height: 100%; position: relative; }
+.screen.active { display: block; }
+
+/* Главная: Запрет скролла, чтобы панель стояла жестко */
+#screen-main { overflow: hidden; }
+
+/* Профиль: Скролл разрешен */
+#screen-profile {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: calc(20px + env(safe-area-inset-top)) 16px 40px 16px;
+}
+
+/* --- 4. ПАНЕЛЬ ВНИЗУ (КАК НА СКРИНЕ) --- */
+.glass-panel-sticky {
+    position: absolute;
+    bottom: 0; left: 0; width: 100%;
+    z-index: 10;
+    
+    /* Убрали стекло, сделали чистый темный фон, как в iOS шторке */
+    background: #000000;
+    border-top: 1px solid #1c1c1e;
+    border-radius: 24px 24px 0 0;
+    
+    padding: 24px 16px 0 16px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+
+/* Заголовок приложения */
+.header-row {
+    display: flex; justify-content: space-between; align-items: center; 
+    margin-bottom: 24px;
+}
+.app-title {
+    font-size: 28px; 
+    font-weight: 800; 
+    margin: 0; 
+    letter-spacing: -0.5px;
+}
+
+/* Статус (справа сверху) */
+.status-badge {
+    font-size: 14px; font-weight: 500; color: var(--text-secondary);
+    background: var(--surface-color);
+    padding: 6px 12px; border-radius: 100px;
+    display: flex; align-items: center; gap: 8px;
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-secondary); }
+.status-badge.online .status-dot { background-color: var(--accent-color); box-shadow: 0 0 8px var(--accent-color); }
+.status-badge.online { color: var(--accent-color); background: rgba(0, 214, 143, 0.1); }
+
+/* --- 5. КНОПКИ (ELUSION STYLE) --- */
+.btn {
+    width: 100%;
+    padding: 16px; /* Чуть меньше высота */
+    border-radius: var(--btn-radius);
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    position: relative;
+    transition: transform 0.1s, opacity 0.2s;
+}
+.btn:active { transform: scale(0.98); opacity: 0.9; }
+
+/* Главная кнопка: Ярко-мятная, черный текст */
+.btn-primary {
+    background: var(--accent-color);
+    color: #000000; /* Черный текст для контраста */
+    box-shadow: 0 4px 20px rgba(0, 214, 143, 0.25);
+}
+
+/* Вторичные кнопки: Темно-серые плашки */
+.btn-secondary {
+    background: var(--surface-color);
+    color: var(--text-primary);
+}
+.btn-secondary:active { background: var(--surface-press); }
+
+.btn-content-row { display: flex; justify-content: space-between; width: 100%; align-items: center; }
+.btn-icon { width: 22px; height: 22px; stroke-width: 2.2; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* --- 6. ЭЛЕМЕНТЫ --- */
+/* Логотип по центру */
+.hero-center-wrapper {
+    position: absolute; top: 0; left: 0; width: 100%; height: 55%;
+    display: flex; align-items: center; justify-content: center; z-index: 1;
+}
+.shield-container { width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
+.shield-icon { width: 100%; height: 100%; stroke: var(--text-primary); stroke-width: 1.5; filter: drop-shadow(0 0 30px rgba(0,214,143,0.3)); }
+
+/* --- 7. ПРОФИЛЬ --- */
+.profile-user-block { text-align: center; margin-top: 20px; margin-bottom: 30px; }
+.avatar-circle {
+    width: 80px; height: 80px;
+    background: var(--surface-color);
+    border-radius: 50%; margin: 0 auto 16px auto;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-color);
+}
+.user-name-text { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.user-id-text { 
+    font-size: 14px; color: var(--text-secondary); font-family: monospace; 
+    background: var(--surface-color); padding: 6px 12px; border-radius: 8px; 
+}
+
+/* Группа меню (список) */
+.menu-group {
+    background: var(--surface-color);
+    border-radius: var(--btn-radius);
+    overflow: hidden; margin-bottom: 16px;
+}
+.menu-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px;
+    background: transparent;
+    /* Тонкая линия разделителя внутри */
+    border-bottom: 1px solid rgba(255,255,255,0.08); 
+    cursor: pointer;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:active { background: var(--surface-press); }
+.menu-item-left { display: flex; align-items: center; gap: 14px; font-size: 16px; font-weight: 500; }
+.menu-chevron { color: var(--text-secondary); width: 18px; opacity: 0.6; }
+
+/* Поле копирования ссылки */
+.copy-link-container { margin-bottom: 24px; }
+.copy-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; margin-left: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.copy-box {
+    background: var(--surface-color);
+    border-radius: var(--btn-radius);
+    padding: 16px;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.copy-box:active { background: var(--surface-press); }
+.copy-text { font-family: monospace; color: var(--accent-color); font-size: 15px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 85%; }
+
+.spacer { height: 60px; }
