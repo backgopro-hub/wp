@@ -6,9 +6,8 @@
     <title>Ultima VPN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- 1. PREMIUM VARIABLES (ВЕРНУЛ НАШИ ЦВЕТА) --- */
+        /* --- 1. PREMIUM ПЕРЕМЕННЫЕ --- */
         :root {
-            --bg-color: #000000;
             --accent-color: #00e096; /* Неоновый зеленый */
             --accent-glow: rgba(0, 224, 150, 0.4);
             --text-primary: #ffffff;
@@ -16,7 +15,6 @@
             --glass-bg: rgba(28, 28, 30, 0.65);
             --glass-border: rgba(255, 255, 255, 0.12);
             --surface-color: #1c1c1e;
-            --danger-color: #ff453a;
         }
 
         * {
@@ -24,45 +22,59 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- 2. ФИКС ФОНА (ТЕХНИЧЕСКАЯ ЧАСТЬ) --- */
-        /* Отдельный слой, чтобы фон был "Deep Aurora" и не дергался */
-        .app-background {
+        /* --- 2. ФОНОВЫЙ СЛОЙ (ИСПРАВЛЕНО) --- */
+        
+        /* Сам фон (Градиент) */
+        .fixed-background {
             position: fixed;
-            top: -10vh;
+            top: 0;
             left: 0;
             width: 100vw;
-            height: 120vh; /* С запасом */
-            z-index: -1;
-            background-color: var(--bg-color);
-            /* Тот самый градиент */
+            height: 120vh; /* Запас высоты от черных полос */
+            z-index: -1;   /* Лежит сзади */
+            
+            background-color: #000000;
+            /* Тот самый красивый градиент */
             background-image: radial-gradient(circle at 50% -20%, #0f4d3a 0%, #000000 70%);
             background-size: cover;
             background-repeat: no-repeat;
             pointer-events: none;
         }
 
-        /* Блокируем скролл страницы, чтобы не было "пружины" */
+        /* Окно браузера (ПРОЗРАЧНОЕ, чтобы видеть фон) */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; 
+            overflow: hidden; /* Блокируем скролл страницы */
+            overscroll-behavior: none;
+            
+            /* !!! ВАЖНО: Убрал черный цвет, поставил прозрачный !!! */
+            background: transparent; 
+            
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
             color: var(--text-primary);
         }
 
-        /* --- 3. КОНТЕЙНЕРЫ ЭКРАНОВ (СКРОЛЛ ВНУТРИ) --- */
+        /* --- 3. КОНТЕЙНЕРЫ ЭКРАНОВ --- */
         .screen {
             display: none;
             flex-direction: column;
             width: 100%;
             height: 100%;
-            overflow-y: auto; /* Скроллим контент */
+            
+            /* Скроллим контент внутри */
+            overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
             
-            padding: calc(20px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom)) 20px;
-            animation: fadeEffect 0.4s ease-out;
+            /* Отступы */
+            padding-top: calc(20px + env(safe-area-inset-top));
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: calc(50px + env(safe-area-inset-bottom));
+            
+            animation: fadeEffect 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .screen.active {
@@ -70,91 +82,92 @@
         }
 
         @keyframes fadeEffect {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* --- 4. ДИЗАЙН ЭЛЕМЕНТОВ (ВЕРНУЛ ВСЕ СТИЛИ) --- */
-        
-        /* Щит с анимацией float */
+        /* --- 4. ДИЗАЙН ЭЛЕМЕНТОВ --- */
+
+        /* Логотип */
         .hero-section {
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 300px;
+            min-height: 280px; 
             flex-grow: 1;
         }
 
         .shield-container { position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; }
-        .shield-icon { width: 100%; height: 100%; stroke: var(--text-primary); stroke-width: 1.2; filter: drop-shadow(0 0 20px var(--accent-glow)); animation: float 6s ease-in-out infinite; }
+        .shield-icon { width: 100%; height: 100%; stroke: var(--text-primary); stroke-width: 1.2; filter: drop-shadow(0 0 25px var(--accent-glow)); animation: float 6s ease-in-out infinite; }
         
         @keyframes float {
-            0% { transform: translateY(0px); filter: drop-shadow(0 0 20px var(--accent-glow)); }
-            50% { transform: translateY(-10px); filter: drop-shadow(0 0 35px var(--accent-glow)); }
-            100% { transform: translateY(0px); filter: drop-shadow(0 0 20px var(--accent-glow)); }
+            0% { transform: translateY(0px); filter: drop-shadow(0 0 25px var(--accent-glow)); }
+            50% { transform: translateY(-12px); filter: drop-shadow(0 0 40px var(--accent-glow)); }
+            100% { transform: translateY(0px); filter: drop-shadow(0 0 25px var(--accent-glow)); }
         }
 
-        /* Стеклянная панель (Glassmorphism) */
+        /* Стеклянная панель */
         .glass-panel {
             flex-shrink: 0;
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border-top: 1px solid var(--glass-border);
             border-radius: 32px 32px 0 0;
             padding: 32px 24px 40px 24px;
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
-            margin: 0 -20px -20px -20px;
+            box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.7);
+            margin: 0 -20px -50px -20px; /* Прижимаем к краям и низу */
+            padding-bottom: calc(50px + env(safe-area-inset-bottom));
         }
 
         .header-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
-        .app-title { font-size: 32px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -0.5px; }
+        .app-title { font-size: 30px; font-weight: 800; margin: 0; line-height: 1; letter-spacing: -0.5px; }
 
         .status-badge { font-size: 13px; font-weight: 600; color: var(--text-secondary); background: rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; }
         .status-dot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--text-secondary); }
         .status-badge.online .status-dot { background-color: var(--accent-color); box-shadow: 0 0 8px var(--accent-color); }
-        .status-badge.online { color: var(--accent-color); background: rgba(0, 224, 150, 0.1); }
+        .status-badge.online { color: var(--accent-color); background: rgba(0, 224, 150, 0.15); }
 
-        /* Кнопки (Premium Gradients) */
-        .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 17px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); margin-bottom: 12px; }
-        .btn:active { transform: scale(0.96); }
+        /* Кнопки */
+        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-size: 17px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden; transition: transform 0.1s; margin-bottom: 12px; }
+        .btn:active { transform: scale(0.96); opacity: 0.9; }
 
-        .btn-primary { background: linear-gradient(135deg, var(--accent-color) 0%, #00b377 100%); color: #000; box-shadow: 0 8px 25px rgba(0, 224, 150, 0.25); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent-color) 0%, #00b377 100%); color: #000; box-shadow: 0 8px 30px rgba(0, 224, 150, 0.3); }
         .btn-content-row { display: flex; justify-content: space-between; width: 100%; align-items: center; }
 
         .btn-secondary { background: rgba(255, 255, 255, 0.08); color: var(--text-primary); border: 1px solid transparent; }
         .btn-secondary:active { background: rgba(255, 255, 255, 0.12); }
-        .btn-icon { width: 22px; height: 22px; stroke-width: 2.5; }
+        .btn-icon { width: 22px; height: 22px; stroke-width: 2.2; }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
         /* Профиль */
         .profile-user-block { text-align: center; padding: 20px 0 40px 0; flex-shrink: 0; }
-        .avatar-circle { width: 80px; height: 80px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05)); border-radius: 50%; margin: 0 auto 15px auto; display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-border); color: var(--accent-color); }
-        .user-name-text { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-        .user-id-text { font-size: 14px; color: var(--text-secondary); font-family: monospace; background: rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 8px; display: inline-block; }
+        .avatar-circle { width: 84px; height: 84px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05)); border-radius: 50%; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; border: 1px solid var(--glass-border); color: var(--accent-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .user-name-text { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+        .user-id-text { font-size: 14px; color: var(--text-secondary); font-family: monospace; background: rgba(255,255,255,0.08); padding: 5px 12px; border-radius: 8px; display: inline-block; }
 
-        .menu-group { background: var(--surface-color); border-radius: 18px; overflow: hidden; margin-bottom: 24px; flex-shrink: 0; }
+        .menu-group { background: var(--surface-color); border-radius: 24px; overflow: hidden; margin-bottom: 24px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.05); }
         .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: transparent; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.2s; }
         .menu-item:last-child { border-bottom: none; }
-        .menu-item:active { background: rgba(255,255,255,0.05); }
+        .menu-item:active { background: rgba(255,255,255,0.08); }
         .menu-item-left { display: flex; align-items: center; gap: 16px; font-size: 16px; font-weight: 500; }
-        .menu-chevron { color: var(--text-secondary); width: 18px; }
+        .menu-chevron { color: var(--text-secondary); width: 18px; opacity: 0.7; }
 
         .copy-link-container { display: none; margin-top: 10px; margin-bottom: 30px; flex-shrink: 0; }
-        .copy-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; margin-left: 12px; text-transform: uppercase; letter-spacing: 1px; }
-        .copy-box { background: #151516; border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: border-color 0.2s; }
-        .copy-box:active { border-color: var(--accent-color); }
+        .copy-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; margin-left: 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .copy-box { background: #151516; border: 1px solid var(--glass-border); border-radius: 18px; padding: 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; }
+        .copy-box:active { border-color: var(--accent-color); background: rgba(0, 224, 150, 0.05); }
         .copy-text { font-family: 'SF Mono', 'Roboto Mono', monospace; color: var(--accent-color); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85%; }
         
-        .spacer { height: 40px; width: 100%; flex-shrink: 0; }
+        .spacer { height: 60px; width: 100%; flex-shrink: 0; }
     </style>
 </head>
 <body>
 
-    <div class="app-background"></div>
+    <div class="fixed-background"></div>
 
     <div id="screen-main" class="screen active">
         <div class="hero-section">
@@ -173,7 +186,7 @@
 
             <button class="btn btn-primary" onclick="handleAction('buy')">
                 <div class="btn-content-row">
-                    <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                         <span>Купить подписку</span>
                     </div>
@@ -183,7 +196,7 @@
 
             <button class="btn btn-secondary" onclick="handleAction('install')">
                 <div class="btn-content-row">
-                    <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
                         <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         <span>Настройка</span>
                     </div>
@@ -202,13 +215,12 @@
                 </button>
             </div>
         </div>
-        <div class="spacer"></div>
     </div>
 
     <div id="screen-profile" class="screen">
         <div class="profile-user-block">
             <div class="avatar-circle">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
             <div class="user-name-text" id="user-name-el">Пользователь</div>
             <div class="user-id-text" id="user-id-el">ID: ...</div>
@@ -225,21 +237,21 @@
         <div class="menu-group">
             <div class="menu-item" onclick="handleAction('buy')">
                 <div class="menu-item-left">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                     <span>Продлить подписку</span>
                 </div>
                 <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </div>
             <div class="menu-item">
                 <div class="menu-item-left">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                     <span>Мои транзакции</span>
                 </div>
                 <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </div>
             <div class="menu-item" onclick="handleAction('support')">
                 <div class="menu-item-left">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                     <span>Написать в поддержку</span>
                 </div>
                 <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -267,8 +279,6 @@
         const userName = tgUser ? tgUser.first_name : 'Guest';
         const userId = urlParams.get('user_id') || (tgUser ? tgUser.id : '000000');
         const vpnKey = urlParams.get('vpn_key'); 
-        
-        // Читаем startScreen, но если это 'profile', мы его обработаем
         const startScreen = urlParams.get('screen');
 
         const linkIos = urlParams.get('ios');
@@ -310,7 +320,6 @@
         
         tg.BackButton.onClick(() => switchScreen('main'));
 
-        // Обработка перехода по прямой ссылке (если нужно)
         if (startScreen === 'profile') {
             screenMain.classList.remove('active');
             screenProfile.classList.add('active');
