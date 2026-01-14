@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>UltimaVPN UI</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Ultima</title> <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- Глобальные переменные --- */
+        /* (СТИЛИ ОСТАЮТСЯ ТЕМИ ЖЕ, ЧТО БЫЛИ В ПОСЛЕДНЕЙ КРАСИВОЙ ВЕРСИИ) */
         :root {
             --bg-dark: #010f0a;
             --bg-light-spot: #0a3d2e;
-            --card-bg: rgba(5, 38, 28, 0.85); /* Полупрозрачный фон */
+            --card-bg: rgba(5, 38, 28, 0.85);
             --accent-green: #00d696;
             --accent-green-dark: #00b37d;
             --text-white: #ffffff;
@@ -19,26 +18,19 @@
             --btn-secondary-bg: rgba(255, 255, 255, 0.06);
             --btn-border: rgba(255, 255, 255, 0.08);
         }
-
-        /* --- Базовые стили --- */
         body {
-            /* Сложный радиальный фон "прожектор" сверху */
             background: radial-gradient(circle at 50% -10%, var(--bg-light-spot) 0%, var(--bg-dark) 60%);
             color: var(--text-white);
-            /* Используем системные шрифты для максимальной нативности */
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            /* Учитываем безопасные зоны (для iPhone с челкой) */
             padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-sizing: border-box;
-            -webkit-font-smoothing: antialiased; /* Сглаживание шрифтов на iOS */
+            -webkit-font-smoothing: antialiased;
         }
-
-        /* --- Логотип и Анимация --- */
         .logo-container {
             flex-grow: 1;
             display: flex;
@@ -46,26 +38,11 @@
             justify-content: center;
             padding-bottom: 40px;
         }
-
-        /* Сложная анимация пульсации и свечения */
         @keyframes pulse-glow {
-            0% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 5px rgba(0, 214, 150, 0.2));
-                opacity: 0.8;
-            }
-            50% {
-                transform: scale(1.04);
-                filter: drop-shadow(0 0 25px rgba(0, 214, 150, 0.5));
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                filter: drop-shadow(0 0 5px rgba(0, 214, 150, 0.2));
-                opacity: 0.8;
-            }
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 214, 150, 0.2)); opacity: 0.8; }
+            50% { transform: scale(1.04); filter: drop-shadow(0 0 25px rgba(0, 214, 150, 0.5)); opacity: 1; }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 214, 150, 0.2)); opacity: 0.8; }
         }
-
         .shield-icon {
             width: 150px;
             height: 150px;
@@ -73,21 +50,15 @@
             stroke-width: 1.5;
             animation: pulse-glow 3.5s ease-in-out infinite;
         }
-
-        /* --- Нижняя панель (Карточка) --- */
         .bottom-panel {
             background-color: var(--card-bg);
-            /* Эффект матового стекла (Glassmorphism) */
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border-radius: 32px;
             padding: 24px;
-            /* Глубокая тень и тонкая светлая рамка сверху для объема */
             box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1);
             border: 1px solid var(--btn-border);
         }
-
-        /* --- Шапка карточки --- */
         .status-row {
             display: flex;
             justify-content: space-between;
@@ -95,127 +66,52 @@
             margin-bottom: 24px;
             padding: 0 4px;
         }
-
         .app-name {
             font-size: 26px;
-            font-weight: 800; /* Очень жирный */
+            font-weight: 800;
             margin: 0;
             letter-spacing: 0.5px;
             line-height: 1.1;
+            text-transform: lowercase; /* Делаем строчными как на макете */
         }
-
+        .app-name::first-letter {
+             text-transform: uppercase; /* Первая буква заглавная: Ultima */
+        }
         .status-offline {
             color: var(--text-gray);
             font-size: 15px;
             font-weight: 500;
             margin-top: 6px;
         }
-
-        .expiry-info {
-            text-align: right;
-        }
-
-        .expiry-date {
-            font-size: 15px;
-            font-weight: 600;
-            display: block;
-            opacity: 0.9;
-        }
-
-        .expiry-warning {
-            color: var(--text-gold);
-            font-size: 14px;
-            font-weight: 500;
-            margin-top: 6px;
-            display: block;
-        }
-
-        /* --- Кнопки (UI/UX) --- */
+        .expiry-info { text-align: right; }
+        .expiry-date { font-size: 15px; font-weight: 600; display: block; opacity: 0.9; }
+        .expiry-warning { color: var(--text-gold); font-size: 14px; font-weight: 500; margin-top: 6px; display: block; }
         .btn {
-            width: 100%;
-            padding: 18px 22px; /* Большие отступы для удобного нажатия */
-            border-radius: 22px; /* Сильные скругления */
-            border: none;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            /* Плавная анимация нажатия */
-            transition: transform 0.1s ease-in-out, opacity 0.2s;
-            position: relative;
-            overflow: hidden;
-            /* Убираем стандартное выделение при тапе на мобильных */
-            -webkit-tap-highlight-color: transparent;
+            width: 100%; padding: 18px 22px; border-radius: 22px; border: none;
+            font-size: 17px; font-weight: 700; cursor: pointer; display: flex;
+            align-items: center; justify-content: space-between; margin-bottom: 14px;
+            transition: transform 0.1s ease-in-out, opacity 0.2s; position: relative;
+            overflow: hidden; -webkit-tap-highlight-color: transparent;
         }
-
-        /* Эффект нажатия */
-        .btn:active {
-            transform: scale(0.97);
-            opacity: 0.95;
-        }
-
-        /* Основная кнопка (Купить) */
+        .btn:active { transform: scale(0.97); opacity: 0.95; }
         .btn-primary {
-            /* Диагональный сочный градиент */
             background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-dark) 100%);
-            color: #fff;
-            /* Зеленое свечение под кнопкой */
-            box-shadow: 0 8px 25px rgba(0, 214, 150, 0.35);
+            color: #fff; box-shadow: 0 8px 25px rgba(0, 214, 150, 0.35);
         }
-
-        /* Вторичные кнопки */
         .btn-secondary {
-            background-color: var(--btn-secondary-bg);
-            color: var(--text-white);
-            border: 1px solid var(--btn-border);
-            /* Внутренняя тень для эффекта "вдавленности" */
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            background-color: var(--btn-secondary-bg); color: var(--text-white);
+            border: 1px solid var(--btn-border); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
             font-weight: 600;
         }
-
-        .btn-text-group {
-            display: flex;
-            align-items: center;
-            gap: 14px; /* Расстояние между иконкой и текстом */
-        }
-
-        .btn-price {
-            font-weight: 500;
-            font-size: 16px;
-        }
-
-        .ios-label {
-            color: var(--accent-green);
-            font-weight: 500;
-            font-size: 15px;
-        }
-
-        /* Сетка кнопок */
-        .grid-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
-        
-        .grid-buttons .btn {
-            margin-bottom: 0;
-            justify-content: flex-start; /* Выравнивание влево в сетке */
-        }
-
-        /* Иконки */
-        .icon {
-            width: 26px;
-            height: 26px;
-            stroke-width: 2.2px; /* Чуть жирнее иконки в кнопках */
-            opacity: 0.9;
-        }
+        .btn-text-group { display: flex; align-items: center; gap: 14px; }
+        .btn-price { font-weight: 500; font-size: 16px; }
+        .ios-label { color: var(--accent-green); font-weight: 500; font-size: 15px; }
+        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .grid-buttons .btn { margin-bottom: 0; justify-content: flex-start; }
+        .icon { width: 26px; height: 26px; stroke-width: 2.2px; opacity: 0.9; }
     </style>
 </head>
 <body>
-
     <div class="logo-container">
         <svg class="shield-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -225,7 +121,7 @@
     <div class="bottom-panel">
         <div class="status-row">
             <div>
-                <h1 class="app-name">ultima</h1>
+                <h1 class="app-name">Ultima</h1>
                 <div class="status-offline">offline</div>
             </div>
             <div class="expiry-info">
@@ -247,7 +143,7 @@
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 <span>Установка и настройка</span>
             </div>
-            <span class="ios-label">для iOS</span>
+            <span class="ios-label">iOS</span>
         </button>
 
         <div class="grid-buttons">
@@ -267,50 +163,39 @@
     </div>
 
     <script>
-        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Раскрываем на весь экран
-        
-        // Настраиваем цвета статус-бара и хедера под наш фон
+        tg.expand();
         tg.setHeaderColor('#0a3d2e'); 
         tg.setBackgroundColor('#010f0a');
 
-        // Функция для тактильного отклика (вибрации) при нажатии
         function hapticAndAction(action) {
-            // Вызываем нативную вибрацию Telegram (если поддерживается)
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.impactOccurred('light');
             }
 
-            // Логика действий
-            switch(action) {
-                case 'buy':
-                    // Отправляем боту команду на покупку
-                    tg.sendData("action_buy_subscription"); 
-                    break;
-                case 'install':
-                    // Открываем инструкцию
-                    tg.openLink("https://your-vpn-service.com/instructions");
-                    break;
-                case 'profile':
-                    // Можно переключить экран или отправить данные боту
-                    console.log("Profile clicked");
-                    break;
-                case 'support':
-                    // Открываем чат поддержки
-                    tg.openTelegramLink("https://t.me/your_support_bot");
-                    break;
+            // ТЕПЕРЬ МЫ ПРОСТО ШЛЕМ КОМАНДЫ БОТУ
+            // А БОТ САМ РЕШАЕТ, КАКУЮ ССЫЛКУ ПРИСЛАТЬ
+            if (action === 'buy') {
+                tg.sendData("action_buy");
+            } 
+            else if (action === 'install') {
+                tg.sendData("action_install");
+            }
+            else if (action === 'support') {
+                tg.sendData("action_support");
+            }
+            else if (action === 'profile') {
+                tg.sendData("action_profile");
             }
         }
 
-        // Простая проверка платформы для метки "для iOS" / "для Android"
         const label = document.querySelector('.ios-label');
         if (tg.platform === 'android') {
-            label.textContent = 'для Android';
+            label.textContent = 'Android';
         } else if (tg.platform === 'ios') {
-            label.textContent = 'для iOS';
+            label.textContent = 'iOS';
         } else {
-             label.textContent = ''; // Скрываем на десктопе
+             label.textContent = ''; 
         }
     </script>
 </body>
