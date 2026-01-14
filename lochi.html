@@ -6,7 +6,7 @@
     <title>Ultima VPN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- СБРОС И БАЗА --- */
+        /* --- НАСТРОЙКИ ЦВЕТОВ --- */
         :root {
             --accent-color: #00e096;
             --accent-glow: rgba(0, 224, 150, 0.4);
@@ -22,43 +22,47 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 1. ФИКСИРОВАННЫЙ ФОН (ГЛАВНОЕ ИСПРАВЛЕНИЕ) */
+        /* 1. ФОН БЕЗ ПОЛОС (FIX) */
         .app-background {
             position: fixed;
-            top: 0;
+            top: -10vh;       /* Начинаем чуть выше экрана */
             left: 0;
             width: 100vw;
-            height: 100vh;
-            z-index: -1; /* Убираем на задний план */
+            height: 120vh;    /* Делаем фон больше экрана, чтобы скрыть полосы при скролле */
+            z-index: -1;
             background-color: #000000;
-            background-image: radial-gradient(circle at 50% -20%, #0f4d3a 0%, #000000 70%);
+            background-image: radial-gradient(circle at 50% 20%, #0f4d3a 0%, #000000 60%);
             background-size: cover;
             background-repeat: no-repeat;
-            pointer-events: none; /* Чтобы клики проходили сквозь него */
+            pointer-events: none;
         }
 
-        /* 2. БЛОКИРОВКА BODY */
+        /* 2. БАЗОВЫЕ НАСТРОЙКИ */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Запрещаем скролл самого окна */
+            overflow: hidden; /* Блокируем скролл страницы целиком */
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
             color: var(--text-primary);
+            background: #000000; /* Черный фон подложки, чтобы не было белых полос */
         }
 
-        /* 3. КОНТЕЙНЕР ЭКРАНА (Скроллится только он) */
+        /* 3. ЭКРАНЫ (Скролл внутри) */
         .screen {
             display: none;
             flex-direction: column;
             width: 100%;
             height: 100%;
-            overflow-y: auto; /* Скролл внутри */
-            -webkit-overflow-scrolling: touch; /* Плавность на iOS */
+            overflow-y: auto; /* Скроллим только контент */
+            -webkit-overflow-scrolling: touch;
             
-            /* Важно: отступы внутри скролла */
-            padding: calc(20px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom)) 20px;
+            /* Отступы с учетом челки и нижней полоски */
+            padding-top: calc(20px + env(safe-area-inset-top));
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-bottom: calc(100px + env(safe-area-inset-bottom)); /* Большой отступ снизу, чтобы контент не перекрывался */
             
             animation: fadeEffect 0.3s ease-out;
         }
@@ -72,18 +76,18 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- ОСТАЛЬНОЙ ДИЗАЙН (Без изменений) --- */
+        /* --- ЭЛЕМЕНТЫ --- */
         .hero-section {
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 250px;
+            min-height: 220px;
             flex-grow: 1;
         }
 
-        .shield-container { position: relative; width: 150px; height: 150px; display: flex; align-items: center; justify-content: center; }
+        .shield-container { position: relative; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; }
         .shield-icon { width: 100%; height: 100%; stroke: var(--text-primary); stroke-width: 1.2; filter: drop-shadow(0 0 20px var(--accent-glow)); animation: float 6s ease-in-out infinite; }
         @keyframes float { 0% { transform: translateY(0px); filter: drop-shadow(0 0 20px var(--accent-glow)); } 50% { transform: translateY(-10px); filter: drop-shadow(0 0 35px var(--accent-glow)); } 100% { transform: translateY(0px); filter: drop-shadow(0 0 20px var(--accent-glow)); } }
 
@@ -96,7 +100,7 @@
             border-radius: 32px 32px 0 0;
             padding: 32px 24px 40px 24px;
             box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
-            margin: 0 -20px -20px -20px; 
+            margin: 0 -20px -20px -20px; /* Растягиваем на всю ширину */
         }
 
         .header-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
@@ -131,9 +135,6 @@
         .copy-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; margin-left: 12px; text-transform: uppercase; letter-spacing: 1px; }
         .copy-box { background: #151516; border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: border-color 0.2s; }
         .copy-text { font-family: 'SF Mono', 'Roboto Mono', monospace; color: var(--accent-color); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85%; }
-
-        /* Отступ внизу, чтобы контент не прилипал к краю */
-        .spacer { height: 40px; width: 100%; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -186,7 +187,6 @@
                 </button>
             </div>
         </div>
-        <div class="spacer"></div>
     </div>
 
     <div id="screen-profile" class="screen">
@@ -232,13 +232,11 @@
 
         <div style="flex-grow:1"></div>
         <button class="btn btn-secondary" onclick="handleAction('install')">Открыть инструкцию</button>
-        <div class="spacer"></div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        // ВАЖНО: Делаем хедер прозрачным/черным, чтобы он сливался с фоном
         tg.setHeaderColor('#000000');
         tg.setBackgroundColor('#000000');
 
@@ -252,6 +250,8 @@
         const userName = tgUser ? tgUser.first_name : 'Guest';
         const userId = urlParams.get('user_id') || (tgUser ? tgUser.id : '000000');
         const vpnKey = urlParams.get('vpn_key'); 
+        
+        // Читаем, какую страницу открыть (если пусто -> откроется Главная)
         const startScreen = urlParams.get('screen');
 
         const linkIos = urlParams.get('ios');
@@ -293,6 +293,7 @@
         
         tg.BackButton.onClick(() => switchScreen('main'));
 
+        // Авто-переход только если бот попросил
         if (startScreen === 'profile') {
             screenMain.classList.remove('active');
             screenProfile.classList.add('active');
