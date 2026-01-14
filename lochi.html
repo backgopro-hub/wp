@@ -3,159 +3,532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Ultima</title>
+    <title>Ultima VPN</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- СТИЛИ (Без изменений, вставь прошлые стили сюда) --- */
-        :root { --bg-dark: #010f0a; --bg-light-spot: #0a3d2e; --card-bg: rgba(5, 38, 28, 0.85); --accent-green: #00d696; --accent-green-dark: #00b37d; --text-white: #ffffff; --text-gray: #8d9e96; --text-gold: #e8b86d; --btn-secondary-bg: rgba(255, 255, 255, 0.06); --btn-border: rgba(255, 255, 255, 0.08); }
-        body { background: radial-gradient(circle at 50% -10%, var(--bg-light-spot) 0%, var(--bg-dark) 60%); color: var(--text-white); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-        .logo-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding-bottom: 40px; }
-        @keyframes pulse-glow { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 214, 150, 0.2)); opacity: 0.8; } 50% { transform: scale(1.04); filter: drop-shadow(0 0 25px rgba(0, 214, 150, 0.5)); opacity: 1; } 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 214, 150, 0.2)); opacity: 0.8; } }
-        .shield-icon { width: 150px; height: 150px; stroke: var(--text-white); stroke-width: 1.5; animation: pulse-glow 3.5s ease-in-out infinite; }
-        .bottom-panel { background-color: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 32px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid var(--btn-border); }
-        .status-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding: 0 4px; }
-        .app-name { font-size: 26px; font-weight: 800; margin: 0; letter-spacing: 0.5px; line-height: 1.1; }
-        .status-offline { color: var(--text-gray); font-size: 15px; font-weight: 500; margin-top: 6px; }
-        .expiry-info { text-align: right; }
-        .expiry-date { font-size: 15px; font-weight: 600; display: block; opacity: 0.9; }
-        .expiry-warning { color: var(--text-gold); font-size: 14px; font-weight: 500; margin-top: 6px; display: block; }
-        .btn { width: 100%; padding: 18px 22px; border-radius: 22px; border: none; font-size: 17px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; transition: transform 0.1s ease-in-out, opacity 0.2s; position: relative; overflow: hidden; -webkit-tap-highlight-color: transparent; }
-        .btn:active { transform: scale(0.97); opacity: 0.95; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent-green) 0%, var(--accent-green-dark) 100%); color: #fff; box-shadow: 0 8px 25px rgba(0, 214, 150, 0.35); }
-        .btn-secondary { background-color: var(--btn-secondary-bg); color: var(--text-white); border: 1px solid var(--btn-border); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; }
-        .btn-text-group { display: flex; align-items: center; gap: 14px; }
-        .btn-price { font-weight: 500; font-size: 16px; }
-        .ios-label { color: var(--accent-green); font-weight: 500; font-size: 15px; }
-        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .grid-buttons .btn { margin-bottom: 0; justify-content: flex-start; }
-        .icon { width: 26px; height: 26px; stroke-width: 2.2px; opacity: 0.9; }
+        /* --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И СБРОС --- */
+        :root {
+            --bg-color: #000000;
+            --accent-color: #00e096; /* Яркий неоновый зеленый */
+            --accent-glow: rgba(0, 224, 150, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+            --glass-bg: rgba(28, 28, 30, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --surface-color: #1c1c1e;
+            --danger-color: #ff453a;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Убирает синий квадрат при нажатии на Android */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            /* Сложный фон: темный низ, зеленый свет сверху */
+            background-image: 
+                radial-gradient(circle at 50% -20%, #0f4d3a 0%, #000000 70%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            /* Учитываем безопасные зоны iPhone (челка, полоска снизу) */
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* --- АНИМАЦИИ ПЕРЕХОДОВ --- */
+        .screen {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+            animation: fadeEffect 0.4s ease-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeEffect {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ЛОГОТИП И ЩИТ --- */
+        .hero-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .shield-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shield-icon {
+            width: 100%;
+            height: 100%;
+            stroke: var(--text-primary);
+            stroke-width: 1.2;
+            filter: drop-shadow(0 0 20px var(--accent-glow));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); filter: drop-shadow(0 0 20px var(--accent-glow)); }
+            50% { transform: translateY(-10px); filter: drop-shadow(0 0 35px var(--accent-glow)); }
+            100% { transform: translateY(0px); filter: drop-shadow(0 0 20px var(--accent-glow)); }
+        }
+
+        /* --- СТЕКЛЯННАЯ ПАНЕЛЬ (КАРТОЧКА) --- */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px); /* Для Safari */
+            border-top: 1px solid var(--glass-border);
+            border-radius: 32px 32px 0 0; /* Скругления только сверху, если панель прижата к низу */
+            padding: 32px 24px 40px 24px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+            margin: 0 -20px -20px -20px; /* Растягиваем на всю ширину */
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        /* --- ЗАГОЛОВКИ И СТАТУС --- */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .app-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .status-badge {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--text-secondary);
+        }
+
+        .status-badge.online .status-dot { background-color: var(--accent-color); box-shadow: 0 0 8px var(--accent-color); }
+        .status-badge.online { color: var(--accent-color); background: rgba(0, 224, 150, 0.1); }
+
+        /* --- КНОПКИ --- */
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: 18px;
+            border: none;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            margin-bottom: 12px;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Основная кнопка (Gradient) */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #00b377 100%);
+            color: #000;
+            box-shadow: 0 8px 25px rgba(0, 224, 150, 0.25);
+        }
+
+        .btn-content-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+        }
+
+        /* Вторичная кнопка (Outline/Glass) */
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border: 1px solid transparent;
+        }
+        
+        .btn-secondary:active {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .btn-icon {
+            width: 22px;
+            height: 22px;
+            stroke-width: 2.5;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* --- ПРОФИЛЬ (СТИЛИ) --- */
+        .profile-user-block {
+            text-align: center;
+            padding: 20px 0 40px 0;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--glass-border);
+            color: var(--accent-color);
+        }
+
+        .user-name-text {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .user-id-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-family: monospace;
+            background: rgba(255,255,255,0.08);
+            padding: 4px 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        /* Список меню в профиле */
+        .menu-group {
+            background: var(--surface-color);
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 20px;
+            background: transparent;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .menu-item:last-child { border-bottom: none; }
+        .menu-item:active { background: rgba(255,255,255,0.05); }
+
+        .menu-item-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .menu-chevron {
+            color: var(--text-secondary);
+            width: 18px;
+        }
+
+        /* Блок копирования ссылки */
+        .copy-link-container {
+            display: none; /* Скрыто по умолчанию */
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        .copy-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            margin-left: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .copy-box {
+            background: #151516;
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .copy-box:active {
+            border-color: var(--accent-color);
+        }
+
+        .copy-text {
+            font-family: 'SF Mono', 'Roboto Mono', monospace;
+            color: var(--accent-color);
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 85%;
+        }
+
     </style>
 </head>
 <body>
-    <div class="logo-container">
-        <svg class="shield-icon" viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
+
+    <div id="screen-main" class="screen active">
+        
+        <div class="hero-section">
+            <div class="shield-container">
+                <svg class="shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <div class="header-row">
+                <div>
+                    <h1 class="app-title">Ultima</h1>
+                </div>
+                <div class="status-badge" id="status-badge">
+                    <div class="status-dot"></div>
+                    <span id="status-text">Disconnect</span>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="handleAction('buy')">
+                <div class="btn-content-row">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <span>Купить подписку</span>
+                    </div>
+                    <span style="font-size: 15px; opacity: 0.9;">150₽</span>
+                </div>
+            </button>
+
+            <button class="btn btn-secondary" onclick="handleAction('install')">
+                <div class="btn-content-row">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span>Настройка</span>
+                    </div>
+                    <span style="color: var(--accent-color); font-size: 14px;" id="platform-lbl">Device</span>
+                </div>
+            </button>
+
+            <div class="grid-2">
+                <button class="btn btn-secondary" onclick="switchScreen('profile')">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span>Профиль</span>
+                </button>
+                <button class="btn btn-secondary" onclick="handleAction('support')">
+                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    <span>Чат</span>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div class="bottom-panel">
-        <div class="status-row">
-            <div>
-                <h1 class="app-name">Ultima</h1>
-                <div class="status-offline">offline</div>
+
+    <div id="screen-profile" class="screen">
+        <div class="profile-user-block">
+            <div class="avatar-circle">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
-            <div class="expiry-info">
-                <span class="expiry-date">до 13 января 2026</span>
-                <span class="expiry-warning">подписка истекла</span>
+            <div class="user-name-text" id="user-name-el">Пользователь</div>
+            <div class="user-id-text" id="user-id-el">ID: Loading...</div>
+        </div>
+
+        <div id="vpn-key-section" class="copy-link-container">
+            <div class="copy-label">Ваша ссылка подписки</div>
+            <div class="copy-box" onclick="copyKey()">
+                <div class="copy-text" id="vpn-key-val">https://...</div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             </div>
         </div>
 
-        <button class="btn btn-primary" onclick="actionBuy()">
-            <div class="btn-text-group">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                <span>Купить подписку</span>
-            </div>
-            <span class="btn-price">от 150 ₽</span>
-        </button>
-
-        <button class="btn btn-secondary" onclick="actionInstall()">
-            <div class="btn-text-group">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                <span>Установка и настройка</span>
-            </div>
-            <span class="platform-label">для устройства</span>
-        </button>
-
-        <div class="grid-buttons">
-            <button class="btn btn-secondary" onclick="actionProfile()">
-                <div class="btn-text-group">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <span>Профиль</span>
+        <div class="menu-group">
+            <div class="menu-item" onclick="handleAction('buy')">
+                <div class="menu-item-left">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    <span>Продлить подписку</span>
                 </div>
-            </button>
-            <button class="btn btn-secondary" onclick="actionSupport()">
-                <div class="btn-text-group">
-                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    <span>Поддержка</span>
+                <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+            <div class="menu-item">
+                <div class="menu-item-left">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <span>Мои транзакции</span>
                 </div>
-            </button>
+                <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+            <div class="menu-item" onclick="handleAction('support')">
+                <div class="menu-item-left">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    <span>Написать в поддержку</span>
+                </div>
+                <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
         </div>
+
+        <div style="flex-grow:1"></div>
+        
+        <button class="btn btn-secondary" onclick="handleAction('install')" style="margin-bottom: 20px;">
+             Открыть инструкцию
+        </button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.setHeaderColor('#0a3d2e'); 
-        tg.setBackgroundColor('#010f0a');
+        
+        // Устанавливаем цвета хедера под наш фон
+        tg.setHeaderColor('#000000');
+        tg.setBackgroundColor('#000000');
 
-        // --- 1. ЧИТАЕМ НАСТРОЙКИ ИЗ URL (которые передал Python) ---
+        // 1. ПАРСИНГ ДАННЫХ ИЗ URL
         const urlParams = new URLSearchParams(window.location.search);
         
-        // Название приложения
-        const appTitle = urlParams.get('title');
-        if (appTitle) {
-            document.querySelector('.app-name').textContent = appTitle;
-        }
+        // Данные юзера
+        const tgUser = tg.initDataUnsafe.user;
+        const userName = tgUser ? tgUser.first_name : 'Guest';
+        const userId = urlParams.get('user_id') || (tgUser ? tgUser.id : '000000');
+        
+        // Ключ VPN (если передан)
+        const vpnKey = urlParams.get('vpn_key'); 
 
         // Ссылки
-        const linkSupport = urlParams.get('support');
-        
-        // Определяем платформу для правильной ссылки инструкции
-        const platform = tg.platform;
-        let installLink = urlParams.get('default'); // По умолчанию
-        let platformName = 'устройства';
+        const linkIos = urlParams.get('ios');
+        const linkAndroid = urlParams.get('android');
+        const linkWin = urlParams.get('windows');
 
-        if (platform === 'ios') {
-            installLink = urlParams.get('ios');
-            platformName = 'iOS';
-        } else if (platform === 'android') {
-            installLink = urlParams.get('android');
-            platformName = 'Android';
-        } else if (platform === 'macos') {
-            installLink = urlParams.get('macos');
-            platformName = 'macOS';
-        } else if (platform === 'tdesktop' || platform === 'weba') {
-            installLink = urlParams.get('windows');
-            platformName = 'Windows';
+        // 2. ИНИЦИАЛИЗАЦИЯ UI
+        document.getElementById('user-name-el').textContent = userName;
+        document.getElementById('user-id-el').textContent = `ID: ${userId}`;
+
+        // Метка платформы
+        let platformName = 'Device';
+        if (tg.platform === 'ios') platformName = 'iOS';
+        else if (tg.platform === 'android') platformName = 'Android';
+        else if (tg.platform === 'tdesktop' || tg.platform === 'weba') platformName = 'Windows';
+        
+        document.getElementById('platform-lbl').textContent = platformName;
+
+        // Если ключ есть - показываем его и меняем статус
+        if (vpnKey) {
+            document.getElementById('vpn-key-section').style.display = 'block';
+            document.getElementById('vpn-key-val').textContent = vpnKey;
+            
+            // Меняем статус на "Active"
+            const statusBadge = document.getElementById('status-badge');
+            statusBadge.classList.add('online');
+            document.getElementById('status-text').textContent = 'Active';
         }
-        
-        // Обновляем текст на кнопке
-        document.querySelector('.platform-label').textContent = 'для ' + platformName;
 
-        // --- 2. ФУНКЦИИ КНОПОК ---
+        // 3. ФУНКЦИИ УПРАВЛЕНИЯ
+        const screenMain = document.getElementById('screen-main');
+        const screenProfile = document.getElementById('screen-profile');
+
+        function switchScreen(screenName) {
+            haptic();
+            if (screenName === 'profile') {
+                screenMain.classList.remove('active');
+                screenProfile.classList.add('active');
+                tg.BackButton.show();
+            } else {
+                screenProfile.classList.remove('active');
+                screenMain.classList.add('active');
+                tg.BackButton.hide();
+            }
+        }
+
+        tg.BackButton.onClick(() => switchScreen('main'));
+
+        function handleAction(action) {
+            haptic();
+            if (action === 'buy') {
+                tg.sendData("action_buy");
+            } 
+            else if (action === 'support') {
+                tg.sendData("action_support");
+            } 
+            else if (action === 'install') {
+                // Открываем ссылку сразу
+                if (tg.platform === 'ios' && linkIos) tg.openLink(linkIos);
+                else if (tg.platform === 'android' && linkAndroid) tg.openLink(linkAndroid);
+                else tg.openLink(linkWin || 'https://google.com');
+            }
+        }
+
+        function copyKey() {
+            const text = document.getElementById('vpn-key-val').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                tg.HapticFeedback.notificationOccurred('success');
+                // Визуальный эффект копирования
+                const box = document.querySelector('.copy-box');
+                box.style.borderColor = '#00e096';
+                setTimeout(() => box.style.borderColor = 'rgba(255,255,255,0.12)', 300);
+            });
+        }
 
         function haptic() {
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
-        function actionBuy() {
-            haptic();
-            // Покупка все еще идет через бота
-            tg.sendData("action_buy");
-        }
-
-        function actionInstall() {
-            haptic();
-            // Открываем ссылку сразу!
-            if (installLink) {
-                tg.openLink(installLink);
-            } else {
-                alert("Ссылка на инструкцию не найдена");
-            }
-        }
-
-        function actionSupport() {
-            haptic();
-            // Открываем Telegram чат сразу!
-            if (linkSupport) {
-                tg.openTelegramLink(linkSupport);
-            }
-        }
-
-        function actionProfile() {
-            haptic();
-            // Тут пока просто вибрация, профиль можно сделать позже
-        }
     </script>
 </body>
 </html>
