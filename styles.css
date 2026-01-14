@@ -1,23 +1,22 @@
-/* --- 1. ПЕРЕМЕННЫЕ (Цвета со скриншота) --- */
+/* --- 1. ЦВЕТОВАЯ ПАЛИТРА (С ПИПЕТКИ) --- */
 :root {
-    /* Ядерный зеленый (как на кнопке Купить) */
-    --accent-color: #00E091; 
+    /* Точный зеленый цвет со скриншота */
+    --accent-color: #00D68F; 
     
-    /* Основной фон (Глубокий черный/темно-зеленый градиент) */
-    --bg-color: #050505;
+    /* Темный фон кнопок (серый) */
+    --btn-dark-bg: #1C1C1E;
     
-    /* Цвет поверхности карточек (Темно-серый, почти черный) */
-    --card-bg: #111111;
+    /* Фон всей страницы */
+    --bg-color: #000000;
     
-    /* Цвет кнопок (Светлее фона, "мокрый асфальт") */
-    --btn-bg: #1C1C1E;
+    /* Цвета текста */
+    --text-white: #FFFFFF;
+    --text-black: #000000;
+    --text-gray: #8E8E93;
     
-    --text-primary: #FFFFFF;
-    --text-secondary: #8E8E93; /* Серый текст для статусов */
-    
-    /* Радиусы скругления (как на iOS) */
-    --radius-l: 24px;  /* Для панели */
-    --radius-m: 16px;  /* Для кнопок */
+    /* Радиусы */
+    --radius-panel: 24px;
+    --radius-btn: 14px;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -27,167 +26,186 @@ body {
     margin: 0; padding: 0;
     width: 100%; height: 100vh;
     overflow: hidden;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", Roboto, sans-serif;
-    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
     background-color: var(--bg-color);
+    color: var(--text-white);
 }
 
-/* Фон: Темный, сверху едва заметное зеленое свечение */
+/* Фон: Темный градиент */
 .fixed-background {
     position: fixed; top: 0; left: 0; width: 100%; height: 120vh;
     z-index: -1;
-    background: radial-gradient(circle at 50% -30%, #063d2e 0%, #000000 70%);
+    background: radial-gradient(circle at 50% -20%, #052e24 0%, #000000 60%);
     pointer-events: none;
 }
 
-/* --- 3. ЛОГИКА ЭКРАНОВ --- */
+/* --- 3. СТРУКТУРА ЭКРАНОВ --- */
 .screen { display: none; width: 100%; height: 100%; position: relative; }
 .screen.active { display: block; }
-#screen-main { overflow: hidden; } /* Главная не скроллится */
+
+#screen-main { overflow: hidden; }
 #screen-profile { 
     overflow-y: auto; 
-    -webkit-overflow-scrolling: touch; 
+    -webkit-overflow-scrolling: touch;
     padding: calc(20px + env(safe-area-inset-top)) 16px 40px 16px;
 }
 
-/* --- 4. ПАНЕЛЬ ВНИЗУ (КАК НА СКРИНШОТЕ) --- */
+/* --- 4. НИЖНЯЯ ПАНЕЛЬ (ЧЕРНАЯ ПЛАШКА) --- */
 .glass-panel-sticky {
     position: absolute;
     bottom: 0; left: 0; width: 100%;
     z-index: 10;
     
-    /* Плотный цвет, без стекла */
-    background: var(--card-bg);
-    border-radius: var(--radius-l) var(--radius-l) 0 0;
+    /* Плотный черный цвет */
+    background: #000000;
     
-    /* Едва заметная граница сверху */
-    border-top: 1px solid #222;
+    /* Скругления только сверху */
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+    border-top: 1px solid #222; /* Тонкая полоска сверху */
     
     padding: 24px 16px 0 16px;
     padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
-/* Заголовок "Elusion VPN" */
+/* ЗАГОЛОВОК И СТАТУС */
 .header-row {
     display: flex; justify-content: space-between; align-items: center; 
     margin-bottom: 24px;
 }
 .app-title {
-    font-size: 32px; /* Крупно */
-    font-weight: 800; /* Жирно */
-    margin: 0;
-    letter-spacing: -0.5px;
+    font-size: 28px; font-weight: 800; margin: 0; letter-spacing: 0.5px;
 }
-
-/* Статус "Disconnect" (таблетка) */
 .status-badge {
-    background: var(--btn-bg);
-    padding: 6px 14px;
-    border-radius: 100px;
+    background: var(--btn-dark-bg);
+    padding: 6px 12px; border-radius: 100px;
     display: flex; align-items: center; gap: 8px;
 }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-secondary); }
-#status-text { font-size: 14px; font-weight: 600; color: var(--text-secondary); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--text-gray); }
+#status-text { font-size: 13px; font-weight: 600; color: var(--text-gray); }
 
-/* Активный статус */
-.status-badge.online { background: rgba(0, 224, 145, 0.15); }
-.status-badge.online .status-dot { background-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); }
+/* Если подключен - зеленый */
+.status-badge.online { background: rgba(0, 214, 143, 0.15); }
+.status-badge.online .status-dot { background-color: var(--accent-color); }
 .status-badge.online #status-text { color: var(--accent-color); }
 
 
-/* --- 5. КНОПКИ (ТОЧНАЯ КОПИЯ) --- */
+/* --- 5. КНОПКИ (PIXEL PERFECT) --- */
 
 .btn {
     width: 100%;
-    height: 64px; /* Фиксированная высота как на скрине */
-    border-radius: var(--radius-m);
+    height: 56px; /* Фиксированная высота как в iOS */
+    padding: 0 16px; /* Внутренние отступы */
+    
+    border-radius: var(--radius-btn);
     border: none;
-    font-size: 17px;
-    font-weight: 700; /* Жирный текст */
     cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 20px;
+    
+    /* Flex для выравнивания содержимого */
+    display: flex; 
+    align-items: center; 
+    
+    font-size: 16px;
+    font-weight: 700; /* Жирный шрифт */
     margin-bottom: 12px;
+    position: relative;
     transition: transform 0.1s;
 }
-.btn:active { transform: scale(0.98); opacity: 0.9; }
+.btn:active { transform: scale(0.97); opacity: 0.9; }
 
-/* КНОПКА "КУПИТЬ" (Зеленая) */
+/* ВНУТРЕННИЙ РЯД КНОПКИ (Чтобы разнести текст и цену) */
+.btn-content-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* Текст слева, цена справа */
+    align-items: center;
+}
+
+/* ЛЕВАЯ ЧАСТЬ КНОПКИ (Иконка + Текст) */
+.btn-left-group {
+    display: flex; align-items: center; gap: 12px;
+}
+.btn-icon { 
+    width: 24px; height: 24px; 
+    stroke-width: 2.2; /* Жирные иконки */
+}
+
+/* === КНОПКА "КУПИТЬ" === */
 .btn-primary {
-    background: var(--accent-color);
-    color: #000000; /* Черный текст */
-    /* Убираем лишние тени для "плоского" вида */
-    box-shadow: none; 
+    background-color: var(--accent-color);
+    color: var(--text-black); /* Черный текст */
 }
-/* Иконка сумки внутри кнопки */
-.btn-primary svg { stroke: #000000; stroke-width: 2; }
+/* Черная иконка */
+.btn-primary .btn-icon { stroke: #000000; } 
 
-/* КНОПКА "НАСТРОЙКА" (Серая) */
+/* === КНОПКА "НАСТРОЙКИ" === */
 .btn-secondary {
-    background: var(--btn-bg);
-    color: var(--text-primary);
+    background-color: var(--btn-dark-bg);
+    color: var(--text-white);
 }
-/* Цвет текста справа (Device) - зеленый */
-#platform-lbl { color: var(--accent-color); font-weight: 600; }
+/* Зеленый текст справа (Device) */
+#platform-lbl { color: var(--accent-color); }
 
-/* КВАДРАТНЫЕ КНОПКИ ВНИЗУ (Профиль и Чат) */
+
+/* === НИЖНИЕ КНОПКИ (СЕТКА) === */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.grid-2 .btn {
-    justify-content: center; /* Текст по центру */
+
+/* Особый стиль для кнопок в сетке: контент по центру */
+.grid-2 .btn .btn-content-row {
+    justify-content: center; /* Центрируем */
     gap: 10px;
 }
 
-/* Иконки */
-.btn-icon { width: 24px; height: 24px; }
-.btn-content-row { display: flex; align-items: center; gap: 12px; width: 100%; }
 
-/* --- 6. ЦЕНТРАЛЬНАЯ ЧАСТЬ (ЛОГО) --- */
+/* --- 6. ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ --- */
+
+/* Щит (Логотип) */
 .hero-center-wrapper {
     position: absolute; top: 0; left: 0; width: 100%; height: 50%;
     display: flex; align-items: center; justify-content: center; z-index: 1;
 }
-/* Щит чуть меньше и без сильного свечения */
-.shield-container { width: 120px; height: 120px; }
-.shield-icon { width: 100%; height: 100%; stroke: var(--text-primary); stroke-width: 1.5; opacity: 0.8; }
+.shield-container { width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; }
+.shield-icon { width: 100%; height: 100%; stroke: var(--text-white); stroke-width: 1.5; opacity: 0.9; }
 
-
-/* --- 7. ПРОФИЛЬ (ВТОРОЙ ЭКРАН) --- */
+/* Профиль */
 .profile-user-block { text-align: center; margin-top: 10px; margin-bottom: 30px; }
 .avatar-circle {
     width: 80px; height: 80px;
-    background: var(--btn-bg);
+    background: var(--btn-dark-bg);
     border-radius: 50%; margin: 0 auto 16px auto;
     display: flex; align-items: center; justify-content: center;
     color: var(--accent-color);
 }
 .user-name-text { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-.user-id-text { font-size: 14px; color: var(--text-secondary); font-family: monospace; background: var(--btn-bg); padding: 4px 10px; border-radius: 8px; }
+.user-id-text { 
+    font-size: 14px; color: var(--text-gray); font-family: monospace; 
+    background: var(--btn-dark-bg); padding: 4px 10px; border-radius: 8px; 
+}
 
-/* Меню в профиле (список) */
+/* Меню профиля */
 .menu-group {
-    background: var(--card-bg); /* Фон как у панели */
-    border-radius: var(--radius-m);
+    background: #111; /* Чуть темнее кнопок, почти черный */
+    border-radius: var(--radius-btn);
     overflow: hidden; margin-bottom: 20px;
     border: 1px solid #222;
 }
 .menu-item {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 20px;
+    padding: 16px;
     background: transparent;
     border-bottom: 1px solid #222;
     cursor: pointer;
 }
 .menu-item:last-child { border-bottom: none; }
 .menu-item-left { display: flex; align-items: center; gap: 14px; font-size: 16px; font-weight: 600; }
-.menu-chevron { color: var(--text-secondary); width: 18px; }
+.menu-chevron { color: var(--text-gray); width: 18px; }
 
-/* Копирование ссылки */
+/* Копирование */
 .copy-link-container { margin-bottom: 24px; }
-.copy-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; margin-left: 6px; text-transform: uppercase; font-weight: 600; }
+.copy-label { font-size: 12px; color: var(--text-gray); margin-bottom: 8px; margin-left: 6px; text-transform: uppercase; font-weight: 600; }
 .copy-box {
-    background: var(--btn-bg);
-    border-radius: var(--radius-m);
-    padding: 18px;
+    background: var(--btn-dark-bg);
+    border-radius: var(--radius-btn);
+    padding: 16px;
     display: flex; align-items: center; justify-content: space-between;
 }
 .copy-text { font-family: monospace; color: var(--accent-color); font-size: 15px; }
