@@ -6,7 +6,7 @@
     <title>Ultima</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* (СТИЛИ ОСТАЮТСЯ ТЕМИ ЖЕ - Я их скрыл для краткости, они работают) */
+        /* --- СТИЛИ (Без изменений, вставь прошлые стили сюда) --- */
         :root { --bg-dark: #010f0a; --bg-light-spot: #0a3d2e; --card-bg: rgba(5, 38, 28, 0.85); --accent-green: #00d696; --accent-green-dark: #00b37d; --text-white: #ffffff; --text-gray: #8d9e96; --text-gold: #e8b86d; --btn-secondary-bg: rgba(255, 255, 255, 0.06); --btn-border: rgba(255, 255, 255, 0.08); }
         body { background: radial-gradient(circle at 50% -10%, var(--bg-light-spot) 0%, var(--bg-dark) 60%); color: var(--text-white); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom)) 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
         .logo-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; padding-bottom: 40px; }
@@ -14,8 +14,7 @@
         .shield-icon { width: 150px; height: 150px; stroke: var(--text-white); stroke-width: 1.5; animation: pulse-glow 3.5s ease-in-out infinite; }
         .bottom-panel { background-color: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 32px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid var(--btn-border); }
         .status-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding: 0 4px; }
-        .app-name { font-size: 26px; font-weight: 800; margin: 0; letter-spacing: 0.5px; line-height: 1.1; text-transform: lowercase; }
-        .app-name::first-letter { text-transform: uppercase; }
+        .app-name { font-size: 26px; font-weight: 800; margin: 0; letter-spacing: 0.5px; line-height: 1.1; }
         .status-offline { color: var(--text-gray); font-size: 15px; font-weight: 500; margin-top: 6px; }
         .expiry-info { text-align: right; }
         .expiry-date { font-size: 15px; font-weight: 600; display: block; opacity: 0.9; }
@@ -26,10 +25,7 @@
         .btn-secondary { background-color: var(--btn-secondary-bg); color: var(--text-white); border: 1px solid var(--btn-border); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); font-weight: 600; }
         .btn-text-group { display: flex; align-items: center; gap: 14px; }
         .btn-price { font-weight: 500; font-size: 16px; }
-        
-        /* Стили для метки платформы */
-        .platform-label { color: var(--accent-green); font-weight: 500; font-size: 15px; }
-        
+        .ios-label { color: var(--accent-green); font-weight: 500; font-size: 15px; }
         .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
         .grid-buttons .btn { margin-bottom: 0; justify-content: flex-start; }
         .icon { width: 26px; height: 26px; stroke-width: 2.2px; opacity: 0.9; }
@@ -54,7 +50,7 @@
             </div>
         </div>
 
-        <button class="btn btn-primary" onclick="hapticAndAction('buy')">
+        <button class="btn btn-primary" onclick="actionBuy()">
             <div class="btn-text-group">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                 <span>Купить подписку</span>
@@ -62,7 +58,7 @@
             <span class="btn-price">от 150 ₽</span>
         </button>
 
-        <button class="btn btn-secondary" onclick="hapticAndAction('install')">
+        <button class="btn btn-secondary" onclick="actionInstall()">
             <div class="btn-text-group">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                 <span>Установка и настройка</span>
@@ -71,13 +67,13 @@
         </button>
 
         <div class="grid-buttons">
-            <button class="btn btn-secondary" onclick="hapticAndAction('profile')">
+            <button class="btn btn-secondary" onclick="actionProfile()">
                 <div class="btn-text-group">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     <span>Профиль</span>
                 </div>
             </button>
-            <button class="btn btn-secondary" onclick="hapticAndAction('support')">
+            <button class="btn btn-secondary" onclick="actionSupport()">
                 <div class="btn-text-group">
                     <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     <span>Поддержка</span>
@@ -92,42 +88,73 @@
         tg.setHeaderColor('#0a3d2e'); 
         tg.setBackgroundColor('#010f0a');
 
-        // --- ЛОГИКА ОПРЕДЕЛЕНИЯ ПЛАТФОРМЫ ---
-        // tg.platform возвращает: 'ios', 'android', 'macos', 'tdesktop' (это винда), 'web'
-        const currentPlatform = tg.platform; 
-        const label = document.querySelector('.platform-label');
-        let platformName = 'device';
-
-        // Меняем текст на кнопке
-        if (currentPlatform === 'ios') {
-            label.textContent = 'для iOS';
-            platformName = 'ios';
-        } else if (currentPlatform === 'android') {
-            label.textContent = 'для Android';
-            platformName = 'android';
-        } else if (currentPlatform === 'macos') {
-            label.textContent = 'для macOS';
-            platformName = 'macos';
-        } else if (currentPlatform === 'tdesktop' || currentPlatform === 'weba') {
-            label.textContent = 'для Windows';
-            platformName = 'windows';
-        } else {
-            label.textContent = 'Установка'; // Если не определили
-            platformName = 'unknown';
+        // --- 1. ЧИТАЕМ НАСТРОЙКИ ИЗ URL (которые передал Python) ---
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Название приложения
+        const appTitle = urlParams.get('title');
+        if (appTitle) {
+            document.querySelector('.app-name').textContent = appTitle;
         }
 
-        function hapticAndAction(action) {
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
-            }
+        // Ссылки
+        const linkSupport = urlParams.get('support');
+        
+        // Определяем платформу для правильной ссылки инструкции
+        const platform = tg.platform;
+        let installLink = urlParams.get('default'); // По умолчанию
+        let platformName = 'устройства';
 
-            if (action === 'install') {
-                // ОТПРАВЛЯЕМ БОТУ НЕ ПРОСТО "install", А "install_ios", "install_windows" и т.д.
-                tg.sendData("action_install_" + platformName);
-            } 
-            else {
-                tg.sendData("action_" + action);
+        if (platform === 'ios') {
+            installLink = urlParams.get('ios');
+            platformName = 'iOS';
+        } else if (platform === 'android') {
+            installLink = urlParams.get('android');
+            platformName = 'Android';
+        } else if (platform === 'macos') {
+            installLink = urlParams.get('macos');
+            platformName = 'macOS';
+        } else if (platform === 'tdesktop' || platform === 'weba') {
+            installLink = urlParams.get('windows');
+            platformName = 'Windows';
+        }
+        
+        // Обновляем текст на кнопке
+        document.querySelector('.platform-label').textContent = 'для ' + platformName;
+
+        // --- 2. ФУНКЦИИ КНОПОК ---
+
+        function haptic() {
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function actionBuy() {
+            haptic();
+            // Покупка все еще идет через бота
+            tg.sendData("action_buy");
+        }
+
+        function actionInstall() {
+            haptic();
+            // Открываем ссылку сразу!
+            if (installLink) {
+                tg.openLink(installLink);
+            } else {
+                alert("Ссылка на инструкцию не найдена");
             }
+        }
+
+        function actionSupport() {
+            haptic();
+            // Открываем Telegram чат сразу!
+            if (linkSupport) {
+                tg.openTelegramLink(linkSupport);
+            }
+        }
+
+        function actionProfile() {
+            haptic();
+            // Тут пока просто вибрация, профиль можно сделать позже
         }
     </script>
 </body>
