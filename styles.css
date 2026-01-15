@@ -1,78 +1,165 @@
-/* --- styles.css --- */
+/* --- styles.css (REMASTERED 1:1) --- */
 
-/* 1. ФОН */
+:root {
+    /* ВОССТАНОВЛЕННЫЕ ПЕРЕМЕННЫЕ ИЗ ОРИГИНАЛА */
+    --background: #010101;
+    --foreground: #ffffff;
+    
+    /* Цвета Ultima */
+    --primary: #00D68F;
+    --primary-foreground: #000000;
+    
+    /* Размеры */
+    --radius-large: 24px;  /* Для панели */
+    --radius-medium: 14px; /* Для кнопок */
+    
+    /* Цвета рамок и подложек */
+    --border-dim: rgba(0, 214, 143, 0.5);
+    --border-light: rgba(0, 214, 143, 0.3);
+    --btn-overlay: rgba(255, 255, 255, 0.05);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+body {
+    margin: 0; padding: 0; width: 100%; height: 100vh;
+    font-family: 'Onest', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--background);
+    color: var(--foreground);
+    overflow: hidden;
+    position: relative;
+    display: flex; justify-content: center;
+}
+
+/* === 1. ФОН === */
 .fixed-background {
-    position: fixed; top: 0; left: 0; 
-    width: 100%; height: 100%; 
-    z-index: -2;
-    background-color: #010101;
-    background-image: url('bg.png'); /* Картинка должна быть рядом */
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+    background-color: var(--background);
+    background-image: url('bg.png'); /* Твой файл */
     background-size: cover;
     background-position: top center;
-    pointer-events: none;
+    background-repeat: no-repeat;
 }
 
-/* 2. АНИМАЦИЯ КОЛЕЦ */
-.RingAnimation {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%; height: 100%;
-    pointer-events: none;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1;
-}
-.RingAnimation div {
-    position: absolute; border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 20px rgba(0, 214, 143, 0.05);
-    animation: ripple 4s infinite linear;
-}
+/* === 2. СТРУКТУРА === */
+.App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 15px; max-width: 500px; margin: 0 auto; }
+.HomePage { width: 100%; height: 100%; z-index: 1; display: grid; grid-template-rows: 1fr minmax(max-content, 1fr); align-items: center; }
+
+/* === 3. ВЕРХНЯЯ ЧАСТЬ (ЛОГО) === */
+.HomePage__top { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; margin-top: -15px; }
+.HomePage__logo { position: relative; z-index: 2; display: flex; justify-content: center; }
+.HomePage__logo svg { width: 70px; height: auto; will-change: scale; filter: drop-shadow(0 0 25px rgba(0,0,0,0.6)); }
+
+/* Анимация колец */
+.RingAnimation { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.RingAnimation div { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 0 20px rgba(0, 214, 143, 0.05); animation: ripple 4s infinite linear; }
 .RingAnimation div:nth-child(1) { animation-delay: 0s; }
-.RingAnimation div:nth-child(2) { animation-delay: 1.2s; }
-.RingAnimation div:nth-child(3) { animation-delay: 2.4s; }
-.RingAnimation div:nth-child(4) { animation-delay: 3.6s; }
-.RingAnimation div:nth-child(5) { animation-delay: 4.8s; }
-
+.RingAnimation div:nth-child(2) { animation-delay: 1s; }
+.RingAnimation div:nth-child(3) { animation-delay: 2s; }
+.RingAnimation div:nth-child(4) { animation-delay: 3s; }
 @keyframes ripple {
     0% { width: 50px; height: 50px; opacity: 0; }
     10% { opacity: 0.8; border-color: rgba(255,255,255,0.1); }
-    100% { width: 700px; height: 700px; opacity: 0; border-color: transparent; }
+    100% { width: 600px; height: 600px; opacity: 0; border-color: transparent; }
 }
 
-/* =========================================
-   3. СПЕЦЭФФЕКТЫ ДЛЯ КНОПОК (ИЗ ОРИГИНАЛА)
-   ========================================= */
-
-/* Базовый класс для кнопки с эффектом */
-.Button-Glow {
-    position: relative;
-    z-index: 1;
-    overflow: hidden; /* Чтобы свечение не вылезало */
-    border: 1px solid rgba(0, 214, 143, 0.3); /* Тонкая рамка */
+/* === 4. НИЖНЯЯ ПАНЕЛЬ === */
+.HomePage__bottom {
+    width: 100%;
+    /* Полупрозрачный черный фон */
+    background-color: rgba(0, 0, 0, 0.4); 
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius-large);
+    padding: 4px; /* Внутренний отступ для "рамки" */
+    overflow: hidden;
+    display: flex; flex-direction: column;
 }
 
-/* Свечение (Псевдо-элемент) */
-.Button-Glow::before {
+.HomePageBottom { padding: 20px 16px 24px 16px; width: 100%; }
+
+/* Шапка панели */
+.HomePageBottom__head { margin-bottom: 20px; width: 100%; }
+.HomePageBottom__headRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; width: 100%; }
+
+/* Тексты */
+.text-default { color: #9ca3af; font-size: 14px; font-weight: 400; }
+.text-right { text-align: right; }
+.text-lg { font-size: 18px; line-height: 1.2; font-weight: 400; }
+.font-light { font-weight: 300; opacity: 0.7; font-size: 14px; }
+.text-yellow-400 { color: #facc15; font-size: 14px; }
+.text-green { color: var(--primary); }
+
+/* === 5. КНОПКИ (ВОССТАНОВЛЕНИЕ 1 в 1) === */
+.HomePageBottom__body { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+
+/* Базовый стиль кнопки */
+.Button {
+    width: 100%; height: 54px;
+    border-radius: var(--radius-medium);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; padding: 0 16px;
+    font-family: 'Onest', sans-serif; font-weight: 600; font-size: 14px;
+    position: relative; gap: 10px; text-decoration: none;
+    transition: transform 0.1s, opacity 0.1s;
+    overflow: hidden; /* Важно для свечения */
+}
+.Button:active { transform: scale(0.98); opacity: 0.9; }
+.Button svg { width: 24px; height: 24px; flex-shrink: 0; }
+.mr-auto { margin-right: auto; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 1. ГЛАВНАЯ КНОПКА (Зеленая) */
+.bg-primary {
+    background-color: var(--primary);
+    color: #000000;
+}
+
+/* 2. КНОПКИ С ГРАДИЕНТОМ И СВЕЧЕНИЕМ */
+/* Это исправляет проблему "прозрачных" кнопок */
+.Button--variant_lighted, 
+.Button--variant_lighted-right {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid var(--border-dim); /* Зеленая рамка */
+}
+
+/* 3. ВОССТАНОВЛЕНИЕ СВЕЧЕНИЯ (ГРАДИЕНТ) */
+/* Мы используем псевдо-элемент, чтобы наложить картинку свечения */
+.Button--variant_lighted::before,
+.Button--variant_lighted-right::before {
     content: "";
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1; /* Под текстом */
+    z-index: -1;
     background-repeat: no-repeat;
-    opacity: 0.8;
+    background-size: cover;
+    opacity: 0.5; /* Яркость свечения */
+    /* SVG градиент из оригинала */
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='376' height='236' viewBox='0 0 376 236' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg filter='url(%23f)'%3E%3Cellipse cx='188' cy='118' rx='94' ry='24' fill='%2300D68F'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='f' x='0' y='0' width='376' height='236' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0' result='bg'/%3E%3CfeBlend in='SourceGraphic' in2='bg'/%3E%3CfeGaussianBlur stdDeviation='47' result='b'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E");
 }
 
-/* Вариант 1: Свечение по центру (Для кнопки Настройки) */
-.variant-center::before {
+/* Позиционирование свечения для кнопки "Настройки" (Центр) */
+.Button--variant_lighted::before {
     background-position: center -60px;
-    background-size: cover;
-    /* Оригинальный Base64 градиент */
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzc2IiBoZWlnaHQ9IjIzNiIgdmlld0JveD0iMCAwIDM3NiAyMzYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGZpbHRlcj0idXJsKCNmaWx0ZXIwX2ZfMTA0XzE3NSkiPgo8ZWxsaXBzZSBjeD0iMTg4IiBjeT0iMTE4IiByeD0iOTQiIHJ5PSIyNCIgZmlsbD0iIzAwQTg3OCIvPgo8L2c+CjxkZWZzPgo8ZmlsdGVyIGlkPSJmaWx0ZXIwX2ZfMTA0XzE3NSIgeD0iMCIgeT0iMCIgd2lkdGg9IjM3NiIgaGVpZ2h0PSIyMzYiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj4KPGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz4KPGZlQmxlbmQgbW9kZT0ibm9ybWFsIiBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0ic2hhcGUiLz4KPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNDciIHJlc3VsdD0iZWZmZWN0MV9mb3JlZ3JvdW5kQmx1cl8xMDRfMTc1Ii8+CjwvZmlsdGVyPgo8L2RlZnM+Cjwvc3ZnPgo=");
 }
 
-/* Вариант 2: Свечение сбоку (Для нижних кнопок) */
-.variant-side::before {
+/* Позиционирование свечения для кнопок "Профиль" (Слева) */
+.Button--variant_lighted-right::before {
     background-position: left -50px;
-    background-size: cover;
-    /* Тот же градиент, просто сдвинут */
-    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzc2IiBoZWlnaHQ9IjIzNiIgdmlld0JveD0iMCAwIDM3NiAyMzYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGZpbHRlcj0idXJsKCNmaWx0ZXIwX2ZfMTA0XzE3NSkiPgo8ZWxsaXBzZSBjeD0iMTg4IiBjeT0iMTE4IiByeD0iOTQiIHJ5PSIyNCIgZmlsbD0iIzAwQTg3OCIvPgo8L2c+CjxkZWZzPgo8ZmlsdGVyIGlkPSJmaWx0ZXIwX2ZfMTA0XzE3NSIgeD0iMCIgeT0iMCIgd2lkdGg9IjM3NiIgaGVpZ2h0PSIyMzYiIGZpbHRlclVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY29sb3ItaW50ZXJwb2xhdGlvbi1maWx0ZXJzPSJzUkdCIj4KPGZlRmxvb2QgZmxvb2Qtb3BhY2l0eT0iMCIgcmVzdWx0PSJCYWNrZ3JvdW5kSW1hZ2VGaXgiLz4KPGZlQmxlbmQgbW9kZT0ibm9ybWFsIiBpbj0iU291cmNlR3JhcGhpYyIgaW4yPSJCYWNrZ3JvdW5kSW1hZ2VGaXgiIHJlc3VsdD0ic2hhcGUiLz4KPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNDciIHJlc3VsdD0iZWZmZWN0MV9mb3JlZ3JvdW5kQmx1cl8xMDRfMTc1Ii8+CjwvZmlsdGVyPgo8L2RlZnM+Cjwvc3ZnPgo=");
+    opacity: 0.3; /* Чуть слабее */
+    border: 1px solid var(--border-light);
 }
+.Button--variant_lighted-right {
+    border: 1px solid var(--border-light);
+}
+
+/* Бейдж macOS */
+.device-badge {
+    color: var(--primary);
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700;
+}
+.device-badge svg { width: 18px; height: 18px; }
+
+/* Сетка нижних кнопок */
+.HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 0px; }
