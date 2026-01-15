@@ -1,4 +1,4 @@
-/* --- styles.css (ORIGINAL FIX) --- */
+/* --- styles.css (FINAL COMPACT VERSION) --- */
 
 :root {
     --background: #010101;
@@ -12,6 +12,12 @@
     /* Цвета рамок */
     --border-dim: rgba(0, 214, 143, 0.5);
     --border-light: rgba(0, 214, 143, 0.3);
+    
+    /* NextUI Rings */
+    --nextui-primary: 160 100% 42%; 
+    --nextui-primary-opacity: 1;
+    --nextui-background: 0 0% 0%;
+    --nextui-background-opacity: 1;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -35,22 +41,21 @@ body {
     pointer-events: none;
 }
 
-/* === ИСПРАВЛЕННАЯ СЕТКА === */
+/* === СЕТКА === */
 .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 15px; max-width: 500px; margin: 0 auto; }
 
 .HomePage {
     width: 100%; height: 100%; z-index: 1;
     display: grid;
-    /* ! ВАЖНО: 1fr (лого) и auto (панель). Панель займет только нужную высоту */
+    /* 1fr (лого) и auto (панель). Панель прижата к низу и компактна */
     grid-template-rows: 1fr auto; 
     align-items: center;
-    /* padding-bottom: 20px; Убрал, так как в оригинале этого нет, панель сама оттолкнется */
 }
 
 /* === ВЕРХНЯЯ ЧАСТЬ === */
 .HomePage__top { 
     position: relative; height: 100%; display: flex; align-items: center; justify-content: center; 
-    margin-top: -15px; /* Из твоего кода */
+    margin-top: -15px;
 }
 .HomePage__logo { position: relative; z-index: 2; }
 .HomePage__logo svg { width: 70px; will-change: scale; filter: drop-shadow(0 0 25px rgba(0,0,0,0.6)); }
@@ -67,26 +72,23 @@ body {
     100% { width: 600px; height: 600px; opacity: 0; border-color: transparent; }
 }
 
-/* === НИЖНЯЯ ПАНЕЛЬ (ИСПРАВЛЕННАЯ) === */
+/* === НИЖНЯЯ ПАНЕЛЬ (КОМПАКТНАЯ) === */
 .HomePage__bottom {
     width: 100%;
-    /* height: 100%;  <-- УДАЛИЛ ЭТО, чтобы она не растягивалась */
     background-color: rgba(0, 0, 0, 0.4); 
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-radius: var(--radius-large);
     
-    /* Отступы из твоего кода */
-    padding: 30px; 
+    /* ИЗМЕНЕНО: Было 30px, стало 4px. Это убирает лишнюю высоту рамки */
+    padding: 4px; 
     
     overflow: hidden;
     display: flex; flex-direction: column;
 }
 
-@media screen and (max-width: 375px){
-    .HomePage__bottom{ padding: 25px; }
-}
-
 .HomePageBottom {
+    /* ИЗМЕНЕНО: Внутренние отступы меньше (20px вместо 30px) */
+    padding: 20px 16px;
     width: 100%;
     display: flex; flex-direction: column;
 }
@@ -107,13 +109,11 @@ body {
 /* === КНОПКИ === */
 .HomePageBottom__body { 
     display: flex; flex-direction: column; width: 100%; 
-    /* Вот этот отступ из твоего кода, который делает дырку между текстом и кнопками */
-    margin-top: 30px; 
-    gap: 12px; /* Добавил gap для расстояния между кнопками */
-}
-
-@media screen and (max-width: 375px){
-    .HomePageBottom__body{ margin-top: 25px; }
+    
+    /* ИЗМЕНЕНО: Было 30px, стало 15px. Кнопки ближе к тексту */
+    margin-top: 15px; 
+    
+    gap: 12px;
 }
 
 .Button {
@@ -133,8 +133,12 @@ body {
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Цвета и свечение */
-.bg-primary { background-color: var(--primary) !important; color: #ffffff !important; font-weight: 700 !important; }
-.bg-primary svg { color: #ffffff !important; }
+.bg-primary { 
+    background-color: var(--primary) !important; 
+    color: #ffffff !important; /* Белый текст */
+    font-weight: 700 !important; 
+}
+.bg-primary svg { color: #ffffff !important; stroke: #ffffff !important; }
 
 .Button--lighted { background: transparent; border: 1px solid var(--border-dim); }
 .Button--lighted::before {
@@ -156,3 +160,10 @@ body {
 .device-badge svg { width: 18px; height: 18px; }
 
 .HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Rings (из NextUI) */
+.ring-background { --tw-ring-opacity: 1; --tw-ring-color: hsl(var(--nextui-background) / var(--nextui-background-opacity, var(--tw-ring-opacity))) }
+.ring-primary { --tw-ring-opacity: 1; --tw-ring-color: hsl(var(--nextui-primary) / var(--nextui-primary-opacity, var(--tw-ring-opacity))) }
+.ring-transparent { --tw-ring-color: transparent }
+.ring-offset-2 { --tw-ring-offset-width: 2px }
+.ring-offset-background { --tw-ring-offset-color: hsl(var(--nextui-background) / var(--nextui-background-opacity, 1)) }
