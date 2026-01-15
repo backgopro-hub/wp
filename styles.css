@@ -1,4 +1,4 @@
-/* --- styles.css (FINAL VERSION) --- */
+/* --- styles.css --- */
 
 :root {
     --primary: #00D68F;
@@ -30,60 +30,84 @@ body {
 
 /* ФОН */
 .fixed-background {
-    position: fixed; top: 0; left: 0; width: 100%; height: 120vh; z-index: -1;
+    position: fixed; top: 0; left: 0; width: 100%; height: 120vh; z-index: -2;
     background: radial-gradient(circle at 50% -20%, #052e24 0%, #000000 60%);
     pointer-events: none;
 }
 
-/* --- ВЕРХНЯЯ ЧАСТЬ (НОВОЕ) --- */
-.home-page-top {
+/* --- АНИМАЦИЯ И ЛОГОТИП (ИСПРАВЛЕНО) --- */
+
+.HomePage__top {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 55%;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: flex-start;
-    padding-top: 60px; /* Отступ сверху */
+    top: 0; left: 0; width: 100%; height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Прижимаем к верху, отступ зададим паддингом */
+    padding-top: 8vh; /* Отступ сверху (примерно 10-15% экрана) */
     z-index: 1;
 }
 
-/* Логотип */
-.logo-container svg {
-    width: 200px; /* Размер логотипа */
+/* 1. Логотип (Уменьшаем размер) */
+.HomePage__logo {
+    position: relative;
+    z-index: 2;
+    width: 140px; /* Фиксируем ширину, чтобы не был огромным */
     height: auto;
-    filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+    display: flex;
+    justify-content: center;
 }
 
-/* Анимация колец */
-.ring-animation {
+.HomePage__logo svg {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 30px rgba(0,0,0,0.5)); /* Тень для объема */
+}
+
+/* 2. Кольца (RingAnimation) */
+.RingAnimation {
     position: absolute;
-    top: 150px; /* Центр колец совпадает с логотипом */
+    top: 45%; /* Центр колец чуть ниже верха */
     left: 50%;
-    transform: translateX(-50%);
-    width: 300px; height: 300px;
-    z-index: -1; /* За логотипом */
-    pointer-events: none;
-}
-
-.ring {
-    position: absolute;
-    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 20px rgba(0, 214, 143, 0.05);
-    animation: pulse 4s infinite linear;
+    width: 100%; 
+    height: 100%;
+    pointer-events: none;
+    z-index: 0; /* ЗА логотипом */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Создаем 5 колец разного размера с задержкой */
-.ring:nth-child(1) { width: 100%; height: 100%; animation-delay: 0s; }
-.ring:nth-child(2) { width: 80%; height: 80%; animation-delay: 1s; }
-.ring:nth-child(3) { width: 60%; height: 60%; animation-delay: 2s; }
-.ring:nth-child(4) { width: 40%; height: 40%; animation-delay: 3s; }
-.ring:nth-child(5) { width: 20%; height: 20%; animation-delay: 4s; }
+.RingAnimation div {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Очень тонкая линия */
+    box-shadow: 0 0 40px rgba(0, 214, 143, 0.05); /* Легкое свечение */
+    opacity: 0;
+    animation: ripple 6s infinite linear;
+}
 
-@keyframes pulse {
-    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.1; }
-    50% { opacity: 0.3; border-color: rgba(0, 214, 143, 0.1); }
-    100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+/* Разные задержки для эффекта волн */
+.RingAnimation div:nth-child(1) { animation-delay: 0s; }
+.RingAnimation div:nth-child(2) { animation-delay: 1.2s; }
+.RingAnimation div:nth-child(3) { animation-delay: 2.4s; }
+.RingAnimation div:nth-child(4) { animation-delay: 3.6s; }
+.RingAnimation div:nth-child(5) { animation-delay: 4.8s; }
+
+@keyframes ripple {
+    0% {
+        width: 100px; height: 100px; /* Старт из центра */
+        opacity: 0;
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    10% {
+        opacity: 1; /* Появляется */
+    }
+    100% {
+        width: 800px; height: 800px; /* Растет за пределы экрана */
+        opacity: 0; /* Исчезает */
+        border-color: rgba(255, 255, 255, 0);
+    }
 }
 
 
@@ -118,6 +142,7 @@ body {
     font-family: 'Onest', sans-serif; font-weight: 500; font-size: 14px;
     transition: transform 0.1s; position: relative;
     gap: 8px; margin-top: 10px;
+    text-decoration: none;
 }
 .btn:active { transform: scale(0.97); }
 .btn svg { width: 24px; height: 24px; flex-shrink: 0; }
