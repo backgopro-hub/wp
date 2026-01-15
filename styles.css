@@ -115,8 +115,12 @@ body {
 .mr-auto { margin-right: auto; }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* 1. КУПИТЬ */
-.bg-primary { background-color: var(--primary); color: #000000; }
+/* 1. ГЛАВНАЯ КНОПКА (Зеленая с белым текстом) */
+.bg-primary {
+    background-color: var(--primary);
+    color: #ffffff; /* БЫЛО #000000, СТАЛО #ffffff */
+    font-weight: 700; /* Сделал чуть жирнее, чтобы белый лучше читался */
+}
 
 /* 2. НАСТРОЙКИ (Свечение по центру) */
 .Button--lighted {
