@@ -6,42 +6,30 @@
     <title>Ultima VPN</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
-
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Onest', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Onest', 'sans-serif'] },
                     colors: {
-                        // Твой зеленый цвет
                         primary: '#00D68F', 
-                        'primary-foreground': '#000000',
-                        'primary-50': 'rgba(0, 214, 143, 0.5)', // Для рамок
+                        'primary-50': 'rgba(0, 214, 143, 0.5)',
                         'primary-30': 'rgba(0, 214, 143, 0.3)',
                     },
-                    borderRadius: {
-                        'xl': '12px', // Скругление кнопок
-                        '2xl': '24px', // Скругление панели
-                    },
-                    spacing: {
-                        '54': '54px', // Высота кнопок (h-54)
-                    }
+                    borderRadius: { 'xl': '12px' },
+                    spacing: { '54': '54px' }
                 }
             }
         }
     </script>
 
-    <link rel="stylesheet" href="styles.css?v=tail1">
-    
-    <script src="script.js?v=tail1" defer></script>
+    <link rel="stylesheet" href="styles.css?v=fix-gradient">
+    <script src="script.js?v=fix-gradient" defer></script>
 </head>
 <body class="bg-[#010101] text-white font-sans overflow-hidden relative h-screen w-screen flex justify-center selection:bg-primary selection:text-black">
 
@@ -51,7 +39,7 @@
         
         <div class="flex-1 relative flex items-center justify-center -mt-4">
             <div class="relative z-10 w-[70px]">
-                <svg viewBox="0 0 323 390" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto drop-shadow-2xl filter">
+                <svg viewBox="0 0 323 390" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto drop-shadow-2xl">
                     <path d="M29.8667 65.2676L144.367 112.914C155.397 117.565 167.869 117.565 178.904 112.914L293.405 65.2676" stroke="white" stroke-width="43.0936" stroke-miterlimit="10" stroke-linecap="round"></path>
                     <mask id="mask0_302_733" maskUnits="userSpaceOnUse" x="8" y="43" width="307" height="95"><path d="M29.8667 65.2676L144.367 112.914C155.397 117.565 167.869 117.565 178.904 112.914L293.405 65.2676" stroke="white" stroke-width="43.0936" stroke-miterlimit="10" stroke-linecap="round"></path></mask>
                     <g mask="url(#mask0_302_733)"><g filter="url(#filter0_f_302_733)"><circle cx="336.673" cy="65.2679" r="74.7347" fill="#302727"></circle></g><g filter="url(#filter1_f_302_733)"><circle cx="-17.3342" cy="65.2679" r="74.7347" fill="#302727"></circle></g></g>
@@ -60,9 +48,7 @@
                     <defs><filter id="filter0_f_302_733" x="169.595" y="-101.81" width="334.156" height="334.156" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend><feGaussianBlur stdDeviation="46.1717" result="effect1_foregroundBlur_302_733"></feGaussianBlur></filter><filter id="filter1_f_302_733" x="-184.412" y="-101.81" width="334.156" height="334.156" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend><feGaussianBlur stdDeviation="46.1717" result="effect1_foregroundBlur_302_733"></feGaussianBlur></filter></defs>
                 </svg>
             </div>
-            <div class="RingAnimation">
-                <div></div><div></div><div></div><div></div><div></div>
-            </div>
+            <div class="RingAnimation"><div></div><div></div><div></div><div></div><div></div></div>
         </div>
 
         <div class="w-full bg-black/40 backdrop-blur-xl rounded-2xl p-1 overflow-hidden flex flex-col">
@@ -89,7 +75,7 @@
                         <span>от 150&nbsp;₽</span>
                     </button>
                     
-                    <button class="w-full h-54 rounded-xl border border-primary-50 text-white font-medium px-4 flex items-center gap-2 active:scale-97 transition-transform bg-transparent">
+                    <button class="Button-Glow variant-center w-full h-54 rounded-xl text-white font-medium px-4 flex items-center gap-2 active:scale-97 transition-transform bg-transparent">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         <span class="mr-auto truncate">Установка и настройка</span>
                         <div class="flex items-center gap-1.5 text-primary">
@@ -99,11 +85,11 @@
                     </button>
                     
                     <div class="grid grid-cols-2 gap-2.5">
-                        <button class="w-full h-54 rounded-xl border border-primary-30 text-white font-medium px-4 flex items-center gap-2 active:scale-97 transition-transform bg-transparent" onclick="openProfile()">
+                        <button class="Button-Glow variant-side w-full h-54 rounded-xl text-white font-medium px-4 flex items-center gap-2 active:scale-97 transition-transform bg-transparent" onclick="openProfile()">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                             <span class="mr-auto">Профиль</span>
                         </button>
-                        <button class="w-full h-54 rounded-xl border border-primary-30 text-white font-medium px-4 flex items-center gap-2 active:scale-97 transition-transform bg-transparent">
+                        <button class="Button-Glow variant-side w-full h-54 rounded-xl text-white font-medium px-4 flex items-center gap-2 active:scale-97 transition-transform bg-transparent">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><path d="M8 10h.01"></path><path d="M12 10h.01"></path><path d="M16 10h.01"></path></svg>
                             <span class="mr-auto">Поддержка</span>
                         </button>
