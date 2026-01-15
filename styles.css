@@ -1,19 +1,13 @@
-/* --- styles.css (FINAL COMPACT VERSION) --- */
-
 :root {
     --background: #010101;
     --foreground: #ffffff;
     --primary: #00D68F;
-    
-    /* Размеры из оригинала */
     --radius-large: 24px;
     --radius-medium: 14px;
-    
-    /* Цвета рамок */
     --border-dim: rgba(0, 214, 143, 0.5);
     --border-light: rgba(0, 214, 143, 0.3);
     
-    /* NextUI Rings */
+    /* NextUI */
     --nextui-primary: 160 100% 42%; 
     --nextui-primary-opacity: 1;
     --nextui-background: 0 0% 0%;
@@ -41,22 +35,18 @@ body {
     pointer-events: none;
 }
 
-/* === СЕТКА === */
 .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 15px; max-width: 500px; margin: 0 auto; }
 
 .HomePage {
     width: 100%; height: 100%; z-index: 1;
     display: grid;
-    /* 1fr (лого) и auto (панель). Панель прижата к низу и компактна */
+    /* ! ИСПРАВЛЕНИЕ: Низ занимает auto (по контенту) */
     grid-template-rows: 1fr auto; 
     align-items: center;
+    padding-bottom: 20px;
 }
 
-/* === ВЕРХНЯЯ ЧАСТЬ === */
-.HomePage__top { 
-    position: relative; height: 100%; display: flex; align-items: center; justify-content: center; 
-    margin-top: -15px;
-}
+.HomePage__top { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; margin-top: -15px; }
 .HomePage__logo { position: relative; z-index: 2; }
 .HomePage__logo svg { width: 70px; will-change: scale; filter: drop-shadow(0 0 25px rgba(0,0,0,0.6)); }
 
@@ -72,33 +62,33 @@ body {
     100% { width: 600px; height: 600px; opacity: 0; border-color: transparent; }
 }
 
-/* === НИЖНЯЯ ПАНЕЛЬ (КОМПАКТНАЯ) === */
+/* === КОМПАКТНАЯ ПАНЕЛЬ === */
 .HomePage__bottom {
     width: 100%;
+    /* Высота только по контенту */
+    height: auto !important; 
     background-color: rgba(0, 0, 0, 0.4); 
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-radius: var(--radius-large);
-    
-    /* ИЗМЕНЕНО: Было 30px, стало 4px. Это убирает лишнюю высоту рамки */
     padding: 4px; 
-    
     overflow: hidden;
     display: flex; flex-direction: column;
 }
 
+@media screen and (max-width: 375px){
+    .HomePage__bottom{ padding: 4px; }
+}
+
 .HomePageBottom {
-    /* ИЗМЕНЕНО: Внутренние отступы меньше (20px вместо 30px) */
+    /* Компактные отступы */
     padding: 20px 16px;
     width: 100%;
     display: flex; flex-direction: column;
 }
 
-.HomePageBottom__head { 
-    width: 100%; display: flex; flex-direction: column; gap: 4px; 
-}
+.HomePageBottom__head { width: 100%; display: flex; flex-direction: column; gap: 4px; }
 .HomePageBottom__headRow { display: flex; justify-content: space-between; gap: 4px; }
 
-/* Тексты */
 .text-default { color: #9ca3af; font-size: 14px; font-weight: 400; }
 .text-right { text-align: right; }
 .text-lg { font-size: 18px; line-height: 1.2; font-weight: 400; }
@@ -106,13 +96,9 @@ body {
 .text-yellow-400 { color: #facc15; font-size: 14px; }
 .text-green { color: var(--primary); }
 
-/* === КНОПКИ === */
 .HomePageBottom__body { 
     display: flex; flex-direction: column; width: 100%; 
-    
-    /* ИЗМЕНЕНО: Было 30px, стало 15px. Кнопки ближе к тексту */
-    margin-top: 15px; 
-    
+    margin-top: 15px; /* Близко к тексту */
     gap: 12px;
 }
 
@@ -132,12 +118,8 @@ body {
 .mr-auto { margin-right: auto; }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* Цвета и свечение */
-.bg-primary { 
-    background-color: var(--primary) !important; 
-    color: #ffffff !important; /* Белый текст */
-    font-weight: 700 !important; 
-}
+/* Белый текст принудительно */
+.bg-primary { background-color: var(--primary) !important; color: #ffffff !important; font-weight: 700 !important; }
 .bg-primary svg { color: #ffffff !important; stroke: #ffffff !important; }
 
 .Button--lighted { background: transparent; border: 1px solid var(--border-dim); }
@@ -153,17 +135,4 @@ body {
     content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
     background-repeat: no-repeat; background-size: cover; opacity: 0.4;
     background-position: left -50px;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='376' height='236' viewBox='0 0 376 236' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg filter='url(%23f)'%3E%3Cellipse cx='188' cy='118' rx='94' ry='24' fill='%2300D68F'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='f' x='0' y='0' width='376' height='236' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0' result='bg'/%3E%3CfeBlend in='SourceGraphic' in2='bg'/%3E%3CfeGaussianBlur stdDeviation='47' result='b'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E");
-}
-
-.device-badge { color: var(--primary); display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
-.device-badge svg { width: 18px; height: 18px; }
-
-.HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-/* Rings (из NextUI) */
-.ring-background { --tw-ring-opacity: 1; --tw-ring-color: hsl(var(--nextui-background) / var(--nextui-background-opacity, var(--tw-ring-opacity))) }
-.ring-primary { --tw-ring-opacity: 1; --tw-ring-color: hsl(var(--nextui-primary) / var(--nextui-primary-opacity, var(--tw-ring-opacity))) }
-.ring-transparent { --tw-ring-color: transparent }
-.ring-offset-2 { --tw-ring-offset-width: 2px }
-.ring-offset-background { --tw-ring-offset-color: hsl(var(--nextui-background) / var(--nextui-background-opacity, 1)) }
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='376' height='236' viewBox='0 0 376 236' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg filter='url(%23f)'%3E%3Cellipse cx='188' cy='118' rx='94' ry='24' fill='%2300D68F'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='f' x='0' y='0' width='376' height='236' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0
