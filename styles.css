@@ -1,20 +1,17 @@
-/* --- styles.css --- */
+/* --- styles.css (Версия с картинкой) --- */
 
 :root {
-    /* Colors */
     --primary: #00D68F;
     --primary-foreground: #000000;
-    --bg-color: #000000;
+    --bg-color: #010101;
     --card-bg: #000000;
     --text-white: #FFFFFF;
     --text-muted: #9ca3af;
     --text-yellow: #facc15;
     
-    /* Borders */
     --border-primary-50: rgba(0, 214, 143, 0.5);
     --border-primary-30: rgba(0, 214, 143, 0.3);
     
-    /* Dimensions */
     --radius-sheet: 24px;
     --radius-btn: 14px;
     --btn-height: 54px;
@@ -31,52 +28,56 @@ body {
     position: relative;
 }
 
-/* BACKGROUND */
+/* --- ФОН (КАРТИНКА + ГРАДИЕНТ КАК ЗАПАСНОЙ ВАРИАНТ) --- */
 .fixed-background {
     position: fixed; top: 0; left: 0; width: 100%; height: 120vh; z-index: -2;
-    background: radial-gradient(circle at 50% -20%, #052e24 0%, #000000 60%);
+    background-color: #010101;
+    
+    /* 1. Сначала пытаемся загрузить картинку */
+    background-image: url('images/main-backgroud-green.png'), 
+    /* 2. Если картинки нет или она грузится — показываем градиент */
+                      radial-gradient(circle at 50% 0%, rgba(0, 214, 143, 0.15) 0%, rgba(0, 214, 143, 0.05) 30%, rgba(1, 1, 1, 0) 60%);
+    
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
     pointer-events: none;
 }
 
-/* --- TOP SECTION --- */
+/* Обертки */
+.App, .HomePage { width: 100%; height: 100%; }
 
+/* --- ВЕРХНЯЯ ЧАСТЬ --- */
 .HomePage__top {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 55%;
-    display: flex;
-    justify-content: center;
+    display: flex; justify-content: center;
     padding-top: 60px; 
     z-index: 1;
 }
 
-/* LOGO */
+/* ЛОГОТИП */
 .HomePage__logo {
     position: relative;
     z-index: 2;
     width: 180px; 
     height: auto;
-    display: flex;
-    justify-content: center;
+    display: flex; justify-content: center;
 }
 
 .HomePage__logo svg {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0 0 20px rgba(0,0,0,0.6)); 
+    width: 100%; height: auto;
+    filter: drop-shadow(0 0 30px rgba(0,0,0,0.6));
 }
 
-/* RINGS ANIMATION */
+/* АНИМАЦИЯ КОЛЕЦ */
 .RingAnimation {
     position: absolute;
     top: 130px; 
-    left: 50%;
-    transform: translateX(-50%);
+    left: 50%; transform: translateX(-50%);
     width: 0; height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 0;
-    pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 0; pointer-events: none;
 }
 
 .RingAnimation div {
@@ -100,8 +101,7 @@ body {
     100% { width: 700px; height: 700px; opacity: 0; border-color: rgba(255, 255, 255, 0); }
 }
 
-/* --- BOTTOM SHEET --- */
-
+/* --- НИЖНЯЯ ПАНЕЛЬ --- */
 .HomePage__bottom {
     position: absolute; bottom: 0; left: 0; width: 100%;
     background: var(--card-bg);
@@ -111,98 +111,36 @@ body {
     z-index: 10;
 }
 
-.HomePageBottom {
-    width: 100%;
-}
+.HomePageBottom__head { margin-bottom: 24px; }
+.HomePageBottom__headRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
 
-/* HEAD ROWS */
-.HomePageBottom__head {
-    margin-bottom: 24px;
-}
-
-.HomePageBottom__headRow {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    margin-bottom: 4px;
-}
-
-/* Text Styles */
 .text-right { text-align: right; }
 .text-lg { font-size: 18px; line-height: 1.2; }
 .text-default { color: var(--text-muted); font-size: 14px; }
 .text-yellow-400 { color: var(--text-yellow); font-size: 14px; }
 .font-light { font-weight: 300; opacity: 0.8; font-size: 16px; }
 
-/* --- BUTTONS --- */
+/* КНОПКИ */
+.HomePageBottom__body { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
 
-.HomePageBottom__body {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* Base Button Style */
 .HomePageBottom__bodyButton {
-    width: 100%; 
-    height: var(--btn-height);
+    width: 100%; height: var(--btn-height);
     border-radius: var(--radius-btn);
-    border: none; 
-    cursor: pointer;
-    display: flex; 
-    align-items: center; 
-    padding: 0 16px;
-    font-family: 'Onest', sans-serif; 
-    font-weight: 500; 
-    font-size: 14px;
-    transition: transform 0.1s; 
-    position: relative;
-    gap: 10px;
-    text-decoration: none;
-    outline: none;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; padding: 0 16px;
+    font-family: 'Onest', sans-serif; font-weight: 500; font-size: 14px;
+    transition: transform 0.1s; position: relative;
+    gap: 10px; text-decoration: none; outline: none;
 }
 .HomePageBottom__bodyButton:active { transform: scale(0.97); }
 .HomePageBottom__bodyButton svg { width: 24px; height: 24px; flex-shrink: 0; }
-
 .mr-auto { margin-right: auto; }
 
-/* 1. Primary Button (Buy) */
-.bg-primary { 
-    background-color: var(--primary); 
-    color: var(--primary-foreground); 
-}
-
-/* 2. Setup Button */
-.HomePageSetupButton {
-    background: transparent;
-    color: var(--text-white);
-    border: 1px solid var(--border-primary-50);
-}
-.HomePageSetupButton--animated { /* Optional animation styles if needed */ }
-
-/* Device Icon Badge */
-.HomePageBottom__sepupButtonDeviceIcon--text {
-    color: var(--primary);
-    font-size: 12px;
-    font-weight: 600;
-}
-.HomePageBottom__sepupButtonDeviceIcon--icon {
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-}
+.bg-primary { background-color: var(--primary); color: var(--primary-foreground); }
+.HomePageSetupButton { background: transparent; color: var(--text-white); border: 1px solid var(--border-primary-50); }
+.HomePageBottom__sepupButtonDeviceIcon--text { color: var(--primary); font-size: 12px; font-weight: 600; }
+.HomePageBottom__sepupButtonDeviceIcon--icon { color: var(--primary); display: flex; align-items: center; }
 .HomePageBottom__sepupButtonDeviceIcon--icon svg { width: 20px; height: 20px; }
 
-/* 3. Grid Row Buttons */
-.HomePageBottom__row {
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 10px; 
-    margin-top: 2.5px;
-}
-
-.Button--variant_lighted-right {
-    background: transparent;
-    color: var(--text-white);
-    border: 1px solid var(--border-primary-30);
-}
+.HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 2.5px; }
+.Button--variant_lighted-right { background: transparent; color: var(--text-white); border: 1px solid var(--border-primary-30); }
