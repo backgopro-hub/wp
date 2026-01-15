@@ -1,7 +1,7 @@
 /* --- styles.css --- */
 
 :root {
-    /* Цвета */
+    /* Colors */
     --primary: #00D68F;
     --primary-foreground: #000000;
     --bg-color: #000000;
@@ -10,13 +10,13 @@
     --text-muted: #9ca3af;
     --text-yellow: #facc15;
     
-    /* Границы (имитация прозрачности) */
+    /* Borders */
     --border-primary-50: rgba(0, 214, 143, 0.5);
     --border-primary-30: rgba(0, 214, 143, 0.3);
     
-    /* Размеры */
+    /* Dimensions */
     --radius-sheet: 24px;
-    --radius-btn: 12px;
+    --radius-btn: 14px;
     --btn-height: 54px;
 }
 
@@ -31,30 +31,28 @@ body {
     position: relative;
 }
 
-/* ФОН */
+/* BACKGROUND */
 .fixed-background {
     position: fixed; top: 0; left: 0; width: 100%; height: 120vh; z-index: -2;
     background: radial-gradient(circle at 50% -20%, #052e24 0%, #000000 60%);
     pointer-events: none;
 }
 
-/* --- ВЕРХНЯЯ ЧАСТЬ ЭКРАНА --- */
+/* --- TOP SECTION --- */
 
 .HomePage__top {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 50%;
+    top: 0; left: 0; width: 100%; height: 55%;
     display: flex;
     justify-content: center;
-    /* Отступ сверху, чтобы логотип был визуально по центру верхней части */
     padding-top: 60px; 
     z-index: 1;
 }
 
-/* ЛОГОТИП */
+/* LOGO */
 .HomePage__logo {
     position: relative;
     z-index: 2;
-    /* Ограничиваем ширину, чтобы SVG корректно масштабировался и не был огромным */
     width: 180px; 
     height: auto;
     display: flex;
@@ -64,14 +62,12 @@ body {
 .HomePage__logo svg {
     width: 100%;
     height: auto;
-    /* Тень для объема */
     filter: drop-shadow(0 0 20px rgba(0,0,0,0.6)); 
 }
 
-/* АНИМАЦИЯ КОЛЕЦ */
+/* RINGS ANIMATION */
 .RingAnimation {
     position: absolute;
-    /* Центрируем кольца относительно логотипа */
     top: 130px; 
     left: 50%;
     transform: translateX(-50%);
@@ -79,21 +75,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 0; /* Слой под логотипом */
+    z-index: 0;
     pointer-events: none;
 }
 
 .RingAnimation div {
     position: absolute;
     border-radius: 50%;
-    /* Тонкая белая линия + зеленое свечение */
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 30px rgba(0, 214, 143, 0.1);
     opacity: 0;
     animation: ripple 6s infinite linear;
 }
 
-/* Задержки для создания эффекта волн */
 .RingAnimation div:nth-child(1) { animation-delay: 0s; }
 .RingAnimation div:nth-child(2) { animation-delay: 1.2s; }
 .RingAnimation div:nth-child(3) { animation-delay: 2.4s; }
@@ -101,23 +95,14 @@ body {
 .RingAnimation div:nth-child(5) { animation-delay: 4.8s; }
 
 @keyframes ripple {
-    0% {
-        width: 100px; height: 100px;
-        opacity: 0;
-        border-color: rgba(255, 255, 255, 0.3);
-    }
-    10% {
-        opacity: 0.5;
-    }
-    100% {
-        width: 700px; height: 700px; /* Растут за пределы экрана */
-        opacity: 0;
-        border-color: rgba(255, 255, 255, 0);
-    }
+    0% { width: 100px; height: 100px; opacity: 0; border-color: rgba(255, 255, 255, 0.3); }
+    10% { opacity: 0.5; }
+    100% { width: 700px; height: 700px; opacity: 0; border-color: rgba(255, 255, 255, 0); }
 }
 
-/* --- НИЖНЯЯ ПАНЕЛЬ --- */
-.bottom-sheet {
+/* --- BOTTOM SHEET --- */
+
+.HomePage__bottom {
     position: absolute; bottom: 0; left: 0; width: 100%;
     background: var(--card-bg);
     border-top-left-radius: var(--radius-sheet);
@@ -126,50 +111,98 @@ body {
     z-index: 10;
 }
 
-/* ШАПКА ПАНЕЛИ */
-.sheet-head {
-    display: flex; justify-content: space-between; align-items: flex-start;
+.HomePageBottom {
+    width: 100%;
+}
+
+/* HEAD ROWS */
+.HomePageBottom__head {
     margin-bottom: 24px;
 }
-.head-left svg { display: block; }
-.head-right { text-align: right; }
 
-.date-text { font-size: 18px; line-height: 1.2; margin-bottom: 4px; }
-.date-label { font-weight: 300; font-size: 16px; opacity: 0.8; }
-
-.status-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-.status-text-gray { color: var(--text-muted); font-size: 14px; }
-.status-text-colored { font-size: 14px; }
-
-/* ОБЩИЕ СТИЛИ КНОПОК */
-.btn {
-    width: 100%; height: var(--btn-height);
-    border-radius: var(--radius-btn);
-    border: none; cursor: pointer;
-    display: flex; align-items: center; padding: 0 16px;
-    font-family: 'Onest', sans-serif; font-weight: 500; font-size: 14px;
-    transition: transform 0.1s; position: relative;
-    gap: 8px; margin-top: 10px;
-    text-decoration: none;
+.HomePageBottom__headRow {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    margin-bottom: 4px;
 }
-.btn:active { transform: scale(0.97); }
-.btn svg { width: 24px; height: 24px; flex-shrink: 0; }
-.mr-auto { margin-right: auto; } /* Прижимает следующий элемент вправо */
 
-/* Стиль 1: Основная кнопка (Зеленая) */
-.btn-primary { background-color: var(--primary); color: var(--primary-foreground); }
-.btn-primary svg { stroke: currentColor; stroke-width: 2; }
+/* Text Styles */
+.text-right { text-align: right; }
+.text-lg { font-size: 18px; line-height: 1.2; }
+.text-default { color: var(--text-muted); font-size: 14px; }
+.text-yellow-400 { color: var(--text-yellow); font-size: 14px; }
+.font-light { font-weight: 300; opacity: 0.8; font-size: 16px; }
 
-/* Стиль 2: Кнопка настройки (Прозрачная + Рамка) */
-.btn-setup { background: transparent; color: var(--text-white); border: 1px solid var(--border-primary-50); }
-.btn-setup svg { stroke: currentColor; stroke-width: 2; }
+/* --- BUTTONS --- */
 
-/* Бейдж устройства */
-.device-badge { display: flex; align-items: center; gap: 6px; color: var(--primary); }
-.device-icon svg { width: 20px; height: 20px; }
+.HomePageBottom__body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-/* Стиль 3: Кнопки в сетке (Прозрачная + Рамка побледнее) */
-.btn-grid { background: transparent; color: var(--text-white); border: 1px solid var(--border-primary-30); margin-top: 0; }
+/* Base Button Style */
+.HomePageBottom__bodyButton {
+    width: 100%; 
+    height: var(--btn-height);
+    border-radius: var(--radius-btn);
+    border: none; 
+    cursor: pointer;
+    display: flex; 
+    align-items: center; 
+    padding: 0 16px;
+    font-family: 'Onest', sans-serif; 
+    font-weight: 500; 
+    font-size: 14px;
+    transition: transform 0.1s; 
+    position: relative;
+    gap: 10px;
+    text-decoration: none;
+    outline: none;
+}
+.HomePageBottom__bodyButton:active { transform: scale(0.97); }
+.HomePageBottom__bodyButton svg { width: 24px; height: 24px; flex-shrink: 0; }
 
-/* Сетка 2 колонки */
-.grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.mr-auto { margin-right: auto; }
+
+/* 1. Primary Button (Buy) */
+.bg-primary { 
+    background-color: var(--primary); 
+    color: var(--primary-foreground); 
+}
+
+/* 2. Setup Button */
+.HomePageSetupButton {
+    background: transparent;
+    color: var(--text-white);
+    border: 1px solid var(--border-primary-50);
+}
+.HomePageSetupButton--animated { /* Optional animation styles if needed */ }
+
+/* Device Icon Badge */
+.HomePageBottom__sepupButtonDeviceIcon--text {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+}
+.HomePageBottom__sepupButtonDeviceIcon--icon {
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+}
+.HomePageBottom__sepupButtonDeviceIcon--icon svg { width: 20px; height: 20px; }
+
+/* 3. Grid Row Buttons */
+.HomePageBottom__row {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 10px; 
+    margin-top: 2.5px;
+}
+
+.Button--variant_lighted-right {
+    background: transparent;
+    color: var(--text-white);
+    border: 1px solid var(--border-primary-30);
+}
