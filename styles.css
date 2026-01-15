@@ -1,16 +1,23 @@
-/* --- styles.css (Pixel Perfect Copy) --- */
+/* --- styles.css (REPLICA) --- */
 
 :root {
-    --primary: #00D68F;          /* Твой зеленый */
-    --primary-dim: rgba(0, 214, 143, 0.3); /* Прозрачный зеленый для рамок */
+    /* Цвета из твоего кода */
+    --primary: #00D68F;
+    --primary-foreground: #000000;
     --bg-color: #000000;
     --card-bg: #000000;
     --text-white: #FFFFFF;
-    --text-gray: #9ca3af;
-    --text-yellow: #facc15;      /* Желтый цвет "истекла" */
+    --text-muted: #9ca3af;
+    --text-yellow: #facc15; /* yellow-400 */
     
-    --radius-xl: 16px;           /* Скругление кнопок */
-    --radius-2xl: 24px;          /* Скругление панели */
+    /* Границы (имитация прозрачности Tailwind) */
+    --border-primary-50: rgba(0, 214, 143, 0.5);
+    --border-primary-30: rgba(0, 214, 143, 0.3);
+    
+    /* Размеры */
+    --radius-sheet: 24px; /* rounded-2xl */
+    --radius-btn: 12px;   /* rounded-xl */
+    --btn-height: 54px;   /* h-54 */
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -30,9 +37,9 @@ body {
     pointer-events: none;
 }
 
-/* ЦЕНТРАЛЬНЫЙ ЩИТ (ЛОГОТИП) */
+/* ЦЕНТРАЛЬНЫЙ ЩИТ */
 .hero-center {
-    position: absolute; top: 0; left: 0; width: 100%; height: 55%;
+    position: absolute; top: 0; left: 0; width: 100%; height: 50%;
     display: flex; align-items: center; justify-content: center;
     z-index: 1;
 }
@@ -45,81 +52,83 @@ body {
 .bottom-sheet {
     position: absolute; bottom: 0; left: 0; width: 100%;
     background: var(--card-bg);
-    border-top-left-radius: var(--radius-2xl);
-    border-top-right-radius: var(--radius-2xl);
-    padding: 24px 20px 40px 20px; /* Отступы как в оригинале */
+    border-top-left-radius: var(--radius-sheet);
+    border-top-right-radius: var(--radius-sheet);
+    padding: 24px 20px 40px 20px;
     z-index: 10;
-    border-top: 1px solid #1a1a1a;
+    /* Тонкая полоска сверху, если нужна */
+    /* border-top: 1px solid #1a1a1a; */
 }
 
-/* ШАПКА ПАНЕЛИ (Логотип слева, Статус справа) */
+/* ШАПКА */
 .sheet-head {
     display: flex; justify-content: space-between; align-items: flex-start;
     margin-bottom: 24px;
 }
+.head-left svg { display: block; } /* Логотип */
 .head-right { text-align: right; }
 
 .date-text {
-    font-size: 18px; font-weight: 300; color: #e5e7eb;
-    margin-bottom: 4px; display: block;
+    font-size: 18px; line-height: 1.2;
+    margin-bottom: 4px;
 }
-.date-label { color: var(--text-gray); font-weight: 300; font-size: 16px; }
+.date-label { font-weight: 300; font-size: 16px; opacity: 0.8; }
 
 .status-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-.status-offline { color: var(--text-gray); font-size: 14px; }
-.status-expired { color: var(--text-yellow); font-size: 14px; }
-.status-active { color: var(--primary); font-size: 14px; }
+.status-text-gray { color: var(--text-muted); font-size: 14px; }
+.status-text-colored { font-size: 14px; }
 
-/* КНОПКИ (ОБЩИЕ СТИЛИ) */
+/* КНОПКИ (БАЗА) */
 .btn {
-    width: 100%; height: 56px;
-    border-radius: var(--radius-xl);
+    width: 100%; height: var(--btn-height);
+    border-radius: var(--radius-btn);
     border: none; cursor: pointer;
     display: flex; align-items: center; padding: 0 16px;
     font-family: 'Onest', sans-serif; font-weight: 500; font-size: 14px;
     transition: transform 0.1s; position: relative;
-    margin-bottom: 10px;
+    gap: 8px; /* gap-2 */
+    margin-top: 10px;
+    text-decoration: none;
 }
-.btn:active { transform: scale(0.98); }
+.btn:active { transform: scale(0.97); }
+.btn svg { width: 24px; height: 24px; flex-shrink: 0; }
 
-.btn-content { width: 100%; display: flex; align-items: center; justify-content: space-between; }
-.btn-start { display: flex; align-items: center; gap: 10px; }
-.btn-icon { width: 20px; height: 20px; }
+.mr-auto { margin-right: auto; } /* Чтобы текст был слева, а цена справа */
 
-/* 1. Кнопка КУПИТЬ (Зеленая) */
+/* ТИПЫ КНОПОК */
+
+/* 1. Primary (Зеленая) */
 .btn-primary {
     background-color: var(--primary);
-    color: #000;
+    color: var(--primary-foreground);
 }
-.btn-primary .btn-icon { stroke: #000; stroke-width: 2; }
-.price-tag { font-weight: 600; }
+.btn-primary svg { stroke: currentColor; stroke-width: 2; }
 
-/* 2. Кнопка НАСТРОЙКА (Прозрачная с рамкой) */
-.btn-outlined {
+/* 2. Setup (Прозрачная + Рамка 50%) */
+.btn-setup {
     background: transparent;
-    color: white;
-    border: 1px solid var(--primary-dim); /* Тонкая зеленая рамка */
+    color: var(--text-white);
+    border: 1px solid var(--border-primary-50);
 }
-.btn-outlined .btn-icon { stroke: white; stroke-width: 2; }
+.btn-setup svg { stroke: currentColor; stroke-width: 2; }
 
-/* Бейдж с устройством (macOS) */
+/* Бейдж macOS */
 .device-badge {
     display: flex; align-items: center; gap: 6px;
     color: var(--primary);
 }
-.device-text { font-size: 12px; font-weight: 600; }
-.device-icon { width: 18px; height: 18px; stroke: var(--primary); }
+.device-icon svg { width: 20px; height: 20px; }
 
-/* 3. СЕТКА КНОПОК ВНИЗУ */
+/* 3. Grid Buttons (Прозрачная + Рамка 30%) */
+.btn-grid {
+    background: transparent;
+    color: var(--text-white);
+    border: 1px solid var(--border-primary-30);
+    margin-top: 0; /* В сетке отступы через grid-gap */
+}
+
+/* СЕТКА */
 .grid-row {
     display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     margin-top: 10px;
 }
-/* Кнопки в сетке тоже прозрачные с рамкой */
-.btn-grid {
-    background: transparent;
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.15); /* Серая рамка */
-    margin-bottom: 0;
-}
-.btn-grid .btn-start { width: 100%; justify-content: flex-start; }
