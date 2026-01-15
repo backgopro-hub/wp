@@ -1,23 +1,20 @@
-/* --- styles.css (REPLICA) --- */
+/* --- styles.css (FINAL VERSION) --- */
 
 :root {
-    /* Цвета из твоего кода */
     --primary: #00D68F;
     --primary-foreground: #000000;
     --bg-color: #000000;
     --card-bg: #000000;
     --text-white: #FFFFFF;
     --text-muted: #9ca3af;
-    --text-yellow: #facc15; /* yellow-400 */
+    --text-yellow: #facc15;
     
-    /* Границы (имитация прозрачности Tailwind) */
     --border-primary-50: rgba(0, 214, 143, 0.5);
     --border-primary-30: rgba(0, 214, 143, 0.3);
     
-    /* Размеры */
-    --radius-sheet: 24px; /* rounded-2xl */
-    --radius-btn: 12px;   /* rounded-xl */
-    --btn-height: 54px;   /* h-54 */
+    --radius-sheet: 24px;
+    --radius-btn: 12px;
+    --btn-height: 54px;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -28,6 +25,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-white);
     overflow: hidden;
+    position: relative;
 }
 
 /* ФОН */
@@ -37,18 +35,59 @@ body {
     pointer-events: none;
 }
 
-/* ЦЕНТРАЛЬНЫЙ ЩИТ */
-.hero-center {
-    position: absolute; top: 0; left: 0; width: 100%; height: 50%;
-    display: flex; align-items: center; justify-content: center;
+/* --- ВЕРХНЯЯ ЧАСТЬ (НОВОЕ) --- */
+.home-page-top {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 55%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start;
+    padding-top: 60px; /* Отступ сверху */
     z-index: 1;
 }
-.hero-shield-icon {
-    width: 120px; height: 120px;
-    stroke: white; stroke-width: 1.5; fill: none; opacity: 0.9;
+
+/* Логотип */
+.logo-container svg {
+    width: 200px; /* Размер логотипа */
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
 }
 
-/* НИЖНЯЯ ПАНЕЛЬ */
+/* Анимация колец */
+.ring-animation {
+    position: absolute;
+    top: 150px; /* Центр колец совпадает с логотипом */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px; height: 300px;
+    z-index: -1; /* За логотипом */
+    pointer-events: none;
+}
+
+.ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 20px rgba(0, 214, 143, 0.05);
+    animation: pulse 4s infinite linear;
+}
+
+/* Создаем 5 колец разного размера с задержкой */
+.ring:nth-child(1) { width: 100%; height: 100%; animation-delay: 0s; }
+.ring:nth-child(2) { width: 80%; height: 80%; animation-delay: 1s; }
+.ring:nth-child(3) { width: 60%; height: 60%; animation-delay: 2s; }
+.ring:nth-child(4) { width: 40%; height: 40%; animation-delay: 3s; }
+.ring:nth-child(5) { width: 20%; height: 20%; animation-delay: 4s; }
+
+@keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.1; }
+    50% { opacity: 0.3; border-color: rgba(0, 214, 143, 0.1); }
+    100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
+
+
+/* --- НИЖНЯЯ ПАНЕЛЬ (Без изменений) --- */
 .bottom-sheet {
     position: absolute; bottom: 0; left: 0; width: 100%;
     background: var(--card-bg);
@@ -56,29 +95,21 @@ body {
     border-top-right-radius: var(--radius-sheet);
     padding: 24px 20px 40px 20px;
     z-index: 10;
-    /* Тонкая полоска сверху, если нужна */
-    /* border-top: 1px solid #1a1a1a; */
 }
 
-/* ШАПКА */
 .sheet-head {
     display: flex; justify-content: space-between; align-items: flex-start;
     margin-bottom: 24px;
 }
-.head-left svg { display: block; } /* Логотип */
+.head-left svg { display: block; }
 .head-right { text-align: right; }
 
-.date-text {
-    font-size: 18px; line-height: 1.2;
-    margin-bottom: 4px;
-}
+.date-text { font-size: 18px; line-height: 1.2; margin-bottom: 4px; }
 .date-label { font-weight: 300; font-size: 16px; opacity: 0.8; }
-
 .status-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .status-text-gray { color: var(--text-muted); font-size: 14px; }
 .status-text-colored { font-size: 14px; }
 
-/* КНОПКИ (БАЗА) */
 .btn {
     width: 100%; height: var(--btn-height);
     border-radius: var(--radius-btn);
@@ -86,49 +117,21 @@ body {
     display: flex; align-items: center; padding: 0 16px;
     font-family: 'Onest', sans-serif; font-weight: 500; font-size: 14px;
     transition: transform 0.1s; position: relative;
-    gap: 8px; /* gap-2 */
-    margin-top: 10px;
-    text-decoration: none;
+    gap: 8px; margin-top: 10px;
 }
 .btn:active { transform: scale(0.97); }
 .btn svg { width: 24px; height: 24px; flex-shrink: 0; }
+.mr-auto { margin-right: auto; }
 
-.mr-auto { margin-right: auto; } /* Чтобы текст был слева, а цена справа */
-
-/* ТИПЫ КНОПОК */
-
-/* 1. Primary (Зеленая) */
-.btn-primary {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
-}
+.btn-primary { background-color: var(--primary); color: var(--primary-foreground); }
 .btn-primary svg { stroke: currentColor; stroke-width: 2; }
 
-/* 2. Setup (Прозрачная + Рамка 50%) */
-.btn-setup {
-    background: transparent;
-    color: var(--text-white);
-    border: 1px solid var(--border-primary-50);
-}
+.btn-setup { background: transparent; color: var(--text-white); border: 1px solid var(--border-primary-50); }
 .btn-setup svg { stroke: currentColor; stroke-width: 2; }
 
-/* Бейдж macOS */
-.device-badge {
-    display: flex; align-items: center; gap: 6px;
-    color: var(--primary);
-}
+.device-badge { display: flex; align-items: center; gap: 6px; color: var(--primary); }
 .device-icon svg { width: 20px; height: 20px; }
 
-/* 3. Grid Buttons (Прозрачная + Рамка 30%) */
-.btn-grid {
-    background: transparent;
-    color: var(--text-white);
-    border: 1px solid var(--border-primary-30);
-    margin-top: 0; /* В сетке отступы через grid-gap */
-}
+.btn-grid { background: transparent; color: var(--text-white); border: 1px solid var(--border-primary-30); margin-top: 0; }
 
-/* СЕТКА */
-.grid-row {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    margin-top: 10px;
-}
+.grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
