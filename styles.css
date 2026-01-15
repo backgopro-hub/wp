@@ -1,11 +1,19 @@
+/* --- styles.css (FINAL FULL VERSION - DARK BTN, NO ICON) --- */
+
 :root {
     --background: #010101;
     --foreground: #ffffff;
-    --primary: #00D68F;
+    --primary: #00D68F; /* Оставляем яркий для свечений */
     --radius-large: 24px;
     --radius-medium: 14px;
     --border-dim: rgba(0, 214, 143, 0.5);
     --border-light: rgba(0, 214, 143, 0.3);
+    
+    /* NextUI variables */
+    --nextui-primary: 160 100% 42%; 
+    --nextui-primary-opacity: 1;
+    --nextui-background: 0 0% 0%;
+    --nextui-background-opacity: 1;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -29,20 +37,24 @@ body {
     pointer-events: none;
 }
 
-/* === СЕТКА (Чтобы низ не улетал вверх) === */
+/* === СЕТКА === */
 .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 15px; max-width: 500px; margin: 0 auto; }
 
 .HomePage {
     width: 100%; height: 100%; z-index: 1;
     display: grid;
-    /* Логотип занимает всё место, Панель - сколько нужно (auto) */
+    /* ! ВАЖНО: 1fr (Верх) и auto (Низ). Низ занимает МИНИМУМ места */
     grid-template-rows: 1fr auto; 
     align-items: center;
-    padding-bottom: 20px; /* Отступ от нижнего края экрана */
+    /* Небольшой отступ от низа экрана */
+    padding-bottom: 20px; 
 }
 
 /* === ВЕРХ === */
-.HomePage__top { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; margin-top: -30px; }
+.HomePage__top { 
+    position: relative; height: 100%; display: flex; align-items: center; justify-content: center; 
+    margin-top: -30px; 
+}
 .HomePage__logo { position: relative; z-index: 2; }
 .HomePage__logo svg { width: 70px; will-change: scale; filter: drop-shadow(0 0 25px rgba(0,0,0,0.6)); }
 
@@ -61,21 +73,25 @@ body {
 /* === НИЖНЯЯ ПАНЕЛЬ === */
 .HomePage__bottom {
     width: 100%;
-    /* Высота АВТО - не растягивается */
-    height: auto; 
+    /* Высота только по контенту */
+    height: auto !important; 
     background-color: rgba(0, 0, 0, 0.4); 
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-radius: var(--radius-large);
     
-    /* Тонкая рамка (как ты хотел) */
+    /* Тонкая рамка */
     padding: 4px; 
     
     overflow: hidden;
     display: flex; flex-direction: column;
 }
 
+@media screen and (max-width: 375px){
+    .HomePage__bottom{ padding: 4px; }
+}
+
 .HomePageBottom {
-    /* Внутренние отступы: Сверху 25, Снизу 25, По бокам 20 */
+    /* Компактные отступы внутри */
     padding: 25px 20px;
     width: 100%;
     display: flex; flex-direction: column;
@@ -92,14 +108,16 @@ body {
 .text-yellow-400 { color: #facc15; font-size: 14px; }
 .text-green { color: var(--primary); }
 
-/* === БЛОК КНОПОК === */
+/* === КНОПКИ === */
 .HomePageBottom__body { 
     display: flex; flex-direction: column; width: 100%; 
-    margin-top: 20px; /* Отступ от текста "подписка истекла" */
+    
+    /* Отступ от текста до кнопок */
+    margin-top: 20px; 
+    
     gap: 12px;
 }
 
-/* Общий стиль кнопок */
 .Button {
     width: 100%; height: 54px;
     border-radius: var(--radius-medium);
@@ -117,47 +135,33 @@ body {
 .mr-auto { margin-right: auto; }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* 1. КНОПКА КУПИТЬ (Зеленая, Белый текст) */
+/* ! ЦВЕТ КНОПКИ "КУПИТЬ" (ТЕМНЕЕ) + БЕЛЫЙ ТЕКСТ ! */
 .bg-primary { 
-    background-color: var(--primary) !important; 
+    background-color: #00A36C !important; /* ТЕМНО-ЗЕЛЕНЫЙ */
     color: #ffffff !important; 
-    font-weight: 700 !important;
+    font-weight: 700 !important; 
 }
 .bg-primary svg { color: #ffffff !important; stroke: #ffffff !important; }
 
-/* 2. КНОПКА НАСТРОЙКИ (С Градиентом по центру) */
-.Button--lighted {
-    background: transparent;
-    border: 1px solid var(--border-dim);
-}
-/* Важно: Псевдоэлемент для градиента */
+/* ГРАДИЕНТ ЦЕНТРАЛЬНЫЙ (Полный код) */
+.Button--lighted { background: transparent; border: 1px solid var(--border-dim); }
 .Button--lighted::before {
     content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
     background-repeat: no-repeat; background-size: cover; opacity: 0.6;
     background-position: center -60px;
-    /* ВОТ ОН, ДЛИННЫЙ КОД ГРАДИЕНТА */
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='376' height='236' viewBox='0 0 376 236' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg filter='url(%23f)'%3E%3Cellipse cx='188' cy='118' rx='94' ry='24' fill='%2300D68F'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='f' x='0' y='0' width='376' height='236' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0' result='bg'/%3E%3CfeBlend in='SourceGraphic' in2='bg'/%3E%3CfeGaussianBlur stdDeviation='47' result='b'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E");
 }
 
-/* 3. КНОПКИ НИЖНИЕ (С Градиентом сбоку) */
-.Button--lighted-side {
-    background: transparent;
-    border: 1px solid var(--border-light);
-}
+/* ГРАДИЕНТ БОКОВОЙ (Полный код) */
+.Button--lighted-side { background: transparent; border: 1px solid var(--border-light); }
 .Button--lighted-side::before {
     content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
     background-repeat: no-repeat; background-size: cover; opacity: 0.4;
     background-position: left -50px;
-    /* ТОТ ЖЕ ГРАДИЕНТ */
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='376' height='236' viewBox='0 0 376 236' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg filter='url(%23f)'%3E%3Cellipse cx='188' cy='118' rx='94' ry='24' fill='%2300D68F'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='f' x='0' y='0' width='376' height='236' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0' result='bg'/%3E%3CfeBlend in='SourceGraphic' in2='bg'/%3E%3CfeGaussianBlur stdDeviation='47' result='b'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E");
 }
 
 .device-badge { color: var(--primary); display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; }
 .device-badge svg { width: 18px; height: 18px; }
 
-/* Сетка для двух нижних кнопок */
-.HomePageBottom__row { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; /* Две равные колонки */
-    gap: 10px; 
-}
+.HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
