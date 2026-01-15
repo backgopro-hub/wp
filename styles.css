@@ -1,6 +1,7 @@
 /* --- styles.css --- */
 
 :root {
+    /* Цвета */
     --primary: #00D68F;
     --primary-foreground: #000000;
     --bg-color: #000000;
@@ -9,9 +10,11 @@
     --text-muted: #9ca3af;
     --text-yellow: #facc15;
     
+    /* Границы (имитация прозрачности) */
     --border-primary-50: rgba(0, 214, 143, 0.5);
     --border-primary-30: rgba(0, 214, 143, 0.3);
     
+    /* Размеры */
     --radius-sheet: 24px;
     --radius-btn: 12px;
     --btn-height: 54px;
@@ -35,23 +38,24 @@ body {
     pointer-events: none;
 }
 
-/* --- АНИМАЦИЯ И ЛОГОТИП (ИСПРАВЛЕНО) --- */
+/* --- ВЕРХНЯЯ ЧАСТЬ ЭКРАНА --- */
 
 .HomePage__top {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 50%;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Прижимаем к верху, отступ зададим паддингом */
-    padding-top: 8vh; /* Отступ сверху (примерно 10-15% экрана) */
+    /* Отступ сверху, чтобы логотип был визуально по центру верхней части */
+    padding-top: 60px; 
     z-index: 1;
 }
 
-/* 1. Логотип (Уменьшаем размер) */
+/* ЛОГОТИП */
 .HomePage__logo {
     position: relative;
     z-index: 2;
-    width: 140px; /* Фиксируем ширину, чтобы не был огромным */
+    /* Ограничиваем ширину, чтобы SVG корректно масштабировался и не был огромным */
+    width: 180px; 
     height: auto;
     display: flex;
     justify-content: center;
@@ -60,34 +64,36 @@ body {
 .HomePage__logo svg {
     width: 100%;
     height: auto;
-    filter: drop-shadow(0 0 30px rgba(0,0,0,0.5)); /* Тень для объема */
+    /* Тень для объема */
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.6)); 
 }
 
-/* 2. Кольца (RingAnimation) */
+/* АНИМАЦИЯ КОЛЕЦ */
 .RingAnimation {
     position: absolute;
-    top: 45%; /* Центр колец чуть ниже верха */
+    /* Центрируем кольца относительно логотипа */
+    top: 130px; 
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%; 
-    height: 100%;
-    pointer-events: none;
-    z-index: 0; /* ЗА логотипом */
+    transform: translateX(-50%);
+    width: 0; height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 0; /* Слой под логотипом */
+    pointer-events: none;
 }
 
 .RingAnimation div {
     position: absolute;
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.08); /* Очень тонкая линия */
-    box-shadow: 0 0 40px rgba(0, 214, 143, 0.05); /* Легкое свечение */
+    /* Тонкая белая линия + зеленое свечение */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 30px rgba(0, 214, 143, 0.1);
     opacity: 0;
     animation: ripple 6s infinite linear;
 }
 
-/* Разные задержки для эффекта волн */
+/* Задержки для создания эффекта волн */
 .RingAnimation div:nth-child(1) { animation-delay: 0s; }
 .RingAnimation div:nth-child(2) { animation-delay: 1.2s; }
 .RingAnimation div:nth-child(3) { animation-delay: 2.4s; }
@@ -96,22 +102,21 @@ body {
 
 @keyframes ripple {
     0% {
-        width: 100px; height: 100px; /* Старт из центра */
+        width: 100px; height: 100px;
         opacity: 0;
-        border-color: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
     }
     10% {
-        opacity: 1; /* Появляется */
+        opacity: 0.5;
     }
     100% {
-        width: 800px; height: 800px; /* Растет за пределы экрана */
-        opacity: 0; /* Исчезает */
+        width: 700px; height: 700px; /* Растут за пределы экрана */
+        opacity: 0;
         border-color: rgba(255, 255, 255, 0);
     }
 }
 
-
-/* --- НИЖНЯЯ ПАНЕЛЬ (Без изменений) --- */
+/* --- НИЖНЯЯ ПАНЕЛЬ --- */
 .bottom-sheet {
     position: absolute; bottom: 0; left: 0; width: 100%;
     background: var(--card-bg);
@@ -121,6 +126,7 @@ body {
     z-index: 10;
 }
 
+/* ШАПКА ПАНЕЛИ */
 .sheet-head {
     display: flex; justify-content: space-between; align-items: flex-start;
     margin-bottom: 24px;
@@ -130,10 +136,12 @@ body {
 
 .date-text { font-size: 18px; line-height: 1.2; margin-bottom: 4px; }
 .date-label { font-weight: 300; font-size: 16px; opacity: 0.8; }
+
 .status-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
 .status-text-gray { color: var(--text-muted); font-size: 14px; }
 .status-text-colored { font-size: 14px; }
 
+/* ОБЩИЕ СТИЛИ КНОПОК */
 .btn {
     width: 100%; height: var(--btn-height);
     border-radius: var(--radius-btn);
@@ -146,17 +154,22 @@ body {
 }
 .btn:active { transform: scale(0.97); }
 .btn svg { width: 24px; height: 24px; flex-shrink: 0; }
-.mr-auto { margin-right: auto; }
+.mr-auto { margin-right: auto; } /* Прижимает следующий элемент вправо */
 
+/* Стиль 1: Основная кнопка (Зеленая) */
 .btn-primary { background-color: var(--primary); color: var(--primary-foreground); }
 .btn-primary svg { stroke: currentColor; stroke-width: 2; }
 
+/* Стиль 2: Кнопка настройки (Прозрачная + Рамка) */
 .btn-setup { background: transparent; color: var(--text-white); border: 1px solid var(--border-primary-50); }
 .btn-setup svg { stroke: currentColor; stroke-width: 2; }
 
+/* Бейдж устройства */
 .device-badge { display: flex; align-items: center; gap: 6px; color: var(--primary); }
 .device-icon svg { width: 20px; height: 20px; }
 
+/* Стиль 3: Кнопки в сетке (Прозрачная + Рамка побледнее) */
 .btn-grid { background: transparent; color: var(--text-white); border: 1px solid var(--border-primary-30); margin-top: 0; }
 
+/* Сетка 2 колонки */
 .grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
