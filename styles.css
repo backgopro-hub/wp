@@ -1,10 +1,20 @@
-/* --- styles.css (FINAL FIXED VERSION) --- */
+/* --- styles.css --- */
 
 :root {
+    /* === 1. ПЕРЕМЕННЫЕ ДЛЯ ТВОЕГО КОДА (NextUI) === */
+    /* Цвет #00D68F в формате HSL: 160 100% 42% */
+    --nextui-primary: 160 100% 42%; 
+    --nextui-primary-opacity: 1;
+    
+    /* Фон (Черный) */
+    --nextui-background: 0 0% 0%;
+    --nextui-background-opacity: 1;
+    
+    /* === 2. ПЕРЕМЕННЫЕ ДИЗАЙНА ULTIMA === */
     --background: #010101;
     --foreground: #ffffff;
     --primary: #00D68F;
-    --primary-foreground: #000000;
+    --primary-foreground: #ffffff;
     
     /* Размеры */
     --radius-large: 24px;
@@ -27,34 +37,34 @@ body {
     display: flex; justify-content: center;
 }
 
-/* === 1. ФОН === */
+/* === ФОН === */
 .fixed-background {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
     background-color: var(--background);
-    background-image: url('bg.png'); /* Картинка bg.png рядом */
+    background-image: url('bg.png');
     background-size: cover;
     background-position: top center;
     pointer-events: none;
 }
 
-/* === 2. СЕТКА (ИСПРАВЛЕНО: НИЖНИЙ БЛОК ВЫШЕ) === */
+/* === СЕТКА (Layout) === */
 .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 15px; max-width: 500px; margin: 0 auto; }
 
 .HomePage {
     width: 100%; height: 100%; z-index: 1;
     display: grid;
-    /* ВАЖНО: Верх 42%, Низ занимает всё остальное (58%) */
+    /* Верх 42%, Низ 58% (высокая панель) */
     grid-template-rows: 42% 1fr; 
     align-items: center;
-    gap: 15px; /* Небольшой отступ между блоками */
+    gap: 15px;
 }
 
-/* === 3. ВЕРХНЯЯ ЧАСТЬ === */
+/* === ВЕРХНЯЯ ЧАСТЬ === */
 .HomePage__top { position: relative; height: 100%; display: flex; align-items: center; justify-content: center; }
 .HomePage__logo { position: relative; z-index: 2; }
 .HomePage__logo svg { width: 70px; height: auto; will-change: scale; filter: drop-shadow(0 0 25px rgba(0,0,0,0.6)); }
 
-/* Кольца */
+/* Анимация колец */
 .RingAnimation { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; pointer-events: none; display: flex; align-items: center; justify-content: center; z-index: 1; }
 .RingAnimation div { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 0 20px rgba(0, 214, 143, 0.05); animation: ripple 4s infinite linear; }
 .RingAnimation div:nth-child(1) { animation-delay: 0s; }
@@ -67,7 +77,7 @@ body {
     100% { width: 600px; height: 600px; opacity: 0; border-color: transparent; }
 }
 
-/* === 4. НИЖНЯЯ ПАНЕЛЬ (ВЫТЯНУТАЯ) === */
+/* === НИЖНЯЯ ПАНЕЛЬ === */
 .HomePage__bottom {
     width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.4); 
@@ -75,17 +85,16 @@ body {
     border-radius: var(--radius-large);
     overflow: hidden;
     display: flex; flex-direction: column;
-    padding: 4px; /* Внутренний паддинг рамки */
+    padding: 4px;
 }
 
-/* Внутренний контейнер панели */
 .HomePageBottom {
-    padding: 30px 20px; /* Увеличил отступы как в оригинале */
+    padding: 30px 20px;
     width: 100%; height: 100%;
     display: flex; flex-direction: column;
 }
 
-.HomePageBottom__head { margin-bottom: auto; width: 100%; } /* auto толкает контент вверх */
+.HomePageBottom__head { margin-bottom: auto; width: 100%; }
 .HomePageBottom__headRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
 
 /* Тексты */
@@ -96,7 +105,7 @@ body {
 .text-yellow-400 { color: #facc15; font-size: 14px; }
 .text-green { color: var(--primary); }
 
-/* === 5. КНОПКИ (С ГРАДИЕНТОМ BASE64) === */
+/* === КНОПКИ === */
 .HomePageBottom__body { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-bottom: 10px; }
 
 .Button {
@@ -107,7 +116,7 @@ body {
     font-family: 'Onest', sans-serif; font-weight: 600; font-size: 14px;
     position: relative; gap: 10px; text-decoration: none;
     transition: transform 0.1s;
-    overflow: hidden; /* Важно для обрезки свечения */
+    overflow: hidden;
     color: #fff;
 }
 .Button:active { transform: scale(0.98); opacity: 0.9; }
@@ -115,36 +124,28 @@ body {
 .mr-auto { margin-right: auto; }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* 1. ГЛАВНАЯ КНОПКА (Зеленая с белым текстом) */
-.bg-primary {
-    background-color: var(--primary);
-    color: #ffffff; /* БЫЛО #000000, СТАЛО #ffffff */
-    font-weight: 700; /* Сделал чуть жирнее, чтобы белый лучше читался */
+/* Кнопка "Купить" (Белый текст) */
+.bg-primary { 
+    background-color: var(--primary); 
+    color: #ffffff; /* Белый цвет */
+    font-weight: 700;
 }
 
-/* 2. НАСТРОЙКИ (Свечение по центру) */
-.Button--lighted {
-    background: transparent;
-    border: 1px solid var(--border-dim);
-}
+/* Свечение для кнопки "Настройки" */
+.Button--lighted { background: transparent; border: 1px solid var(--border-dim); }
 .Button--lighted::before {
     content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
     background-repeat: no-repeat; background-size: cover; opacity: 0.6;
     background-position: center -60px;
-    /* ORIGINAL SVG GRADIENT */
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='376' height='236' viewBox='0 0 376 236' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg filter='url(%23f)'%3E%3Cellipse cx='188' cy='118' rx='94' ry='24' fill='%2300D68F'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='f' x='0' y='0' width='376' height='236' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0' result='bg'/%3E%3CfeBlend in='SourceGraphic' in2='bg'/%3E%3CfeGaussianBlur stdDeviation='47' result='b'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E");
 }
 
-/* 3. НИЖНИЕ КНОПКИ (Свечение сбоку) */
-.Button--lighted-side {
-    background: transparent;
-    border: 1px solid var(--border-light);
-}
+/* Свечение для нижних кнопок */
+.Button--lighted-side { background: transparent; border: 1px solid var(--border-light); }
 .Button--lighted-side::before {
     content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
     background-repeat: no-repeat; background-size: cover; opacity: 0.4;
     background-position: left -50px;
-    /* SAME GRADIENT */
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg width='376' height='236' viewBox='0 0 376 236' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg filter='url(%23f)'%3E%3Cellipse cx='188' cy='118' rx='94' ry='24' fill='%2300D68F'/%3E%3C/g%3E%3Cdefs%3E%3Cfilter id='f' x='0' y='0' width='376' height='236' filterUnits='userSpaceOnUse' color-interpolation-filters='sRGB'%3E%3CfeFlood flood-opacity='0' result='bg'/%3E%3CfeBlend in='SourceGraphic' in2='bg'/%3E%3CfeGaussianBlur stdDeviation='47' result='b'/%3E%3C/filter%3E%3C/defs%3E%3C/svg%3E");
 }
 
@@ -152,3 +153,47 @@ body {
 .device-badge svg { width: 18px; height: 18px; }
 
 .HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* === ТВОЙ КОД ДЛЯ КОЛЕЦ (RINGS) === */
+.ring-background {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: hsl(var(--nextui-background) / var(--nextui-background-opacity, var(--tw-ring-opacity)))
+}
+.ring-danger {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: hsl(var(--nextui-danger) / var(--nextui-danger-opacity, var(--tw-ring-opacity)))
+}
+.ring-default {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: hsl(var(--nextui-default) / var(--nextui-default-opacity, var(--tw-ring-opacity)))
+}
+.ring-focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: hsl(var(--nextui-focus) / var(--nextui-focus-opacity, var(--tw-ring-opacity)))
+}
+/* ВАЖНО: Это будет работать, так как мы задали --nextui-primary в начале файла */
+.ring-primary {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: hsl(var(--nextui-primary) / var(--nextui-primary-opacity, var(--tw-ring-opacity)))
+}
+.ring-secondary {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: hsl(var(--nextui-secondary) / var(--nextui-secondary-opacity, var(--tw-ring-opacity)))
+}
+.ring-success {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: hsl(var(--nextui-success) / var(--nextui-success-opacity, var(--tw-ring-opacity)))
+}
+.ring-transparent {
+    --tw-ring-color: transparent
+}
+.ring-warning {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: hsl(var(--nextui-warning) / var(--nextui-warning-opacity, var(--tw-ring-opacity)))
+}
+.ring-offset-2 {
+    --tw-ring-offset-width: 2px
+}
+.ring-offset-background {
+    --tw-ring-offset-color: hsl(var(--nextui-background) / var(--nextui-background-opacity, 1))
+}
