@@ -197,3 +197,18 @@ body {
 .ring-offset-background {
     --tw-ring-offset-color: hsl(var(--nextui-background) / var(--nextui-background-opacity, 1))
 }
+/* --- ВСТАВИТЬ В САМЫЙ КОНЕЦ styles.css --- */
+
+/* Принудительно делаем текст кнопки белым */
+.bg-primary, 
+button.bg-primary,
+.App .bg-primary {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* Делаем иконку внутри кнопки тоже белой */
+.bg-primary svg {
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+}
