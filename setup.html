@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Настройка</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css?v=setup_page">
+    <script src="setup.js?v=setup_page" defer></script>
+</head>
+<body class="ultima">
+    <div class="fixed-background"></div>
+
+    <div class="App">
+        <div class="SetupPage">
+            <div class="SetupPage__top">
+                <div class="SetupPage__rings">
+                    <div></div><div></div><div></div><div></div>
+                </div>
+                
+                <div class="SetupPage__progress">
+                    <svg viewBox="0 0 32 32">
+                        <circle cx="16" cy="16" r="15.8" class="progress-bg"></circle>
+                        <circle cx="16" cy="16" r="15.8" class="progress-fill" id="progress-circle"></circle>
+                    </svg>
+                    <div class="SetupPage__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m19 5 3-3"></path><path d="m2 22 3-3"></path><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path><path d="M7.5 13.5 10 11"></path><path d="M10.5 16.5 13 14"></path><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="SetupPage__bottom">
+                <p class="text-xl" id="setup-title">Настройка устройства</p>
+                <p class="text-default mt-2">
+                    Автоматическая настройка VPN <br>займет всего пару секунд
+                </p>
+
+                <button class="Button bg-primary Button--pulsed" onclick="startSetup()">
+                    <span id="btn-start-text">Подключить</span>
+                </button>
+
+                <button class="Button Button--transparent" onclick="openManual()">
+                    Установить на другом устройстве
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
