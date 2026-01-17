@@ -7,8 +7,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="styles.css?v=fix_colors_final">
-    <script src="setup.js?v=fix_colors_final" defer></script>
+    <link rel="stylesheet" href="styles.css?v=step_30_percent">
+    <script src="setup.js?v=step_30_percent" defer></script>
 </head>
 <body class="ultima">
     <div class="fixed-background"></div>
@@ -24,36 +24,31 @@
                 </div>
                 
                 <div class="SetupPage__progress">
-                    <svg viewBox="0 0 32 32">
-                        <circle cx="16" cy="16" r="15.8" class="progress-bg"></circle>
-                        <circle cx="16" cy="16" r="15.8" class="progress-fill" id="progress-circle"></circle>
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
+                        <circle cx="50" cy="50" r="45" class="progress-fill" id="progress-circle"></circle>
                     </svg>
                     
                     <div class="SetupPage__icon" id="status-icon">
-                        <svg id="icon-wait" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5 3-3"></path><path d="m2 22 3-3"></path><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path><path d="M7.5 13.5 10 11"></path><path d="M10.5 16.5 13 14"></path><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path></svg>
                     </div>
                 </div>
             </div>
 
             <div class="SetupPage__bottom">
-                <p class="text-title" id="setup-title">Анализ устройства...</p>
+                <p class="text-title" id="setup-title">Настройка на устройстве</p>
                 <p class="text-subtitle" id="setup-subtitle">
-                    Пожалуйста, подождите
+                    Настройка VPN происходит <br>в 3 шага и занимает пару минут
                 </p>
 
-                <div id="buttons-container" style="opacity: 0; transition: opacity 0.5s; width: 100%;">
-                    <button class="Button-Original Button--primary" id="main-setup-btn" onclick="startSetup()">
-                        <span id="btn-start-text">Подключить</span>
-                    </button>
+                <button class="Button-Original Button--primary" id="main-btn" onclick="startProcess()">
+                    <span id="btn-text">Начать настройку на этом устройстве</span>
+                </button>
 
-                    <button class="Button-Original Button--secondary" onclick="openManual()">
-                        Установить на другом устройстве
-                    </button>
-                    
-                    <button class="Button-Link" onclick="goHome()">
-                        Вернуться назад
-                    </button>
-                </div>
+                <button class="Button-Original Button--secondary" onclick="openManual()">
+                    Установить на другом устройстве
+                </button>
+                
             </div>
         </div>
     </div>
