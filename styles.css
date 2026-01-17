@@ -194,78 +194,87 @@ body {
 
 /* === ДОБАВЬ ЭТО В КОНЕЦ styles.css (ЗАМЕНИ СТАРЫЕ КНОПКИ) === */
 
-/* === ФИНАЛЬНЫЕ СТИЛИ КНОПОК (1-в-1 ORIGINAL) === */
+/* === ФИНАЛЬНЫЕ КНОПКИ (ТОЧНАЯ КОПИЯ) === */
 
-/* Общие параметры */
-.Button-Original, .Button--variant_lighted {
-    width: 100%; height: 54px;
-    border-radius: 16px;
+/* Базовый стиль кнопки */
+.Button-Original {
+    width: 100%; height: 54px; /* h-54 */
+    border-radius: 16px; /* rounded-large */
+    
+    /* Текст */
     font-family: 'Onest', sans-serif;
-    font-size: 14px; font-weight: 600;
-    cursor: pointer;
+    font-size: 14px; /* text-sm */
+    font-weight: 500; /* font-normal/medium */
+    
+    /* Выравнивание */
     display: flex; align-items: center; justify-content: center;
-    transition: transform 0.1s;
+    border: none; cursor: pointer;
     position: relative;
     z-index: 1;
-    text-transform: none; /* В оригинале текст не всегда капсом */
+    
+    /* Плавность нажатия (transition-transform-colors-opacity) */
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.Button-Original:active, .Button--variant_lighted:active {
+/* Эффект нажатия (scale-[0.97]) */
+.Button-Original:active {
     transform: scale(0.97);
 }
 
-/* --- 1. КНОПКА "УСТАНОВИТЬ" / "НАЧАТЬ" (ЯРКАЯ) --- */
+/* --- ВАРИАНТ 1: ЗЕЛЕНАЯ (PRIMARY) --- */
 .Button--primary {
-    /* Тот самый ЯРКИЙ ГРАДИЕНТ */
-    background: linear-gradient(90deg, #00D68F 0%, #009e6d 100%) !important;
-    color: #ffffff !important;
-    border: none;
-    box-shadow: 0 4px 15px rgba(0, 214, 143, 0.3);
-}
-
-/* Пульсация (Волна) */
-.Button--pulsed::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    border-radius: 16px; z-index: -1;
-    background: inherit;
-    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-@keyframes ping {
-    75%, 100% { transform: scale(1.08); opacity: 0; }
-}
-
-
-/* --- 2. КНОПКА "ДАЛЕЕ" (LIGHTED VARIANT) --- */
-.Button--variant_lighted {
-    /* ЛЕГКИЙ ГРАДИЕНТ ФОНА (слева направо, как в оригинале) */
-    background: linear-gradient(90deg, rgba(0, 214, 143, 0.15) 0%, rgba(0, 214, 143, 0) 100%) !important;
-    
-    /* Зеленая рамка (border-primary-50) */
-    border: 1px solid rgba(0, 214, 143, 0.5) !important;
-    
+    /* bg-primary */
+    background: #00D68F !important; 
+    /* text-primary-foreground (обычно белый или черный, ставим белый для контраста) */
     color: #ffffff !important;
     
-    /* ПАРАМЕТРЫ ИЗ ТВОЕГО HTML (gap-7, -mr-4) */
-    gap: 28px; /* gap-7 */
+    /* gap-2 (между текстом и иконкой 8px) */
+    gap: 8px; 
 }
 
-/* Смещение стрелки вправо */
-.Button--variant_lighted svg {
-    margin-right: -16px; /* -mr-4 */
+/* Иконки внутри зеленой кнопки */
+.Button--primary svg {
     width: 20px; height: 20px;
-    opacity: 0.9;
+    stroke-width: 2px;
+}
+
+/* --- ПУЛЬСАЦИЯ КАК В ОРИГИНАЛЕ (Shadow Pulse) --- */
+/* Это эффект "дыхания" тени, а не увеличение самой кнопки */
+.Button--pulsed {
+    animation: shadow-pulse 2s infinite;
+}
+
+@keyframes shadow-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 214, 143, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 214, 143, 0);
+    }
 }
 
 
-/* --- 3. ВТОРИЧНАЯ КНОПКА (СЕРАЯ/ПРОЗРАЧНАЯ) --- */
-/* Используется для "Установить на другом устройстве" */
-.Button--secondary {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+/* --- ВАРИАНТ 2: ПРОЗРАЧНАЯ (LIGHTED/OUTLINE) --- */
+/* Для кнопки "Далее" */
+.Button--variant_lighted {
+    background: transparent !important;
+    /* border-primary-50 */
+    border: 1px solid rgba(0, 214, 143, 0.5) !important; 
     color: #ffffff !important;
+    
+    /* gap-7 (большой отступ) */
+    gap: 28px; 
 }
 
-/* Контейнер кнопок */
+/* Смещение стрелки вправо (-mr-4) */
+.Button--variant_lighted svg {
+    width: 20px; height: 20px;
+    margin-right: -16px;
+}
+
+/* Контейнер для кнопок в ряд */
 .Buttons-Row { display: flex; width: 100%; gap: 10px; }
 .Buttons-Row button { flex: 1; margin-bottom: 0; }
