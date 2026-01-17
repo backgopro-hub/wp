@@ -228,3 +228,30 @@ body {
     color: #6b7280; font-size: 14px; 
     margin-top: 10px; cursor: pointer;
 }
+/* === ДОБАВИТЬ В styles.css === */
+
+/* Контейнер для двух кнопок в ряд */
+.Buttons-Row {
+    display: flex;
+    width: 100%;
+    gap: 10px; /* Отступ между кнопками */
+}
+
+.Buttons-Row button {
+    flex: 1; /* Кнопки растягиваются равномерно */
+    margin-bottom: 0; /* Убираем нижний отступ, так как они в ряду */
+    font-size: 14px;
+    padding: 0 10px;
+}
+
+/* Стиль для кнопки "Далее" (Прозрачная с обводкой) */
+.Button--outline {
+    background-color: transparent !important;
+    border: 1px solid rgba(0, 214, 143, 0.5) !important; /* Зеленая рамка */
+    color: #fff !important;
+}
+
+/* Доработка SVG иконок внутри кнопок */
+.Button-Original svg {
+    pointer-events: none;
+}
