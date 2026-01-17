@@ -159,51 +159,87 @@ body {
 .device-badge svg { width: 18px; height: 18px; }
 
 .HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-/* === ДОБАВИТЬ В КОНЕЦ styles.css === */
+/* === ОРИГИНАЛЬНЫЙ ДИЗАЙН (SETUP PAGE) === */
 
-/* Стили для страницы SETUP (SetupPage) */
 .SetupPage {
-    width: 100%; height: 100%; display: flex; flex-direction: column;
+    width: 100%; height: 100%; 
+    display: flex; flex-direction: column;
     padding-top: 60px; padding-bottom: 20px;
 }
+
 .SetupPage__top { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; }
 
-/* Анимация колец (Rings) */
-.SetupPage__rings { position: absolute; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+/* Кольца (Rings) */
+.SetupPage__rings { position: absolute; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; pointer-events: none; }
 .SetupPage__rings div {
-    position: absolute; border-radius: 50%; border: 1px solid rgba(0, 214, 143, 0.1);
+    position: absolute; border-radius: 50%; 
+    border: 1px solid rgba(0, 214, 143, 0.1); /* Наш зеленый */
     animation: setupRipple 3s infinite linear;
 }
 .SetupPage__rings div:nth-child(1) { animation-delay: 0s; }
 .SetupPage__rings div:nth-child(2) { animation-delay: 0.8s; }
 .SetupPage__rings div:nth-child(3) { animation-delay: 1.6s; }
+.SetupPage__rings div:nth-child(4) { animation-delay: 2.4s; }
 
 @keyframes setupRipple {
-    0% { width: 50px; height: 50px; opacity: 0.8; border-color: rgba(0, 214, 143, 0.4); }
-    100% { width: 350px; height: 350px; opacity: 0; border-color: transparent; }
+    0% { width: 40px; height: 40px; opacity: 0.8; border-color: rgba(0, 214, 143, 0.5); }
+    100% { width: 380px; height: 380px; opacity: 0; border-color: transparent; }
 }
 
-/* Круговой прогресс бар */
-.SetupPage__progress { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
+/* Прогресс-бар */
+.SetupPage__progress { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
 .SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.progress-bg { fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 0.5; }
+
+/* Пунктирный фон (как в оригинале) */
+.progress-bg { 
+    fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 0.2; 
+    stroke-dasharray: 4 4; /* Пунктир */
+}
+
 .progress-fill {
     fill: none; stroke: var(--primary); stroke-width: 0.8;
     stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round;
     transition: stroke-dashoffset 1.5s ease-in-out;
 }
-.SetupPage__icon { position: absolute; color: #fff; filter: drop-shadow(0 0 10px rgba(0,214,143,0.5)); }
 
-/* Низ страницы настройки */
-.SetupPage__bottom { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; margin-top: auto; }
-.mt-2 { margin-top: 8px; margin-bottom: 24px; line-height: 1.4; font-size: 14px; color: #9ca3af; }
-.text-xl { font-size: 22px; font-weight: 700; color: #fff; margin: 0; }
+.SetupPage__icon { position: absolute; color: var(--primary); }
 
-/* Пульсирующая кнопка */
-.Button--pulsed { margin-bottom: 12px; animation: btnPulse 2s infinite; box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
-@keyframes btnPulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
-    70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(0, 214, 143, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
+/* НИЖНЯЯ ЧАСТЬ */
+.SetupPage__bottom { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+.text-title { font-size: 20px; font-weight: 600; color: #fff; margin: 0; }
+.text-subtitle { font-size: 15px; color: #9ca3af; margin-top: 8px; margin-bottom: 24px; line-height: 1.4; }
+
+/* === КНОПКИ КАК В ОРИГИНАЛЕ === */
+.Button-Original {
+    width: 100%; height: 54px; /* Высокая кнопка (h-54) */
+    border-radius: 16px; /* Большое скругление (rounded-large) */
+    font-size: 15px; font-weight: 600;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.1s;
+    margin-bottom: 12px;
 }
-.Button--transparent { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); }
+.Button-Original:active { transform: scale(0.98); }
+
+/* Основная (Зеленая с черным текстом или Белая с черным) */
+.Button--primary {
+    background-color: var(--primary); 
+    color: #000; /* Контрастный текст на ярком фоне */
+}
+
+/* Пульсация для основной */
+.Button--pulsed { animation: btnPulse 2s infinite; box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
+
+/* Вторая кнопка (Полупрозрачная) */
+.Button--secondary {
+    background-color: rgba(0, 214, 143, 0.15); /* bg-primary/20 */
+    color: #fff;
+}
+
+/* Ссылка назад */
+.Button-Link {
+    background: none; border: none; 
+    color: #6b7280; font-size: 13px; 
+    margin-top: 5px; cursor: pointer;
+}
