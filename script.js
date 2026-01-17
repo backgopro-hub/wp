@@ -35,8 +35,10 @@ function detectDevice() {
     }
 }
 
+// === НОВАЯ ФУНКЦИЯ ПЕРЕХОДА ===
 function openSetup() {
-    // Переходим на страницу настройки, передавая все параметры (ключ, id и т.д.)
+    // Вместо открытия внешней ссылки, мы переходим на наш файл setup.html
+    // window.location.search переносит все параметры (vpn_key, id и т.д.) на новую страницу
     window.location.href = 'setup.html' + window.location.search;
 }
 
