@@ -160,74 +160,64 @@ body {
 
 .HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-/* === ИСПРАВЛЕННЫЙ ДИЗАЙН (SETUP PAGE) === */
+/* === СТИЛИ SETUP (FINAL) === */
 
 .SetupPage {
     width: 100%; height: 100%; 
     display: flex; flex-direction: column;
     padding-top: 60px; padding-bottom: 20px;
 }
-
 .SetupPage__top { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; }
 
-/* === КОЛЬЦА (СТАТИЧНЫЕ) === */
+/* Кольца */
 .SetupPage__rings { position: absolute; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; pointer-events: none; }
+.SetupPage__rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05); }
+.ring-1 { width: 160px; height: 160px; }
+.ring-2 { width: 240px; height: 240px; opacity: 0.6; }
+.ring-3 { width: 320px; height: 320px; opacity: 0.3; }
 
-/* Общий стиль колец */
-.SetupPage__rings div {
-    position: absolute; border-radius: 50%; 
-    border: 1px solid rgba(255, 255, 255, 0.05); /* Еле заметный белый */
-}
+/* Прогресс */
+.SetupPage__progress { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
+.SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); transform-origin: center; }
 
-/* Размеры колец */
-.ring-1 { width: 180px; height: 180px; }
-.ring-2 { width: 260px; height: 260px; opacity: 0.6; }
-.ring-3 { width: 340px; height: 340px; opacity: 0.3; }
-
-/* === ПРОГРЕСС БАР === */
-.SetupPage__progress { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
-.SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-
-.progress-bg { 
-    fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 1; 
-}
+.progress-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 4; }
 
 .progress-fill {
     fill: none; 
-    stroke: #00D68F; /* ЯРКО-ЗЕЛЕНЫЙ */
-    stroke-width: 3; /* Сделал потолще */
-    stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round;
-    transition: stroke-dashoffset 0.5s ease-in-out; /* Плавное заполнение */
+    stroke: #00D68F; 
+    stroke-width: 4; 
+    stroke-linecap: round;
+    stroke-dasharray: 283; /* Полная длина круга */
+    stroke-dashoffset: 283; /* 283 = ПУСТОЙ КРУГ (0%) */
+    transition: stroke-dashoffset 0.8s ease-in-out;
 }
 
 .SetupPage__icon { position: absolute; color: #fff; }
 
-/* === НИЗ === */
+/* Тексты */
 .SetupPage__bottom { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: auto; }
-
 .text-title { font-size: 20px; font-weight: 700; color: #ffffff; margin: 0; }
 .text-subtitle { font-size: 14px; color: #9ca3af; margin-top: 8px; margin-bottom: 24px; line-height: 1.4; }
 
-/* === КНОПКИ (FIX COLORS) === */
+/* Кнопки */
 .Button-Original {
     width: 100%; height: 54px;
     border-radius: 16px;
-    font-size: 16px; font-weight: 700;
+    font-size: 14px; font-weight: 700; /* Жирный шрифт */
     border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: transform 0.1s;
+    transition: all 0.2s;
     margin-bottom: 12px;
     font-family: 'Onest', sans-serif;
+    text-transform: uppercase; letter-spacing: 0.5px;
 }
 .Button-Original:active { transform: scale(0.98); }
 
-/* ЗЕЛЕНАЯ КНОПКА */
 .Button--primary {
-    background-color: #00D68F !important; /* Зеленый фон */
+    background-color: #00D68F !important; /* Зеленый */
     color: #000000 !important; /* Черный текст */
 }
 
-/* ПРОЗРАЧНАЯ КНОПКА */
 .Button--secondary {
     background-color: rgba(255, 255, 255, 0.08) !important;
     color: #ffffff !important;
