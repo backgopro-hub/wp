@@ -36,17 +36,8 @@ function detectDevice() {
 }
 
 function openSetup() {
-    let targetLink = links.default;
-    if (['ios', 'ipad', 'iphone'].includes(currentPlatform)) targetLink = links.ios;
-    else if (currentPlatform === 'android') targetLink = links.android;
-    else if (['tdesktop', 'weba'].includes(currentPlatform)) {
-        if (navigator.userAgent.indexOf('Win') !== -1) targetLink = links.windows;
-        else if (navigator.userAgent.indexOf('Mac') !== -1) targetLink = links.macos;
-        else targetLink = links.windows;
-    } else if (currentPlatform === 'macos') targetLink = links.macos;
-
-    if (targetLink) tg.openLink(targetLink);
-    else tg.showAlert("Инструкция не найдена для этого устройства");
+    // Переходим на страницу настройки, передавая все параметры (ключ, id и т.д.)
+    window.location.href = 'setup.html' + window.location.search;
 }
 
 function openSupport() {
