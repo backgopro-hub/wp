@@ -7,8 +7,8 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="styles.css?v=step_33_percent">
-    <script src="setup.js?v=step_33_percent" defer></script>
+    <link rel="stylesheet" href="styles.css?v=final_fix_v3">
+    <script src="setup.js?v=final_fix_v3" defer></script>
 </head>
 <body class="ultima">
     <div class="fixed-background"></div>
@@ -53,9 +53,9 @@
 
                 <div id="step-buttons-container" class="Buttons-Row" style="display: none;">
                     
-                    <button class="Button-Original Button--primary" onclick="performInstall()">
+                    <button class="Button-Original Button--primary Button--pulsed" onclick="performInstall()">
                         Установить
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px;"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                     </button>
 
                     <button class="Button-Original Button--outline" onclick="nextStep()">
@@ -64,10 +64,7 @@
                     </button>
                 </div>
                 
-                <button class="Button-Link" onclick="goHome()">
-                    Вернуться назад
-                </button>
-            </div>
+                </div>
         </div>
     </div>
 </body>
