@@ -159,6 +159,55 @@ body {
 .device-badge svg { width: 18px; height: 18px; }
 
 .HomePageBottom__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* === ДОБАВИТЬ В КОНЕЦ styles.css === */
+
+/* Стили для страницы SETUP (SetupPage) */
+.SetupPage {
+    width: 100%; height: 100%; display: flex; flex-direction: column;
+    padding-top: 60px; padding-bottom: 20px;
+}
+.SetupPage__top { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; }
+
+/* Анимация колец (Rings) */
+.SetupPage__rings { position: absolute; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.SetupPage__rings div {
+    position: absolute; border-radius: 50%; border: 1px solid rgba(0, 214, 143, 0.1);
+    animation: setupRipple 3s infinite linear;
+}
+.SetupPage__rings div:nth-child(1) { animation-delay: 0s; }
+.SetupPage__rings div:nth-child(2) { animation-delay: 0.8s; }
+.SetupPage__rings div:nth-child(3) { animation-delay: 1.6s; }
+
+@keyframes setupRipple {
+    0% { width: 50px; height: 50px; opacity: 0.8; border-color: rgba(0, 214, 143, 0.4); }
+    100% { width: 350px; height: 350px; opacity: 0; border-color: transparent; }
+}
+
+/* Круговой прогресс бар */
+.SetupPage__progress { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
+.SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.progress-bg { fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 0.5; }
+.progress-fill {
+    fill: none; stroke: var(--primary); stroke-width: 0.8;
+    stroke-dasharray: 100; stroke-dashoffset: 100; stroke-linecap: round;
+    transition: stroke-dashoffset 1.5s ease-in-out;
+}
+.SetupPage__icon { position: absolute; color: #fff; filter: drop-shadow(0 0 10px rgba(0,214,143,0.5)); }
+
+/* Низ страницы настройки */
+.SetupPage__bottom { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; margin-top: auto; }
+.mt-2 { margin-top: 8px; margin-bottom: 24px; line-height: 1.4; font-size: 14px; color: #9ca3af; }
+.text-xl { font-size: 22px; font-weight: 700; color: #fff; margin: 0; }
+
+/* Пульсирующая кнопка */
+.Button--pulsed { margin-bottom: 12px; animation: btnPulse 2s infinite; box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
+@keyframes btnPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
+    70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(0, 214, 143, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
+}
+.Button--transparent { background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); }
 /* === ОРИГИНАЛЬНЫЙ ДИЗАЙН (SETUP PAGE) === */
 
 .SetupPage {
