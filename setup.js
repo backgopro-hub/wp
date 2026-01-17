@@ -1,23 +1,19 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-// === НАСТРОЙКА КНОПКИ "НАЗАД" ===
-// При нажатии возвращаемся на главную страницу (lochi.html или index.html)
+// === НАСТРОЙКА СИСТЕМНОЙ КНОПКИ НАЗАД ===
 tg.BackButton.show();
 tg.BackButton.onClick(() => {
-    // ВАЖНО: Укажи здесь точное имя твоего главного файла
+    // Укажи здесь точное имя файла главной страницы
     window.location.href = 'index.html' + window.location.search;
 });
 
-// === 1. ЧТЕНИЕ ДАННЫХ ИЗ URL (ОТ БОТА) ===
+// Чтение параметров
 const urlParams = new URLSearchParams(window.location.search);
 const getParam = (key) => (urlParams.get(key) ? decodeURIComponent(urlParams.get(key)) : '');
-
-// Получаем ключ пользователя
 const vpnKey = getParam('vpn_key');
 
-// === 2. ССЫЛКИ (СТРОГО ИЗ SETTINGS.PY) ===
-// Теперь тут нет жестких ссылок. Если бот их не пришлет — они будут пустыми.
+// Ссылки
 const LINKS = {
     ios: getParam('link_ios'),
     android: getParam('link_android'),
@@ -26,41 +22,28 @@ const LINKS = {
     manual: getParam('link_manual')
 };
 
-// === 3. ОПРЕДЕЛЕНИЕ УСТРОЙСТВА ===
 const platform = tg.platform || 'unknown';
 let deviceName = 'устройстве';
 let appName = 'Приложение';
-let installLink = LINKS.manual; // По умолчанию - инструкция
+let installLink = LINKS.manual;
 
 function initPage() {
-    // Логика выбора ссылки в зависимости от платформы
     if (['ios', 'ipad', 'iphone'].includes(platform)) {
-        deviceName = 'iOS'; 
-        appName = 'V2RayTun'; 
-        installLink = LINKS.ios;
+        deviceName = 'iOS'; appName = 'V2RayTun'; installLink = LINKS.ios;
     } else if (platform === 'android') {
-        deviceName = 'Android'; 
-        appName = 'V2RayTun'; 
-        installLink = LINKS.android;
+        deviceName = 'Android'; appName = 'V2RayTun'; installLink = LINKS.android;
     } else if (['tdesktop', 'weba'].includes(platform) && navigator.userAgent.indexOf('Win') !== -1) {
-        deviceName = 'Windows'; 
-        appName = 'Hiddify'; 
-        installLink = LINKS.windows;
+        deviceName = 'Windows'; appName = 'Hiddify'; installLink = LINKS.windows;
     } else if (platform === 'macos') {
-        deviceName = 'macOS'; 
-        appName = 'V2RayTun'; 
-        installLink = LINKS.macos;
+        deviceName = 'macOS'; appName = 'V2RayTun'; installLink = LINKS.macos;
     }
 
-    // Заполняем тексты на странице
     document.getElementById('setup-title').innerText = `Настройка на ${deviceName}`;
     document.getElementById('btn-start-text').innerText = `Начать настройку на ${deviceName}`;
 }
 
-// Иконка "Облако вниз" (для кнопки установки)
 const ICON_CLOUD_DOWN = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>`;
 
-// === ЛОГИКА АНИМАЦИИ (ШАГ 1 - 33%) ===
 function startProcess() {
     if (!vpnKey) {
         tg.showAlert("Сначала купите подписку!");
@@ -69,43 +52,32 @@ function startProcess() {
     
     tg.HapticFeedback.impactOccurred('medium');
 
-    // 1. Заполняем круг на 33% (остаток 190 от 283)
+    // 1. Анимация 33%
     document.getElementById('progress-circle').style.strokeDashoffset = '190'; 
 
-    // 2. Меняем иконку по центру
+    // 2. Иконка Облако Вниз
     document.getElementById('status-icon').innerHTML = ICON_CLOUD_DOWN;
     
-    // 3. Меняем тексты
+    // 3. Тексты
     document.getElementById('setup-title').innerText = "Приложение";
     document.getElementById('setup-subtitle').innerHTML = `Установите приложение ${appName} <br>и вернитесь к этому экрану`;
 
-    // 4. Переключаем кнопки (скрываем большую, показываем две маленьких)
+    // 4. Кнопки (скрываем старые, показываем новые)
     document.getElementById('initial-buttons').style.display = 'none';
     document.getElementById('step-buttons-container').style.display = 'flex';
 }
 
-// === ДЕЙСТВИЯ КНОПОК ===
-
-// Кнопка "Установить"
 function performInstall() {
     tg.HapticFeedback.impactOccurred('light');
-    if (installLink) {
-        tg.openLink(installLink);
-    } else {
-        tg.showAlert("Ссылка на приложение не найдена в настройках бота!");
-    }
+    if (installLink) tg.openLink(installLink);
+    else tg.showAlert("Ссылка не найдена");
 }
 
-// Кнопка "Далее"
 function nextStep() {
     tg.HapticFeedback.impactOccurred('light');
-    // Тут мы позже допишем переход к следующему шагу (66%)
-    tg.showAlert("Переход к Шагу 2...");
+    tg.showAlert("Переход к шагу 2...");
 }
 
-function openManual() { 
-    if (LINKS.manual) tg.openLink(LINKS.manual);
-}
+function openManual() { if(LINKS.manual) tg.openLink(LINKS.manual); }
 
-// Запуск при загрузке
 document.addEventListener('DOMContentLoaded', initPage);
