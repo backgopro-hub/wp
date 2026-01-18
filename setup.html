@@ -10,8 +10,8 @@
     <style>
         /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
         :root {
-            --primary: #00D68F;
-            --bg: #010101;
+            --bg: #031810; /* Более глубокий темно-зеленый фон как на скриншоте */
+            --accent: #00D68F;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -25,115 +25,114 @@
             position: relative;
         }
 
+        /* Виньетка (Радиальный градиент фона) */
         .fixed-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            background: #010101 url('bg.png') no-repeat top center; background-size: cover;
-            pointer-events: none;
+            /* Градиент от чуть светлого центра к темным краям */
+            background: radial-gradient(circle at center, #0a2e20 0%, #02120b 100%);
         }
 
-        .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 16px; max-width: 500px; margin: 0 auto; }
+        .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 20px; max-width: 500px; margin: 0 auto; }
         
-        /* === ИСПРАВЛЕННАЯ ВЕРСТКА === */
         .SetupPage { 
             width: 100%; height: 100%; 
             display: flex; flex-direction: column; 
-            /* Центрируем всё содержимое по вертикали, но чуть выше центра (40vh) */
-            justify-content: center; 
-            align-items: center;
-            padding-bottom: 10vh; /* Визуально поднимаем контент вверх */
-            gap: 40px; /* Расстояние между Кольцами и Текстом */
+            justify-content: space-between; /* Распределяем верх и низ */
+            padding-top: 40px; padding-bottom: 30px;
         }
 
-        /* Верхняя часть теперь не растягивается, а занимает фиксированное место */
+        /* Верхняя часть (Кольца) */
         .SetupPage__top { 
             position: relative; 
             display: flex; justify-content: center; align-items: center;
-            width: 100%;
-            height: 280px; /* Фиксированная высота для области колец */
-            flex-shrink: 0;
+            flex: 1; /* Занимает всё свободное место */
         }
 
-        /* === КОЛЬЦА (Увеличил масштаб для "близости") === */
+        /* === КОЛЬЦА (МАСШТАБ КАК В ОРИГИНАЛЕ) === */
         .SetupPage__rings { position: absolute; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-        .SetupPage__rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .SetupPage__rings div { 
+            position: absolute; 
+            border-radius: 50%; 
+            border: 1px solid rgba(255, 255, 255, 0.08); /* Очень тонкие и прозрачные */
+        }
         
-        /* Слегка увеличил кольца */
-        .ring-1 { width: 180px; height: 180px; }
-        .ring-2 { width: 280px; height: 280px; opacity: 0.6; }
-        .ring-3 { width: 380px; height: 380px; opacity: 0.3; }
-        .ring-4 { width: 480px; height: 480px; opacity: 0.1; } /* Добавил 4-е кольцо для объема */
+        /* Увеличил размеры в 2 раза */
+        .ring-1 { width: 280px; height: 280px; }
+        .ring-2 { width: 420px; height: 420px; opacity: 0.7; }
+        .ring-3 { width: 560px; height: 560px; opacity: 0.4; } 
 
-        /* === ПРОГРЕСС БАР (32x32 ViewBox) === */
+        /* === ЦЕНТРАЛЬНАЯ ИКОНКА === */
         .SetupPage__progress { 
             position: relative; 
-            width: 80px; height: 80px; 
+            width: 100px; height: 100px; /* Размер круга прогресса */
             display: flex; align-items: center; justify-content: center; 
         }
         .SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
         
-        .progress-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 1px; }
+        .progress-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 1px; }
         
         .progress-fill {
-            fill: none; stroke: #00D68F; 
+            fill: none; stroke: var(--accent); 
             stroke-width: 1.5px; stroke-linecap: round;
             stroke-dasharray: 99.27; stroke-dashoffset: 99.27; 
             transition: stroke-dashoffset 0.8s ease-in-out;
         }
         
         .SetupPage__icon { position: absolute; color: #fff; display: flex; align-items: center; justify-content: center; }
-        .SetupPage__icon svg { width: 42px; height: 42px; }
+        /* Иконка крупнее и тоньше */
+        .SetupPage__icon svg { width: 56px; height: 56px; stroke-width: 1.2px; }
 
         /* === НИЗ (Текст + Кнопки) === */
         .SetupPage__bottom { 
             width: 100%; 
             display: flex; flex-direction: column; 
             align-items: center; text-align: center; 
-            /* Убрал margin-top: auto, теперь он прижат к кольцам с отступом gap */
+            z-index: 2;
         }
 
-        .text-title { font-size: 20px; font-weight: 700; color: #ffffff; margin: 0; }
-        .text-subtitle { font-size: 15px; color: #9ca3af; margin-top: 8px; margin-bottom: 32px; line-height: 1.4; }
+        .text-title { font-size: 24px; font-weight: 600; color: #ffffff; margin: 0; letter-spacing: -0.5px; }
+        .text-subtitle { font-size: 16px; color: #8daaa0; margin-top: 10px; margin-bottom: 30px; line-height: 1.4; font-weight: 400; }
 
-        /* === КНОПКИ === */
-        .Buttons-Container { display: flex; flex-direction: column; width: 100%; gap: 16px; }
+        /* === КНОПКИ (НОВЫЙ ДИЗАЙН) === */
+        .Buttons-Container { display: flex; flex-direction: column; width: 100%; gap: 14px; }
         .Buttons-Row { display: flex; width: 100%; gap: 12px; }
 
         .Button-Original {
-            width: 100%; height: 54px;
-            border-radius: 16px;
+            width: 100%; height: 56px;
+            border-radius: 18px; /* Чуть больше скругление */
             font-family: 'Onest', sans-serif;
-            font-size: 14px; font-weight: 500;
+            font-size: 15px; font-weight: 600;
             display: flex; align-items: center; justify-content: center;
             border: none; cursor: pointer;
             position: relative; z-index: 1;
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.2s;
             margin: 0; white-space: nowrap;
         }
         .Button-Original:active { transform: scale(0.97); }
 
-        /* Primary */
+        /* --- PRIMARY: ГРАДИЕНТ КАК НА ФОТО --- */
         .Button--primary {
-            background: #00D68F; color: #ffffff; gap: 8px;
-        }
-        .Button--pulsed { animation: shadow-pulse 2s infinite; }
-        @keyframes shadow-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(0, 214, 143, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
-        }
-
-        /* Secondary (bg-primary/20) */
-        .Button--secondary {
-            background-color: rgba(0, 214, 143, 0.2); 
+            /* Градиент сверху вниз (светло-зеленый -> темно-зеленый) */
+            background: linear-gradient(180deg, #05D896 0%, #00B377 100%);
             color: #ffffff;
-            transition: background-color 0.2s, transform 0.2s;
+            gap: 8px;
+            /* Мягкая тень-свечение */
+            box-shadow: 0 8px 20px -4px rgba(0, 214, 143, 0.4);
         }
-        .Button--secondary:active { background-color: rgba(0, 214, 143, 0.3); }
 
-        /* Lighted (Outline) */
+        /* --- SECONDARY: ТЕМНАЯ СТЕКЛЯННАЯ --- */
+        .Button--secondary {
+            /* Темно-зеленый полупрозрачный фон */
+            background-color: rgba(9, 43, 32, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        /* --- LIGHTED (Далее) --- */
         .Button--variant_lighted {
             background: transparent;
-            border: 1px solid rgba(0, 214, 143, 0.5); 
+            border: 1px solid rgba(0, 214, 143, 0.4); 
             color: #ffffff;
             gap: 28px;
         }
@@ -152,7 +151,6 @@
                     <div class="ring-1"></div>
                     <div class="ring-2"></div>
                     <div class="ring-3"></div>
-                    <div class="ring-4"></div>
                 </div>
                 
                 <div class="SetupPage__progress">
@@ -162,7 +160,7 @@
                     </svg>
                     
                     <div class="SetupPage__icon" id="status-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5 3-3"></path><path d="m2 22 3-3"></path><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path><path d="M7.5 13.5 10 11"></path><path d="M10.5 16.5 13 14"></path><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5 3-3"></path><path d="m2 22 3-3"></path><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path><path d="M7.5 13.5 10 11"></path><path d="M10.5 16.5 13 14"></path><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path></svg>
                     </div>
                 </div>
             </div>
@@ -174,8 +172,8 @@
                 </p>
 
                 <div id="initial-buttons" class="Buttons-Container">
-                    <button class="Button-Original Button--primary Button--pulsed" id="start-btn" onclick="startProcess()">
-                        <span id="btn-start-text">Начать настройку</span>
+                    <button class="Button-Original Button--primary" id="start-btn" onclick="startProcess()">
+                        <span id="btn-start-text">Начать настройку на этом устройстве</span>
                     </button>
 
                     <button class="Button-Original Button--secondary" onclick="openManual()">
@@ -184,7 +182,7 @@
                 </div>
 
                 <div id="step-buttons-container" class="Buttons-Row" style="display: none;">
-                    <button class="Button-Original Button--primary Button--pulsed" onclick="performInstall()">
+                    <button class="Button-Original Button--primary" onclick="performInstall()">
                         Установить
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>
                     </button>
@@ -223,7 +221,8 @@
             else if (platform === 'macos') { deviceName = 'macOS'; appName = 'V2RayTun'; installLink = LINKS.macos; }
 
             document.getElementById('setup-title').innerText = `Настройка на ${deviceName}`;
-            document.getElementById('btn-start-text').innerText = `Начать настройку на ${deviceName}`;
+            // Убрал лишний текст, чтобы кнопка не была слишком длинной
+            document.getElementById('btn-start-text').innerText = `Начать настройку на устройстве`;
         }
 
         const ICON_CLOUD = `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>`;
@@ -236,6 +235,7 @@
             document.getElementById('status-icon').innerHTML = ICON_CLOUD;
             document.getElementById('setup-title').innerText = "Приложение";
             document.getElementById('setup-subtitle').innerHTML = `Установите приложение ${appName} <br>и вернитесь к этому экрану`;
+
             document.getElementById('initial-buttons').style.display = 'none';
             document.getElementById('step-buttons-container').style.display = 'flex';
         }
