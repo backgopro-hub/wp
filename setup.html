@@ -11,7 +11,7 @@
         /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
         :root {
             --primary: #00D68F;
-            --bg: #010101;
+            --bg-dark: #010101;
         }
 
         * { 
@@ -26,12 +26,23 @@
             width: 100%; 
             height: 100vh;
             font-family: 'Onest', sans-serif;
-            background-color: var(--bg);
             color: #fff;
             overflow: hidden;
             position: fixed;
             display: flex;
             flex-direction: column;
+
+            /* === ФОН С bg.png === */
+            background-color: var(--bg-dark);
+            /* Слой 1: Виньетка (затемнение краев для глубины) */
+            /* Слой 2: Твоя картинка bg.png */
+            background-image: 
+                radial-gradient(circle at center, rgba(0,0,0,0.1) 0%, #000000 100%),
+                url('bg.png');
+            
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .App { 
@@ -42,9 +53,10 @@
             max-width: 500px; 
             margin: 0 auto;
             width: 100%;
+            z-index: 1; /* Поверх фона */
         }
         
-        /* === ОСНОВНАЯ СТРУКТУРА КАК В ОРИГИНАЛЕ === */
+        /* === ОСНОВНАЯ СТРУКТУРА === */
         .SetupPage { 
             width: 100%; 
             flex: 1;
@@ -67,7 +79,7 @@
             flex-shrink: 0;
         }
 
-        /* === КОЛЬЦА ТОЧНО КАК В ОРИГИНАЛЕ === */
+        /* === КОЛЬЦА === */
         .SetupPage__rings { 
             position: absolute; 
             width: 100%;
@@ -81,6 +93,7 @@
         .SetupPage__rings div { 
             position: absolute; 
             border-radius: 50%; 
+            /* Очень тонкая линия, чтобы не спорить с фоном */
             border: 1px solid rgba(255, 255, 255, 0.05);
             animation: ringPulse 4s ease-in-out infinite;
             top: 50%;
@@ -88,38 +101,18 @@
             transform: translate(-50%, -50%);
         }
         
-        /* Размеры и прозрачность как в оригинале */
-        .ring-1 { 
-            width: 180px; 
-            height: 180px; 
-            border-color: rgba(255, 255, 255, 0.05);
-            animation-delay: 0s;
-        }
-        .ring-2 { 
-            width: 260px; 
-            height: 260px; 
-            border-color: rgba(255, 255, 255, 0.08);
-            animation-delay: 0.5s;
-        }
-        .ring-3 { 
-            width: 340px; 
-            height: 340px; 
-            border-color: rgba(255, 255, 255, 0.12);
-            animation-delay: 1s;
-        }
-        .ring-4 { 
-            width: 420px; 
-            height: 420px; 
-            border-color: rgba(255, 255, 255, 0.15);
-            animation-delay: 1.5s;
-        }
+        /* Размеры (vh для масштаба как в оригинале) */
+        .ring-1 { width: 40vh; height: 40vh; animation-delay: 0s; }
+        .ring-2 { width: 60vh; height: 60vh; animation-delay: 0.5s; opacity: 0.8; }
+        .ring-3 { width: 80vh; height: 80vh; animation-delay: 1s; opacity: 0.6; }
+        .ring-4 { width: 100vh; height: 100vh; animation-delay: 1.5s; opacity: 0.4; }
 
         @keyframes ringPulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.7; }
+            0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.02); }
         }
 
-        /* === ПРОГРЕСС БАР - ТОЧНАЯ КОПИЯ ОРИГИНАЛА === */
+        /* === ПРОГРЕСС БАР === */
         .SetupPage__progress { 
             position: relative; 
             width: 100px; 
@@ -134,18 +127,19 @@
             width: 100%; 
             height: 100%; 
             transform: rotate(-90deg);
+            filter: drop-shadow(0 0 15px rgba(0, 214, 143, 0.2));
         }
         
         .progress-bg { 
             fill: none; 
-            stroke: transparent; 
-            stroke-width: 0.2; 
+            stroke: rgba(255, 255, 255, 0.1); 
+            stroke-width: 1.5; /* Чуть толще */
         }
         
         .progress-fill {
             fill: none; 
-            stroke: #00D68F;
-            stroke-width: 0.2; 
+            stroke: url(#progress-gradient);
+            stroke-width: 1.5; 
             stroke-linecap: round;
             stroke-dasharray: 99.274; 
             stroke-dashoffset: 99.274; 
@@ -167,13 +161,13 @@
         }
         
         .SetupPage__icon svg { 
-            width: 84px; 
-            height: 84px; 
-            color: #00D68F;
-            filter: drop-shadow(0 0 10px rgba(0, 214, 143, 0.3));
+            width: 50px; /* Размер иконки */
+            height: 50px; 
+            color: #fff;
+            filter: drop-shadow(0 0 10px rgba(0, 214, 143, 0.5));
         }
 
-        /* === НИЖНЯЯ ЧАСТЬ С ТЕКСТОМ И КНОПКАМИ === */
+        /* === НИЖНЯЯ ЧАСТЬ === */
         .SetupPage__bottom { 
             width: 100%; 
             display: flex; 
@@ -182,12 +176,13 @@
             text-align: center; 
             padding-bottom: 40px;
             flex-shrink: 0;
+            /* Легкий градиент снизу вверх, чтобы кнопки читались */
+            background: linear-gradient(0deg, #000000 0%, transparent 100%);
         }
 
-        /* Текст как в оригинале */
         .text-title { 
-            font-size: 20px; 
-            font-weight: 600; 
+            font-size: 22px; 
+            font-weight: 700; 
             color: #FFFFFF;
             margin: 0 0 8px 0;
             line-height: 1.2;
@@ -201,12 +196,12 @@
             font-weight: 400;
         }
 
-        /* === КНОПКИ - ТОЧНАЯ КОПИЯ ОРИГИНАЛА === */
+        /* === КНОПКИ === */
         .Buttons-Container { 
             display: flex; 
             flex-direction: column; 
             width: 100%; 
-            gap: 12px; 
+            gap: 14px; 
         }
 
         .Buttons-Row { 
@@ -215,14 +210,14 @@
             gap: 12px; 
         }
 
-        /* Базовый стиль кнопки как в оригинале */
+        /* Базовый стиль кнопки */
         .Button-Original {
             width: 100%; 
-            height: 54px;
-            border-radius: 16px;
+            height: 58px;
+            border-radius: 18px;
             font-family: 'Onest', sans-serif;
-            font-size: 14px; 
-            font-weight: 500;
+            font-size: 15px; 
+            font-weight: 600;
             display: flex; 
             align-items: center; 
             justify-content: center;
@@ -233,125 +228,84 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             margin: 0; 
             white-space: nowrap;
-            overflow: hidden;
             user-select: none;
         }
         
-        .Button-Original:active { 
-            transform: scale(0.97); 
-        }
+        .Button-Original:active { transform: scale(0.97); }
         
-        /* Primary кнопка - основной акцент */
+        /* Primary кнопка (Градиент) */
         .Button--primary {
-            background-color: #00D68F; 
+            background: linear-gradient(180deg, #10B981 0%, #047857 100%);
             color: #FFFFFF; 
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
-        /* Анимация пульсации как в оригинале */
-        .Button--pulsed { 
-            animation: shadowPulse 2s infinite; 
-        }
+        /* Анимация пульсации */
+        .Button--pulsed { animation: shadowPulse 2.5s infinite; }
         
         @keyframes shadowPulse {
-            0% { 
-                box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); 
-            }
-            70% { 
-                box-shadow: 0 0 0 10px rgba(0, 214, 143, 0); 
-            }
-            100% { 
-                box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); 
-            }
+            0% { box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 0 0 0 rgba(16, 185, 129, 0); }
         }
         
-        /* Secondary кнопка - прозрачная */
+        /* Secondary кнопка (Стекло) */
         .Button--secondary {
-            background-color: rgba(0, 214, 143, 0.2); 
+            background-color: rgba(255, 255, 255, 0.03); 
             color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
         }
         
-        .Button--secondary:active { 
-            background-color: rgba(0, 214, 143, 0.3); 
-        }
+        .Button--secondary:active { background-color: rgba(255, 255, 255, 0.1); }
 
         /* Кнопка с иконкой */
-        .Button--with-icon {
-            gap: 8px;
+        .Button--with-icon { gap: 8px; }
+        .Button--with-icon svg { width: 20px; height: 20px; }
+
+        /* Outline кнопка */
+        .Button--outline {
+            background: transparent;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            color: #FFFFFF;
+            gap: 28px;
         }
-        
-        .Button--with-icon svg { 
-            width: 20px; 
-            height: 20px; 
+        .Button--outline svg { margin-right: -16px; }
+
+        /* === ЭФФЕКТ ЧАСТИЦ (Поверх фона, но под контентом) === */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0; /* Между фоном и контентом */
         }
 
-        /* === МЕДИА-ЗАПРОСЫ ДЛЯ АДАПТИВНОСТИ === */
-        @media (max-width: 480px) {
-            .SetupPage {
-                padding-top: 20px;
-            }
-            
-            .SetupPage__top {
-                height: 45vh;
-                min-height: 250px;
-            }
-            
-            .ring-1 { width: 150px; height: 150px; }
-            .ring-2 { width: 220px; height: 220px; }
-            .ring-3 { width: 290px; height: 290px; }
-            .ring-4 { width: 360px; height: 360px; }
-            
-            .SetupPage__progress {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .SetupPage__icon {
-                width: 64px;
-                height: 64px;
-            }
-            
-            .SetupPage__icon svg {
-                width: 64px;
-                height: 64px;
-            }
-            
-            .text-title {
-                font-size: 18px;
-            }
-            
-            .text-subtitle {
-                font-size: 14px;
-            }
+        .particle {
+            position: absolute;
+            background: rgba(0, 214, 143, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
         }
 
-        @media (max-height: 700px) {
-            .SetupPage__top {
-                height: 40vh;
-            }
-            
-            .SetupPage__bottom {
-                padding-bottom: 20px;
-            }
-        }
-
-        /* === ЭФФЕКТЫ ПРИ НАВЕДЕНИИ (ДЛЯ ДЕСКТОПА) === */
-        @media (hover: hover) {
-            .Button--primary:hover {
-                background-color: #00E69A;
-            }
-            
-            .Button--secondary:hover {
-                background-color: rgba(0, 214, 143, 0.25);
-            }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
 
     </style>
 </head>
 <body class="ultima">
+    <div class="particles" id="particles"></div>
+
     <div class="App">
         <div class="SetupPage">
             
-            <!-- Верхняя часть с кольцами и прогрессом -->
             <div class="SetupPage__top">
                 <div class="SetupPage__rings">
                     <div class="ring-1"></div>
@@ -360,14 +314,18 @@
                     <div class="ring-4"></div>
                 </div>
                 
-                <!-- Прогресс круг -->
                 <div class="SetupPage__progress">
                     <svg viewBox="0 0 32 32">
+                        <defs>
+                            <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00D68F" />
+                                <stop offset="100%" stop-color="#00B478" />
+                            </linearGradient>
+                        </defs>
                         <circle cx="16" cy="16" r="15.8" class="progress-bg"></circle>
                         <circle cx="16" cy="16" r="15.8" class="progress-fill" id="progress-circle"></circle>
                     </svg>
                     
-                    <!-- Иконка в центре -->
                     <div class="SetupPage__icon" id="status-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m19 5 3-3"></path>
@@ -381,14 +339,12 @@
                 </div>
             </div>
 
-            <!-- Нижняя часть с текстом и кнопками -->
             <div class="SetupPage__bottom">
                 <p class="text-title" id="setup-title">Настройка устройства</p>
                 <p class="text-subtitle" id="setup-subtitle">
                     Настройка VPN происходит <br>в 3 шага и занимает пару минут
                 </p>
 
-                <!-- Начальные кнопки -->
                 <div id="initial-buttons" class="Buttons-Container">
                     <button class="Button-Original Button--primary Button--pulsed" id="start-btn" onclick="startProcess()">
                         <span id="btn-start-text">Начать настройку</span>
@@ -399,7 +355,6 @@
                     </button>
                 </div>
 
-                <!-- Кнопки для шагов (скрыты изначально) -->
                 <div id="step-buttons-container" class="Buttons-Row" style="display: none;">
                     <button class="Button-Original Button--primary Button--pulsed Button--with-icon" onclick="performInstall()">
                         Установить
@@ -410,7 +365,7 @@
                         </svg>
                     </button>
 
-                    <button class="Button-Original Button--with-icon" onclick="nextStep()" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <button class="Button-Original Button--outline Button--with-icon" onclick="nextStep()">
                         Далее
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M5 12h14"></path>
@@ -425,22 +380,13 @@
     <script>
         // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
-        
-        // Расширяем на весь экран
         tg.expand();
-        
-        // Настройка кнопки "Назад"
         tg.BackButton.show();
-        tg.BackButton.onClick(() => { 
-            window.location.href = 'index.html' + window.location.search; 
-        });
+        tg.BackButton.onClick(() => { window.location.href = 'index.html' + window.location.search; });
 
         // Получение параметров из URL
         const urlParams = new URLSearchParams(window.location.search);
-        const getParam = (key) => {
-            return urlParams.get(key) ? decodeURIComponent(urlParams.get(key)) : '';
-        };
-        
+        const getParam = (key) => { return urlParams.get(key) ? decodeURIComponent(urlParams.get(key)) : ''; };
         const vpnKey = getParam('vpn_key');
         
         // Ссылки из параметров
@@ -459,85 +405,66 @@
         let installLink = LINKS.manual;
         let step = 1;
 
+        // Создание эффекта частиц
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 15;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 3 + 1;
+                const posX = Math.random() * 100;
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
         // Инициализация страницы
         function initPage() {
-            // Определяем устройство и настройки
+            createParticles();
             if (['ios', 'ipad', 'iphone'].includes(platform)) {
-                deviceName = 'iOS';
-                appName = 'V2RayTun';
-                installLink = LINKS.ios;
+                deviceName = 'iOS'; appName = 'V2RayTun'; installLink = LINKS.ios;
             } else if (platform === 'android') {
-                deviceName = 'Android';
-                appName = 'V2RayTun';
-                installLink = LINKS.android;
+                deviceName = 'Android'; appName = 'V2RayTun'; installLink = LINKS.android;
             } else if (['tdesktop', 'weba'].includes(platform) && navigator.userAgent.indexOf('Win') !== -1) {
-                deviceName = 'Windows';
-                appName = 'Hiddify';
-                installLink = LINKS.windows;
+                deviceName = 'Windows'; appName = 'Hiddify'; installLink = LINKS.windows;
             } else if (platform === 'macos') {
-                deviceName = 'macOS';
-                appName = 'V2RayTun';
-                installLink = LINKS.macos;
+                deviceName = 'macOS'; appName = 'V2RayTun'; installLink = LINKS.macos;
             }
-
-            // Обновляем текст на странице
             document.getElementById('setup-title').textContent = `Настройка на ${deviceName}`;
             document.getElementById('btn-start-text').textContent = `Начать настройку на ${deviceName}`;
         }
 
-        // SVG иконки
-        const ICON_CLOUD = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 13v8l-4-4"></path>
-                <path d="m12 21 4-4"></path>
-                <path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path>
-            </svg>
-        `;
+        const ICON_CLOUD = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>`;
+        const ICON_CHECK = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+        const ICON_PLUG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"></path><path d="M9 8V2"></path><path d="M15 8V2"></path><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"></path></svg>`;
 
-        const ICON_CHECK = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-        `;
-
-        const ICON_PLUG = `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22v-5"></path>
-                <path d="M9 8V2"></path>
-                <path d="M15 8V2"></path>
-                <path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"></path>
-            </svg>
-        `;
-
-        // Запуск процесса настройки
         function startProcess() {
-            // Проверяем наличие ключа
             if (!vpnKey) {
                 tg.showAlert("Сначала купите подписку!");
                 tg.HapticFeedback.impactOccurred('heavy');
                 return;
             }
-
-            // Тактильный отклик
             tg.HapticFeedback.impactOccurred('medium');
-
-            // Шаг 1: Установка приложения
             step = 1;
-            updateProgress(33); // 33% - шаг 1
+            updateProgress(33);
             updateUIForStep(step);
         }
 
-        // Обновление прогресса
         function updateProgress(percent) {
             const progressCircle = document.getElementById('progress-circle');
             const circumference = 99.274;
             const offset = circumference - (percent / 100) * circumference;
-            
+            progressCircle.style.transition = 'stroke-dashoffset 0.7s ease-in-out';
             progressCircle.style.strokeDashoffset = offset;
         }
 
-        // Обновление интерфейса для текущего шага
         function updateUIForStep(stepNumber) {
             const title = document.getElementById('setup-title');
             const subtitle = document.getElementById('setup-subtitle');
@@ -547,31 +474,24 @@
 
             switch(stepNumber) {
                 case 1:
-                    // Шаг 1: Установка приложения
                     title.textContent = "Приложение";
                     subtitle.innerHTML = `Установите приложение ${appName}<br>и вернитесь к этому экрану`;
                     statusIcon.innerHTML = ICON_CLOUD;
                     initialButtons.style.display = 'none';
                     stepButtons.style.display = 'flex';
                     break;
-                    
                 case 2:
-                    // Шаг 2: Настройка подключения
                     updateProgress(66);
                     title.textContent = "Подключение";
                     subtitle.innerHTML = `Подключитесь к VPN серверу<br>через приложение ${appName}`;
                     statusIcon.innerHTML = ICON_PLUG;
                     break;
-                    
                 case 3:
-                    // Шаг 3: Завершение
                     updateProgress(100);
                     title.textContent = "Готово!";
                     subtitle.innerHTML = `VPN успешно настроен<br>на вашем устройстве`;
                     statusIcon.innerHTML = ICON_CHECK;
                     stepButtons.style.display = 'none';
-                    
-                    // Показываем сообщение об успехе
                     setTimeout(() => {
                         tg.showAlert("Настройка успешно завершена!");
                         tg.HapticFeedback.notificationOccurred('success');
@@ -580,59 +500,33 @@
             }
         }
 
-        // Установка приложения
         function performInstall() {
             tg.HapticFeedback.impactOccurred('light');
-            
             if (installLink) {
-                // Открываем ссылку на установку
                 tg.openLink(installLink);
-                
-                // Показываем подсказку
                 tg.showAlert(`Открыта ссылка для установки ${appName}. После установки вернитесь в это окно и нажмите "Далее".`);
             } else {
                 tg.showAlert("Ссылка для установки не найдена");
             }
         }
 
-        // Переход к следующему шагу
         function nextStep() {
             tg.HapticFeedback.impactOccurred('light');
-            
             if (step < 3) {
                 step++;
                 updateUIForStep(step);
-            }
-        }
-
-        // Открытие мануала для другого устройства
-        function openManual() {
-            if (LINKS.manual) {
-                tg.openLink(LINKS.manual);
             } else {
-                tg.showAlert("Инструкция не найдена");
+                tg.showAlert("Настройка уже завершена!");
             }
         }
 
-        // Инициализация при загрузке
+        function openManual() {
+            if (LINKS.manual) { tg.openLink(LINKS.manual); } 
+            else { tg.showAlert("Инструкция не найдена"); }
+        }
+
         document.addEventListener('DOMContentLoaded', initPage);
-
-        // Дополнительные настройки
-        setTimeout(() => {
-            // Настройка анимации прогресса
-            const progressCircle = document.getElementById('progress-circle');
-            progressCircle.style.transition = 'stroke-dashoffset 0.7s ease-in-out';
-            
-            // Установка начального прогресса
-            updateProgress(0);
-        }, 100);
-
-        // Обработка нажатий вне кнопок (для тестирования)
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.Button-Original')) {
-                // Можно добавить дополнительные обработчики
-            }
-        });
+        setTimeout(() => { updateProgress(0); }, 100);
 
     </script>
 </body>
