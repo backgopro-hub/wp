@@ -7,8 +7,131 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="styles.css?v=final_fix_v3">
-    <script src="setup.js?v=final_fix_v3" defer></script>
+    <style>
+        /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
+        :root {
+            --primary: #00D68F;
+            --bg: #010101;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body {
+            margin: 0; padding: 0; width: 100%; height: 100vh;
+            font-family: 'Onest', sans-serif;
+            background-color: var(--bg);
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .fixed-background {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background: #010101 url('bg.png') no-repeat top center; background-size: cover;
+            pointer-events: none;
+        }
+
+        .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 15px; max-width: 500px; margin: 0 auto; }
+        .SetupPage { width: 100%; height: 100%; display: flex; flex-direction: column; padding-top: 60px; padding-bottom: 20px; }
+        .SetupPage__top { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; }
+
+        /* === КОЛЬЦА === */
+        .SetupPage__rings { position: absolute; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; pointer-events: none; }
+        .SetupPage__rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .ring-1 { width: 160px; height: 160px; }
+        .ring-2 { width: 240px; height: 240px; opacity: 0.6; }
+        .ring-3 { width: 320px; height: 320px; opacity: 0.3; }
+
+        /* === ПРОГРЕСС БАР === */
+        .SetupPage__progress { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
+        .SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .progress-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 4; }
+        .progress-fill {
+            fill: none; stroke: #00D68F; stroke-width: 4; stroke-linecap: round;
+            stroke-dasharray: 283; stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.8s ease-in-out;
+        }
+        .SetupPage__icon { position: absolute; color: #fff; display: flex; align-items: center; justify-content: center; }
+
+        /* === ТЕКСТЫ === */
+        .SetupPage__bottom { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: auto; }
+        .text-title { font-size: 22px; font-weight: 700; color: #ffffff; margin: 0; }
+        .text-subtitle { font-size: 15px; color: #9ca3af; margin-top: 8px; margin-bottom: 24px; line-height: 1.4; }
+
+        /* ========================================= */
+        /* === КНОПКИ (ФИНАЛ) === */
+        /* ========================================= */
+
+        /* Контейнер для вертикальных кнопок (с отступом!) */
+        .Buttons-Container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 16px; /* ОТСТУП МЕЖДУ КНОПКАМИ */
+        }
+
+        /* Контейнер для горизонтальных кнопок (шаг 2) */
+        .Buttons-Row { 
+            display: flex; 
+            width: 100%; 
+            gap: 12px; 
+        }
+
+        /* Базовый стиль всех кнопок */
+        .Button-Original {
+            width: 100%; 
+            height: 56px; /* Чуть выше (было 54) */
+            border-radius: 16px;
+            
+            font-family: 'Onest', sans-serif;
+            font-size: 16px; /* ТЕКСТ БОЛЬШЕ (было 14) */
+            font-weight: 600; /* Жирнее */
+            
+            display: flex; align-items: center; justify-content: center;
+            border: none; cursor: pointer;
+            position: relative; z-index: 1;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 0; /* Убираем margin, так как используем gap */
+        }
+
+        .Button-Original:active { transform: scale(0.97); }
+
+        /* --- 1. КНОПКА "НАЧАТЬ" / "УСТАНОВИТЬ" (Яркая) --- */
+        .Button--primary {
+            background: linear-gradient(90deg, #00D68F 0%, #00b377 100%);
+            color: #ffffff;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 214, 143, 0.3);
+        }
+
+        /* Пульсация */
+        .Button--pulsed { animation: shadow-pulse 2s infinite; }
+        @keyframes shadow-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 214, 143, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
+        }
+
+        /* --- 2. КНОПКА "УСТАНОВИТЬ НА ДРУГОМ" (Полупрозрачная зеленая) --- */
+        .Button--secondary {
+            background-color: rgba(0, 214, 143, 0.2); /* bg-primary/20 */
+            color: #ffffff;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        .Button--secondary:active {
+            background-color: rgba(0, 214, 143, 0.3);
+        }
+
+        /* --- 3. КНОПКА "ДАЛЕЕ" (С рамкой) --- */
+        .Button--variant_lighted {
+            background: transparent;
+            border: 1px solid rgba(0, 214, 143, 0.5);
+            color: #ffffff;
+            gap: 28px; /* Большой отступ */
+        }
+        .Button--variant_lighted svg { margin-right: -16px; width: 22px; height: 22px; }
+
+    </style>
 </head>
 <body class="ultima">
     <div class="fixed-background"></div>
@@ -41,7 +164,8 @@
                     Настройка VPN происходит <br>в 3 шага и занимает пару минут
                 </p>
 
-                <div id="initial-buttons" style="width: 100%;">
+                <div id="initial-buttons" class="Buttons-Container">
+                    
                     <button class="Button-Original Button--primary Button--pulsed" id="start-btn" onclick="startProcess()">
                         <span id="btn-start-text">Начать настройку</span>
                     </button>
@@ -49,31 +173,104 @@
                     <button class="Button-Original Button--secondary" onclick="openManual()">
                         Установить на другом устройстве
                     </button>
+                    
                 </div>
 
                 <div id="step-buttons-container" class="Buttons-Row" style="display: none;">
-    
-    <button class="Button-Original Button--primary Button--pulsed" onclick="performInstall()">
-        Установить
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-download">
-            <path d="M12 13v8l-4-4"></path>
-            <path d="m12 21 4-4"></path>
-            <path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path>
-        </svg>
-    </button>
+                    
+                    <button class="Button-Original Button--primary Button--pulsed" onclick="performInstall()">
+                        Установить
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-download"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>
+                    </button>
 
-    <button class="Button-Original Button--variant_lighted" onclick="nextStep()">
-        Далее
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14"></path>
-            <path d="m12 5 7 7-7 7"></path>
-        </svg>
-    </button>
-
-</div>
-                
+                    <button class="Button-Original Button--variant_lighted" onclick="nextStep()">
+                        Далее
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                    </button>
+                    
                 </div>
+                
+            </div>
         </div>
     </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            window.location.href = 'index.html' + window.location.search;
+        });
+
+        // Чтение параметров
+        const urlParams = new URLSearchParams(window.location.search);
+        const getParam = (key) => (urlParams.get(key) ? decodeURIComponent(urlParams.get(key)) : '');
+        const vpnKey = getParam('vpn_key');
+
+        const LINKS = {
+            ios: getParam('link_ios'),
+            android: getParam('link_android'),
+            windows: getParam('link_windows'),
+            macos: getParam('link_macos'),
+            manual: getParam('link_manual')
+        };
+
+        const platform = tg.platform || 'unknown';
+        let deviceName = 'устройстве';
+        let appName = 'Приложение';
+        let installLink = LINKS.manual;
+
+        function initPage() {
+            if (['ios', 'ipad', 'iphone'].includes(platform)) {
+                deviceName = 'iOS'; appName = 'V2RayTun'; installLink = LINKS.ios;
+            } else if (platform === 'android') {
+                deviceName = 'Android'; appName = 'V2RayTun'; installLink = LINKS.android;
+            } else if (['tdesktop', 'weba'].includes(platform) && navigator.userAgent.indexOf('Win') !== -1) {
+                deviceName = 'Windows'; appName = 'Hiddify'; installLink = LINKS.windows;
+            } else if (platform === 'macos') {
+                deviceName = 'macOS'; appName = 'V2RayTun'; installLink = LINKS.macos;
+            }
+
+            document.getElementById('setup-title').innerText = `Настройка на ${deviceName}`;
+            document.getElementById('btn-start-text').innerText = `Начать настройку на ${deviceName}`;
+        }
+
+        const ICON_CLOUD_DOWN = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>`;
+
+        function startProcess() {
+            if (!vpnKey) {
+                tg.showAlert("Сначала купите подписку!");
+                return;
+            }
+            
+            tg.HapticFeedback.impactOccurred('medium');
+
+            // Анимация 33%
+            document.getElementById('progress-circle').style.strokeDashoffset = '190'; 
+            document.getElementById('status-icon').innerHTML = ICON_CLOUD_DOWN;
+            
+            document.getElementById('setup-title').innerText = "Приложение";
+            document.getElementById('setup-subtitle').innerHTML = `Установите приложение ${appName} <br>и вернитесь к этому экрану`;
+
+            // Смена кнопок
+            document.getElementById('initial-buttons').style.display = 'none';
+            document.getElementById('step-buttons-container').style.display = 'flex';
+        }
+
+        function performInstall() {
+            tg.HapticFeedback.impactOccurred('light');
+            if (installLink) tg.openLink(installLink);
+            else tg.showAlert("Ссылка не найдена");
+        }
+
+        function nextStep() {
+            tg.HapticFeedback.impactOccurred('light');
+            tg.showAlert("Переход к шагу 2...");
+        }
+
+        function openManual() { if(LINKS.manual) tg.openLink(LINKS.manual); }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
 </body>
 </html>
