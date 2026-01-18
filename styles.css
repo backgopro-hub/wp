@@ -278,3 +278,21 @@ body {
 /* Контейнер для кнопок в ряд */
 .Buttons-Row { display: flex; width: 100%; gap: 10px; }
 .Buttons-Row button { flex: 1; margin-bottom: 0; }
+
+/* --- ВАРИАНТ 3: ПОЛУПРОЗРАЧНАЯ ЗЕЛЕНАЯ (bg-primary/20) --- */
+/* Используется для кнопки "Установить на другом устройстве" */
+
+.Button--secondary {
+    /* #00D68F с прозрачностью 0.2 (20%) */
+    background-color: rgba(0, 214, 143, 0.2) !important; 
+    color: #ffffff !important;
+    
+    /* Плавность */
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+/* При нажатии чуть темнеет (до 30%) и уменьшается */
+.Button--secondary:active {
+    background-color: rgba(0, 214, 143, 0.3) !important;
+    transform: scale(0.97);
+}
