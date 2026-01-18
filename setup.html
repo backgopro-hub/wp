@@ -8,12 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
     
     <style>
+        /* === ГЛОБАЛЬНЫЕ СТИЛИ === */
         :root {
-            /* Базовые цвета */
-            --bg-dark: #000502; /* Почти черный */
-            --bg-light: #0d3023; /* Темно-зеленый центр */
-            --accent-top: #34D399; /* Светло-зеленый верх кнопки */
-            --accent-bot: #059669; /* Темно-зеленый низ кнопки */
+            --primary: #00D68F;
+            --bg: #010101;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -21,131 +19,125 @@
         body {
             margin: 0; padding: 0; width: 100%; height: 100vh;
             font-family: 'Onest', sans-serif;
-            background-color: var(--bg-dark);
+            background-color: var(--bg);
             color: #fff;
             overflow: hidden;
             position: relative;
         }
 
-        /* === ФОН (ГЛУБОКИЙ РАДИАЛЬНЫЙ ГРАДИЕНТ) === */
         .fixed-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            /* Свет идет из центра (30% от верха) и уходит в черноту */
-            background: radial-gradient(120% 80% at 50% 40%, #0f3528 0%, #000000 100%);
+            background: #010101 url('bg.png') no-repeat top center; background-size: cover;
             pointer-events: none;
         }
 
-        .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 20px; max-width: 500px; margin: 0 auto; }
+        .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 16px; max-width: 500px; margin: 0 auto; }
         
+        /* === ИСПРАВЛЕННАЯ ВЕРСТКА === */
         .SetupPage { 
             width: 100%; height: 100%; 
             display: flex; flex-direction: column; 
-            position: relative;
+            /* Центрируем всё содержимое по вертикали, но чуть выше центра (40vh) */
+            justify-content: center; 
+            align-items: center;
+            padding-bottom: 10vh; /* Визуально поднимаем контент вверх */
+            gap: 40px; /* Расстояние между Кольцами и Текстом */
         }
 
-        /* Верхняя часть (занимает все место, центрирует кольца) */
+        /* Верхняя часть теперь не растягивается, а занимает фиксированное место */
         .SetupPage__top { 
-            flex: 1; 
+            position: relative; 
             display: flex; justify-content: center; align-items: center;
-            position: relative;
-            /* Сдвигаем центр колец чуть выше, как на скрине */
-            margin-bottom: 20px; 
+            width: 100%;
+            height: 280px; /* Фиксированная высота для области колец */
+            flex-shrink: 0;
         }
 
-        /* === КОЛЬЦА (ОГРОМНЫЕ И ЕЛЕ ЗАМЕТНЫЕ) === */
+        /* === КОЛЬЦА (Увеличил масштаб для "близости") === */
         .SetupPage__rings { position: absolute; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-        .SetupPage__rings div { 
-            position: absolute; 
-            border-radius: 50%; 
-            /* Очень тонкая, еле видная линия */
-            border: 1px solid rgba(255, 255, 255, 0.04); 
-        }
+        .SetupPage__rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05); }
         
-        /* Размеры в VW, чтобы они были огромными на любом экране */
-        .ring-1 { width: 50vh; height: 50vh; }
-        .ring-2 { width: 75vh; height: 75vh; }
-        .ring-3 { width: 100vh; height: 100vh; opacity: 0.5; } 
+        /* Слегка увеличил кольца */
+        .ring-1 { width: 180px; height: 180px; }
+        .ring-2 { width: 280px; height: 280px; opacity: 0.6; }
+        .ring-3 { width: 380px; height: 380px; opacity: 0.3; }
+        .ring-4 { width: 480px; height: 480px; opacity: 0.1; } /* Добавил 4-е кольцо для объема */
 
-        /* === ЦЕНТРАЛЬНЫЙ КРУГ === */
+        /* === ПРОГРЕСС БАР (32x32 ViewBox) === */
         .SetupPage__progress { 
             position: relative; 
-            width: 90px; height: 90px; 
+            width: 80px; height: 80px; 
             display: flex; align-items: center; justify-content: center; 
         }
         .SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
         
-        .progress-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 1px; }
+        .progress-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 1px; }
         
         .progress-fill {
-            fill: none; stroke: var(--accent-top); 
+            fill: none; stroke: #00D68F; 
             stroke-width: 1.5px; stroke-linecap: round;
             stroke-dasharray: 99.27; stroke-dashoffset: 99.27; 
             transition: stroke-dashoffset 0.8s ease-in-out;
         }
         
-        /* Иконка вилки */
         .SetupPage__icon { position: absolute; color: #fff; display: flex; align-items: center; justify-content: center; }
-        .SetupPage__icon svg { width: 48px; height: 48px; stroke-width: 1.2px; opacity: 0.9; }
+        .SetupPage__icon svg { width: 42px; height: 42px; }
 
         /* === НИЗ (Текст + Кнопки) === */
         .SetupPage__bottom { 
             width: 100%; 
             display: flex; flex-direction: column; 
             align-items: center; text-align: center; 
-            padding-bottom: 30px; /* Отступ от низа экрана */
-            z-index: 10;
+            /* Убрал margin-top: auto, теперь он прижат к кольцам с отступом gap */
         }
 
-        .text-title { font-size: 24px; font-weight: 700; color: #ffffff; margin: 0; letter-spacing: 0.2px; }
-        .text-subtitle { font-size: 15px; color: #8baead; margin-top: 8px; margin-bottom: 32px; line-height: 1.4; font-weight: 400; }
+        .text-title { font-size: 20px; font-weight: 700; color: #ffffff; margin: 0; }
+        .text-subtitle { font-size: 15px; color: #9ca3af; margin-top: 8px; margin-bottom: 32px; line-height: 1.4; }
 
-        /* === КНОПКИ (НОВЫЕ СТИЛИ) === */
-        .Buttons-Container { display: flex; flex-direction: column; width: 100%; gap: 14px; }
+        /* === КНОПКИ === */
+        .Buttons-Container { display: flex; flex-direction: column; width: 100%; gap: 16px; }
         .Buttons-Row { display: flex; width: 100%; gap: 12px; }
 
         .Button-Original {
-            width: 100%; height: 58px; /* Чуть выше */
-            border-radius: 20px; /* Сильнее скругление */
+            width: 100%; height: 54px;
+            border-radius: 16px;
             font-family: 'Onest', sans-serif;
-            font-size: 16px; font-weight: 700; /* Жирный шрифт */
+            font-size: 14px; font-weight: 500;
             display: flex; align-items: center; justify-content: center;
             border: none; cursor: pointer;
             position: relative; z-index: 1;
-            transition: transform 0.1s;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             margin: 0; white-space: nowrap;
         }
         .Button-Original:active { transform: scale(0.97); }
 
-        /* --- 1. КНОПКА "НАЧАТЬ" (ВЕРТИКАЛЬНЫЙ ГРАДИЕНТ) --- */
+        /* Primary */
         .Button--primary {
-            /* Градиент сверху вниз: Светлый -> Темный */
-            background: linear-gradient(180deg, #10B981 0%, #047857 100%);
-            color: #ffffff;
-            gap: 8px;
-            /* Яркое свечение снизу */
-            box-shadow: 0 10px 30px -5px rgba(16, 185, 129, 0.4);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            background: #00D68F; color: #ffffff; gap: 8px;
+        }
+        .Button--pulsed { animation: shadow-pulse 2s infinite; }
+        @keyframes shadow-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 214, 143, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
         }
 
-        /* --- 2. КНОПКА "УСТАНОВИТЬ НА ДРУГОМ" (ТЕМНАЯ) --- */
+        /* Secondary (bg-primary/20) */
         .Button--secondary {
-            /* Темный, почти черный фон */
-            background: rgba(14, 28, 23, 0.6);
-            backdrop-filter: blur(12px);
-            /* Тонкая рамка */
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background-color: rgba(0, 214, 143, 0.2); 
             color: #ffffff;
-            font-weight: 600;
+            transition: background-color 0.2s, transform 0.2s;
         }
+        .Button--secondary:active { background-color: rgba(0, 214, 143, 0.3); }
 
-        /* --- 3. КНОПКА "ДАЛЕЕ" --- */
+        /* Lighted (Outline) */
         .Button--variant_lighted {
             background: transparent;
-            border: 1px solid rgba(16, 185, 129, 0.5); 
+            border: 1px solid rgba(0, 214, 143, 0.5); 
             color: #ffffff;
             gap: 28px;
         }
-        .Button--variant_lighted svg { margin-right: -16px; width: 22px; height: 22px; }
+        .Button--variant_lighted svg { margin-right: -16px; width: 20px; height: 20px; }
 
     </style>
 </head>
@@ -160,6 +152,7 @@
                     <div class="ring-1"></div>
                     <div class="ring-2"></div>
                     <div class="ring-3"></div>
+                    <div class="ring-4"></div>
                 </div>
                 
                 <div class="SetupPage__progress">
@@ -169,7 +162,7 @@
                     </svg>
                     
                     <div class="SetupPage__icon" id="status-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5 3-3"></path><path d="m2 22 3-3"></path><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path><path d="M7.5 13.5 10 11"></path><path d="M10.5 16.5 13 14"></path><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5 3-3"></path><path d="m2 22 3-3"></path><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path><path d="M7.5 13.5 10 11"></path><path d="M10.5 16.5 13 14"></path><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path></svg>
                     </div>
                 </div>
             </div>
@@ -181,8 +174,8 @@
                 </p>
 
                 <div id="initial-buttons" class="Buttons-Container">
-                    <button class="Button-Original Button--primary" id="start-btn" onclick="startProcess()">
-                        <span id="btn-start-text">Начать настройку на устройстве</span>
+                    <button class="Button-Original Button--primary Button--pulsed" id="start-btn" onclick="startProcess()">
+                        <span id="btn-start-text">Начать настройку</span>
                     </button>
 
                     <button class="Button-Original Button--secondary" onclick="openManual()">
@@ -191,7 +184,7 @@
                 </div>
 
                 <div id="step-buttons-container" class="Buttons-Row" style="display: none;">
-                    <button class="Button-Original Button--primary" onclick="performInstall()">
+                    <button class="Button-Original Button--primary Button--pulsed" onclick="performInstall()">
                         Установить
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>
                     </button>
