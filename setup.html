@@ -31,94 +31,90 @@
             pointer-events: none;
         }
 
-        .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 15px; max-width: 500px; margin: 0 auto; }
-        .SetupPage { width: 100%; height: 100%; display: flex; flex-direction: column; padding-top: 60px; padding-bottom: 20px; }
-        .SetupPage__top { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; }
+        .App { width: 100%; height: 100%; display: flex; justify-content: center; padding: 16px; max-width: 500px; margin: 0 auto; }
+        
+        /* === ИСПРАВЛЕННАЯ ВЕРСТКА === */
+        .SetupPage { 
+            width: 100%; height: 100%; 
+            display: flex; flex-direction: column; 
+            /* Центрируем всё содержимое по вертикали, но чуть выше центра (40vh) */
+            justify-content: center; 
+            align-items: center;
+            padding-bottom: 10vh; /* Визуально поднимаем контент вверх */
+            gap: 40px; /* Расстояние между Кольцами и Текстом */
+        }
 
-        /* === КОЛЬЦА (Rings) === */
-        .SetupPage__rings { position: absolute; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; pointer-events: none; }
+        /* Верхняя часть теперь не растягивается, а занимает фиксированное место */
+        .SetupPage__top { 
+            position: relative; 
+            display: flex; justify-content: center; align-items: center;
+            width: 100%;
+            height: 280px; /* Фиксированная высота для области колец */
+            flex-shrink: 0;
+        }
+
+        /* === КОЛЬЦА (Увеличил масштаб для "близости") === */
+        .SetupPage__rings { position: absolute; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         .SetupPage__rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05); }
-        .ring-1 { width: 160px; height: 160px; }
-        .ring-2 { width: 240px; height: 240px; opacity: 0.6; }
-        .ring-3 { width: 320px; height: 320px; opacity: 0.3; }
+        
+        /* Слегка увеличил кольца */
+        .ring-1 { width: 180px; height: 180px; }
+        .ring-2 { width: 280px; height: 280px; opacity: 0.6; }
+        .ring-3 { width: 380px; height: 380px; opacity: 0.3; }
+        .ring-4 { width: 480px; height: 480px; opacity: 0.1; } /* Добавил 4-е кольцо для объема */
 
-        /* === ПРОГРЕСС БАР (FIXED 32x32 ViewBox как в оригинале) === */
+        /* === ПРОГРЕСС БАР (32x32 ViewBox) === */
         .SetupPage__progress { 
             position: relative; 
-            width: 80px; height: 80px; /* Визуальный размер */
+            width: 80px; height: 80px; 
             display: flex; align-items: center; justify-content: center; 
         }
-        .SetupPage__progress svg { 
-            width: 100%; height: 100%; 
-            transform: rotate(-90deg); 
-        }
+        .SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
         
-        /* Фон круга (stroke-width 0.2 как в коде) */
-        .progress-bg { 
-            fill: none; 
-            stroke: rgba(255,255,255,0.1); 
-            stroke-width: 1px; /* Чуть толще 0.2, чтобы было видно на темном */
-        }
+        .progress-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 1px; }
         
-        /* Заполнение (stroke-width побольше для акцента) */
         .progress-fill {
-            fill: none; 
-            stroke: #00D68F; 
-            stroke-width: 1.5px; /* Аккуратная тонкая линия */
-            stroke-linecap: round;
-            /* Длина окружности 2*PI*15.8 ≈ 99.27 */
-            stroke-dasharray: 99.27; 
-            stroke-dashoffset: 99.27; /* Пустой */
+            fill: none; stroke: #00D68F; 
+            stroke-width: 1.5px; stroke-linecap: round;
+            stroke-dasharray: 99.27; stroke-dashoffset: 99.27; 
             transition: stroke-dashoffset 0.8s ease-in-out;
         }
         
-        /* Иконка в центре */
         .SetupPage__icon { position: absolute; color: #fff; display: flex; align-items: center; justify-content: center; }
         .SetupPage__icon svg { width: 42px; height: 42px; }
 
-        /* === ТЕКСТЫ === */
-        .SetupPage__bottom { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: auto; }
-        .text-title { font-size: 20px; font-weight: 600; color: #ffffff; margin: 0; }
-        .text-subtitle { font-size: 14px; color: #9ca3af; margin-top: 8px; margin-bottom: 24px; line-height: 1.4; }
-
-        /* ========================================= */
-        /* === КНОПКИ (1-в-1 ORIGINAL) === */
-        /* ========================================= */
-
-        .Buttons-Container {
-            display: flex; flex-direction: column; width: 100%;
-            gap: 16px; 
+        /* === НИЗ (Текст + Кнопки) === */
+        .SetupPage__bottom { 
+            width: 100%; 
+            display: flex; flex-direction: column; 
+            align-items: center; text-align: center; 
+            /* Убрал margin-top: auto, теперь он прижат к кольцам с отступом gap */
         }
 
-        .Buttons-Row { 
-            display: flex; width: 100%; 
-            gap: 10px; /* gap-2.5 = 10px */
-        }
+        .text-title { font-size: 20px; font-weight: 700; color: #ffffff; margin: 0; }
+        .text-subtitle { font-size: 15px; color: #9ca3af; margin-top: 8px; margin-bottom: 32px; line-height: 1.4; }
+
+        /* === КНОПКИ === */
+        .Buttons-Container { display: flex; flex-direction: column; width: 100%; gap: 16px; }
+        .Buttons-Row { display: flex; width: 100%; gap: 12px; }
 
         .Button-Original {
-            width: 100%; height: 54px; /* h-54 */
-            border-radius: 16px; /* rounded-large */
+            width: 100%; height: 54px;
+            border-radius: 16px;
             font-family: 'Onest', sans-serif;
-            font-size: 14px; /* text-sm */
-            font-weight: 500; /* font-normal */
+            font-size: 14px; font-weight: 500;
             display: flex; align-items: center; justify-content: center;
             border: none; cursor: pointer;
             position: relative; z-index: 1;
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            margin: 0; 
-            white-space: nowrap; /* whitespace-nowrap */
+            margin: 0; white-space: nowrap;
         }
-
         .Button-Original:active { transform: scale(0.97); }
 
-        /* --- 1. PRIMARY (Зеленая) --- */
+        /* Primary */
         .Button--primary {
-            background: #00D68F; /* bg-primary */
-            color: #ffffff; /* text-primary-foreground */
-            gap: 8px; /* gap-2 */
+            background: #00D68F; color: #ffffff; gap: 8px;
         }
-
-        /* Pulsed Animation (Тень-радар) */
         .Button--pulsed { animation: shadow-pulse 2s infinite; }
         @keyframes shadow-pulse {
             0% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
@@ -126,22 +122,21 @@
             100% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
         }
 
-        /* --- 2. SECONDARY (Полупрозрачная) --- */
+        /* Secondary (bg-primary/20) */
         .Button--secondary {
-            background-color: rgba(0, 214, 143, 0.2); /* bg-primary/20 */
+            background-color: rgba(0, 214, 143, 0.2); 
             color: #ffffff;
+            transition: background-color 0.2s, transform 0.2s;
         }
         .Button--secondary:active { background-color: rgba(0, 214, 143, 0.3); }
 
-        /* --- 3. LIGHTED (Далее) --- */
+        /* Lighted (Outline) */
         .Button--variant_lighted {
             background: transparent;
-            /* border-primary-50 (50% opacity) */
             border: 1px solid rgba(0, 214, 143, 0.5); 
             color: #ffffff;
-            gap: 28px; /* gap-7 */
+            gap: 28px;
         }
-        /* Смещение стрелки (-mr-4) */
         .Button--variant_lighted svg { margin-right: -16px; width: 20px; height: 20px; }
 
     </style>
@@ -157,6 +152,7 @@
                     <div class="ring-1"></div>
                     <div class="ring-2"></div>
                     <div class="ring-3"></div>
+                    <div class="ring-4"></div>
                 </div>
                 
                 <div class="SetupPage__progress">
@@ -188,7 +184,6 @@
                 </div>
 
                 <div id="step-buttons-container" class="Buttons-Row" style="display: none;">
-                    
                     <button class="Button-Original Button--primary Button--pulsed" onclick="performInstall()">
                         Установить
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>
@@ -199,7 +194,6 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
                     </button>
                 </div>
-                
             </div>
         </div>
     </div>
@@ -208,61 +202,40 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.BackButton.show();
-        tg.BackButton.onClick(() => {
-            window.location.href = 'index.html' + window.location.search;
-        });
+        tg.BackButton.onClick(() => { window.location.href = 'index.html' + window.location.search; });
 
         const urlParams = new URLSearchParams(window.location.search);
         const getParam = (key) => (urlParams.get(key) ? decodeURIComponent(urlParams.get(key)) : '');
         const vpnKey = getParam('vpn_key');
 
         const LINKS = {
-            ios: getParam('link_ios'),
-            android: getParam('link_android'),
-            windows: getParam('link_windows'),
-            macos: getParam('link_macos'),
-            manual: getParam('link_manual')
+            ios: getParam('link_ios'), android: getParam('link_android'),
+            windows: getParam('link_windows'), macos: getParam('link_macos'), manual: getParam('link_manual')
         };
 
         const platform = tg.platform || 'unknown';
-        let deviceName = 'устройстве';
-        let appName = 'Приложение';
-        let installLink = LINKS.manual;
+        let deviceName = 'устройстве'; let appName = 'Приложение'; let installLink = LINKS.manual;
 
         function initPage() {
-            if (['ios', 'ipad', 'iphone'].includes(platform)) {
-                deviceName = 'iOS'; appName = 'V2RayTun'; installLink = LINKS.ios;
-            } else if (platform === 'android') {
-                deviceName = 'Android'; appName = 'V2RayTun'; installLink = LINKS.android;
-            } else if (['tdesktop', 'weba'].includes(platform) && navigator.userAgent.indexOf('Win') !== -1) {
-                deviceName = 'Windows'; appName = 'Hiddify'; installLink = LINKS.windows;
-            } else if (platform === 'macos') {
-                deviceName = 'macOS'; appName = 'V2RayTun'; installLink = LINKS.macos;
-            }
+            if (['ios', 'ipad', 'iphone'].includes(platform)) { deviceName = 'iOS'; appName = 'V2RayTun'; installLink = LINKS.ios; }
+            else if (platform === 'android') { deviceName = 'Android'; appName = 'V2RayTun'; installLink = LINKS.android; }
+            else if (['tdesktop', 'weba'].includes(platform) && navigator.userAgent.indexOf('Win') !== -1) { deviceName = 'Windows'; appName = 'Hiddify'; installLink = LINKS.windows; }
+            else if (platform === 'macos') { deviceName = 'macOS'; appName = 'V2RayTun'; installLink = LINKS.macos; }
 
             document.getElementById('setup-title').innerText = `Настройка на ${deviceName}`;
             document.getElementById('btn-start-text').innerText = `Начать настройку на ${deviceName}`;
         }
 
-        // Иконка Cloud Download (с stroke-width 1.25 как в оригинале)
         const ICON_CLOUD = `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>`;
 
         function startProcess() {
-            if (!vpnKey) {
-                tg.showAlert("Сначала купите подписку!");
-                return;
-            }
-            
+            if (!vpnKey) { tg.showAlert("Сначала купите подписку!"); return; }
             tg.HapticFeedback.impactOccurred('medium');
 
-            // 33% (остаток 66.5 от 99.27)
             document.getElementById('progress-circle').style.strokeDashoffset = '66.5'; 
             document.getElementById('status-icon').innerHTML = ICON_CLOUD;
-            
             document.getElementById('setup-title').innerText = "Приложение";
             document.getElementById('setup-subtitle').innerHTML = `Установите приложение ${appName} <br>и вернитесь к этому экрану`;
-
-            // Смена кнопок
             document.getElementById('initial-buttons').style.display = 'none';
             document.getElementById('step-buttons-container').style.display = 'flex';
         }
@@ -279,7 +252,6 @@
         }
 
         function openManual() { if(LINKS.manual) tg.openLink(LINKS.manual); }
-
         document.addEventListener('DOMContentLoaded', initPage);
     </script>
 </body>
