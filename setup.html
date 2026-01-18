@@ -35,76 +35,90 @@
         .SetupPage { width: 100%; height: 100%; display: flex; flex-direction: column; padding-top: 60px; padding-bottom: 20px; }
         .SetupPage__top { position: relative; flex: 1; display: flex; justify-content: center; align-items: center; }
 
-        /* === КОЛЬЦА === */
+        /* === КОЛЬЦА (Rings) === */
         .SetupPage__rings { position: absolute; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; pointer-events: none; }
         .SetupPage__rings div { position: absolute; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.05); }
         .ring-1 { width: 160px; height: 160px; }
         .ring-2 { width: 240px; height: 240px; opacity: 0.6; }
         .ring-3 { width: 320px; height: 320px; opacity: 0.3; }
 
-        /* === ПРОГРЕСС БАР === */
-        .SetupPage__progress { position: relative; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; }
-        .SetupPage__progress svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .progress-bg { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 4; }
+        /* === ПРОГРЕСС БАР (FIXED 32x32 ViewBox как в оригинале) === */
+        .SetupPage__progress { 
+            position: relative; 
+            width: 80px; height: 80px; /* Визуальный размер */
+            display: flex; align-items: center; justify-content: center; 
+        }
+        .SetupPage__progress svg { 
+            width: 100%; height: 100%; 
+            transform: rotate(-90deg); 
+        }
+        
+        /* Фон круга (stroke-width 0.2 как в коде) */
+        .progress-bg { 
+            fill: none; 
+            stroke: rgba(255,255,255,0.1); 
+            stroke-width: 1px; /* Чуть толще 0.2, чтобы было видно на темном */
+        }
+        
+        /* Заполнение (stroke-width побольше для акцента) */
         .progress-fill {
-            fill: none; stroke: #00D68F; stroke-width: 4; stroke-linecap: round;
-            stroke-dasharray: 283; stroke-dashoffset: 283;
+            fill: none; 
+            stroke: #00D68F; 
+            stroke-width: 1.5px; /* Аккуратная тонкая линия */
+            stroke-linecap: round;
+            /* Длина окружности 2*PI*15.8 ≈ 99.27 */
+            stroke-dasharray: 99.27; 
+            stroke-dashoffset: 99.27; /* Пустой */
             transition: stroke-dashoffset 0.8s ease-in-out;
         }
+        
+        /* Иконка в центре */
         .SetupPage__icon { position: absolute; color: #fff; display: flex; align-items: center; justify-content: center; }
+        .SetupPage__icon svg { width: 42px; height: 42px; }
 
         /* === ТЕКСТЫ === */
         .SetupPage__bottom { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: auto; }
-        .text-title { font-size: 22px; font-weight: 700; color: #ffffff; margin: 0; }
-        .text-subtitle { font-size: 15px; color: #9ca3af; margin-top: 8px; margin-bottom: 24px; line-height: 1.4; }
+        .text-title { font-size: 20px; font-weight: 600; color: #ffffff; margin: 0; }
+        .text-subtitle { font-size: 14px; color: #9ca3af; margin-top: 8px; margin-bottom: 24px; line-height: 1.4; }
 
         /* ========================================= */
-        /* === КНОПКИ (ФИНАЛ) === */
+        /* === КНОПКИ (1-в-1 ORIGINAL) === */
         /* ========================================= */
 
-        /* Контейнер для вертикальных кнопок (с отступом!) */
         .Buttons-Container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            gap: 16px; /* ОТСТУП МЕЖДУ КНОПКАМИ */
+            display: flex; flex-direction: column; width: 100%;
+            gap: 16px; 
         }
 
-        /* Контейнер для горизонтальных кнопок (шаг 2) */
         .Buttons-Row { 
-            display: flex; 
-            width: 100%; 
-            gap: 12px; 
+            display: flex; width: 100%; 
+            gap: 10px; /* gap-2.5 = 10px */
         }
 
-        /* Базовый стиль всех кнопок */
         .Button-Original {
-            width: 100%; 
-            height: 56px; /* Чуть выше (было 54) */
-            border-radius: 16px;
-            
+            width: 100%; height: 54px; /* h-54 */
+            border-radius: 16px; /* rounded-large */
             font-family: 'Onest', sans-serif;
-            font-size: 16px; /* ТЕКСТ БОЛЬШЕ (было 14) */
-            font-weight: 600; /* Жирнее */
-            
+            font-size: 14px; /* text-sm */
+            font-weight: 500; /* font-normal */
             display: flex; align-items: center; justify-content: center;
             border: none; cursor: pointer;
             position: relative; z-index: 1;
             transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            margin: 0; /* Убираем margin, так как используем gap */
+            margin: 0; 
+            white-space: nowrap; /* whitespace-nowrap */
         }
 
         .Button-Original:active { transform: scale(0.97); }
 
-        /* --- 1. КНОПКА "НАЧАТЬ" / "УСТАНОВИТЬ" (Яркая) --- */
+        /* --- 1. PRIMARY (Зеленая) --- */
         .Button--primary {
-            background: linear-gradient(90deg, #00D68F 0%, #00b377 100%);
-            color: #ffffff;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0, 214, 143, 0.3);
+            background: #00D68F; /* bg-primary */
+            color: #ffffff; /* text-primary-foreground */
+            gap: 8px; /* gap-2 */
         }
 
-        /* Пульсация */
+        /* Pulsed Animation (Тень-радар) */
         .Button--pulsed { animation: shadow-pulse 2s infinite; }
         @keyframes shadow-pulse {
             0% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0.7); }
@@ -112,24 +126,23 @@
             100% { box-shadow: 0 0 0 0 rgba(0, 214, 143, 0); }
         }
 
-        /* --- 2. КНОПКА "УСТАНОВИТЬ НА ДРУГОМ" (Полупрозрачная зеленая) --- */
+        /* --- 2. SECONDARY (Полупрозрачная) --- */
         .Button--secondary {
             background-color: rgba(0, 214, 143, 0.2); /* bg-primary/20 */
             color: #ffffff;
-            transition: background-color 0.2s, transform 0.2s;
         }
-        .Button--secondary:active {
-            background-color: rgba(0, 214, 143, 0.3);
-        }
+        .Button--secondary:active { background-color: rgba(0, 214, 143, 0.3); }
 
-        /* --- 3. КНОПКА "ДАЛЕЕ" (С рамкой) --- */
+        /* --- 3. LIGHTED (Далее) --- */
         .Button--variant_lighted {
             background: transparent;
-            border: 1px solid rgba(0, 214, 143, 0.5);
+            /* border-primary-50 (50% opacity) */
+            border: 1px solid rgba(0, 214, 143, 0.5); 
             color: #ffffff;
-            gap: 28px; /* Большой отступ */
+            gap: 28px; /* gap-7 */
         }
-        .Button--variant_lighted svg { margin-right: -16px; width: 22px; height: 22px; }
+        /* Смещение стрелки (-mr-4) */
+        .Button--variant_lighted svg { margin-right: -16px; width: 20px; height: 20px; }
 
     </style>
 </head>
@@ -147,13 +160,13 @@
                 </div>
                 
                 <div class="SetupPage__progress">
-                    <svg viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="45" class="progress-bg"></circle>
-                        <circle cx="50" cy="50" r="45" class="progress-fill" id="progress-circle"></circle>
+                    <svg viewBox="0 0 32 32">
+                        <circle cx="16" cy="16" r="15.8" class="progress-bg"></circle>
+                        <circle cx="16" cy="16" r="15.8" class="progress-fill" id="progress-circle"></circle>
                     </svg>
                     
                     <div class="SetupPage__icon" id="status-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5 3-3"></path><path d="m2 22 3-3"></path><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path><path d="M7.5 13.5 10 11"></path><path d="M10.5 16.5 13 14"></path><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="m19 5 3-3"></path><path d="m2 22 3-3"></path><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"></path><path d="M7.5 13.5 10 11"></path><path d="M10.5 16.5 13 14"></path><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"></path></svg>
                     </div>
                 </div>
             </div>
@@ -165,7 +178,6 @@
                 </p>
 
                 <div id="initial-buttons" class="Buttons-Container">
-                    
                     <button class="Button-Original Button--primary Button--pulsed" id="start-btn" onclick="startProcess()">
                         <span id="btn-start-text">Начать настройку</span>
                     </button>
@@ -173,21 +185,19 @@
                     <button class="Button-Original Button--secondary" onclick="openManual()">
                         Установить на другом устройстве
                     </button>
-                    
                 </div>
 
                 <div id="step-buttons-container" class="Buttons-Row" style="display: none;">
                     
                     <button class="Button-Original Button--primary Button--pulsed" onclick="performInstall()">
                         Установить
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-download"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>
                     </button>
 
                     <button class="Button-Original Button--variant_lighted" onclick="nextStep()">
                         Далее
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
                     </button>
-                    
                 </div>
                 
             </div>
@@ -202,7 +212,6 @@
             window.location.href = 'index.html' + window.location.search;
         });
 
-        // Чтение параметров
         const urlParams = new URLSearchParams(window.location.search);
         const getParam = (key) => (urlParams.get(key) ? decodeURIComponent(urlParams.get(key)) : '');
         const vpnKey = getParam('vpn_key');
@@ -235,7 +244,8 @@
             document.getElementById('btn-start-text').innerText = `Начать настройку на ${deviceName}`;
         }
 
-        const ICON_CLOUD_DOWN = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>`;
+        // Иконка Cloud Download (с stroke-width 1.25 как в оригинале)
+        const ICON_CLOUD = `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13v8l-4-4"></path><path d="m12 21 4-4"></path><path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path></svg>`;
 
         function startProcess() {
             if (!vpnKey) {
@@ -245,9 +255,9 @@
             
             tg.HapticFeedback.impactOccurred('medium');
 
-            // Анимация 33%
-            document.getElementById('progress-circle').style.strokeDashoffset = '190'; 
-            document.getElementById('status-icon').innerHTML = ICON_CLOUD_DOWN;
+            // 33% (остаток 66.5 от 99.27)
+            document.getElementById('progress-circle').style.strokeDashoffset = '66.5'; 
+            document.getElementById('status-icon').innerHTML = ICON_CLOUD;
             
             document.getElementById('setup-title').innerText = "Приложение";
             document.getElementById('setup-subtitle').innerHTML = `Установите приложение ${appName} <br>и вернитесь к этому экрану`;
