@@ -296,3 +296,15 @@ body {
     background-color: rgba(0, 214, 143, 0.3) !important;
     transform: scale(0.97);
 }
+/* === ОТСТУП МЕЖДУ НАЧАЛЬНЫМИ КНОПКАМИ === */
+#initial-buttons {
+    display: flex;
+    flex-direction: column; /* Кнопки друг под другом */
+    gap: 16px; /* <--- ВОТ РАЗМЕР ОТСТУПА (поменяй на 20px, если нужно больше) */
+    width: 100%;
+}
+
+/* Убираем лишние отступы у самих кнопок, чтобы gap работал ровно */
+#initial-buttons .Button-Original {
+    margin-bottom: 0; 
+}
