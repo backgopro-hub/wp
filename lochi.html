@@ -6,6 +6,14 @@
     <title>Ultima VPN</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script>
+        const tgInit = window.Telegram.WebApp;
+        tgInit.expand(); // Раскрываем на 100% высоты
+        // Красим шапку Телеграма в черный, чтобы не было белой полосы
+        tgInit.setHeaderColor('#010101'); 
+        tgInit.setBackgroundColor('#010101');
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
