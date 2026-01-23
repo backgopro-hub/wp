@@ -1,159 +1,152 @@
 const tg = window.Telegram.WebApp;
-tg.expand(); // Раскрываем на весь экран
-
-// === ВАЖНО: Делаем шапку черной, чтобы слилась с фоном ===
+tg.expand();
 tg.setHeaderColor('#000000');
 tg.setBackgroundColor('#000000');
 
-// Запрет контекстного меню (защита от копирования)
+// Защита
 (function() {
-    document.addEventListener('contextmenu', (e) => e.preventDefault(), { capture: true });
-    // Блокируем выделение текста (для ощущения приложения)
-    document.body.style.userSelect = 'none';
-    document.body.style.webkitUserSelect = 'none';
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
 })();
 
-// === ГЛАВНАЯ ФУНКЦИЯ: ПОЛУЧЕНИЕ ДАННЫХ ===
+// === ГЛАВНАЯ ФУНКЦИЯ: РАСПАКОВКА ДАННЫХ ===
 function getAppData() {
-    let data = {};
-
-    // 1. Пробуем получить данные из start_param (Нативный Mini App)
-    // Это тот самый длинный код, который мы генерировали в Python
+    let raw = {};
     const startParam = tg.initDataUnsafe?.start_param;
     
+    // 1. Попытка достать из Mini App (start_param)
     if (startParam) {
         try {
-            // Декодируем Base64 строку в JSON
-            // Заменяем символы URL-safe Base64 на стандартные
-            const base64 = startParam.replace(/-/g, '+').replace(/_/g, '/');
-            // Декодируем (atob) и чиним русские буквы (decodeURIComponent)
+            // Возвращаем padding "=" если мы его обрезали в Python
+            let base64 = startParam.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4) { base64 += '='; }
+            
             const jsonString = decodeURIComponent(escape(atob(base64)));
-            data = JSON.parse(jsonString);
-            console.log("Данные из Mini App:", data);
+            raw = JSON.parse(jsonString);
+            console.log("MiniApp Data:", raw);
         } catch (e) {
-            console.error("Ошибка распаковки параметров:", e);
+            console.error("Decode error:", e);
         }
-    } 
+    }
     
-    // 2. Если пусто, пробуем URL параметры (Старый способ / Тесты в браузере)
-    if (Object.keys(data).length === 0) {
-        const urlParams = new URLSearchParams(window.location.search);
-        // Собираем объект из URL параметров
-        data = {
-            ios: urlParams.get('ios'),
-            android: urlParams.get('android'),
-            windows: urlParams.get('windows'),
-            macos: urlParams.get('macos'),
-            support: urlParams.get('support'),
-            status: urlParams.get('status'),
-            date: urlParams.get('date'),
-            title: urlParams.get('title'),
-            vpn_key: urlParams.get('vpn_key') // Не забудь про ключ!
+    // 2. Fallback для тестов в браузере (URL params)
+    if (Object.keys(raw).length === 0) {
+        const p = new URLSearchParams(window.location.search);
+        // Если открыли по старинке, читаем длинные ключи
+        return {
+            title: p.get('title'),
+            userId: p.get('user_id'),
+            status: p.get('status'),
+            date: p.get('date'),
+            vpn_key: p.get('vpn_key'),
+            links: {
+                ios: p.get('link_ios'),
+                android: p.get('link_android'),
+                windows: p.get('link_windows'),
+                macos: p.get('link_macos'),
+                manual: p.get('link_manual'),
+                support: p.get('support')
+            }
         };
     }
-    
-    return data;
+
+    // 3. ПРЕВРАЩАЕМ КОРОТКИЕ КЛЮЧИ (из Python) В ПОНЯТНЫЕ ПЕРЕМЕННЫЕ
+    return {
+        title: raw.t,
+        userId: raw.u,
+        status: raw.s,
+        date: raw.d,
+        vpn_key: raw.k, // Ключ VPN
+        links: {
+            ios: raw.li,
+            android: raw.la,
+            windows: raw.lw,
+            macos: raw.lm,
+            manual: raw.h,  // help
+            support: raw.sup
+        }
+    };
 }
 
-// Загружаем данные
+// Загружаем данные один раз
 const appData = getAppData();
 
-// === ИНИЦИАЛИЗАЦИЯ ПЕРЕМЕННЫХ ===
-let links = {
-    ios: appData.ios || '',
-    android: appData.android || '',
-    windows: appData.windows || '',
-    macos: appData.macos || '',
-    support: appData.support || ''
-};
+// === ЛОГИКА ИНТЕРФЕЙСА ===
+function updateUI() {
+    // 1. Заголовок
+    if (appData.title) {
+        document.title = appData.title;
+        const headerEl = document.getElementById('header-title');
+        if (headerEl) headerEl.innerText = appData.title;
+    }
 
-// === ОПРЕДЕЛЕНИЕ УСТРОЙСТВА ===
-function detectDevice() {
-    const platform = tg.platform || 'unknown'; 
-    const textEl = document.getElementById('device-text');
-    if (!textEl) return;
+    // 2. Определение устройства (для надписи на кнопке)
+    const platform = tg.platform || 'unknown';
+    const deviceText = document.getElementById('device-text');
+    if (deviceText) {
+        if (['ios', 'macos', 'ipad', 'iphone'].includes(platform)) deviceText.innerText = 'iOS/macOS';
+        else if (platform === 'android') deviceText.innerText = 'Android';
+        else if (platform === 'tdesktop' || platform === 'weba') deviceText.innerText = 'Windows';
+        else deviceText.innerText = 'Device';
+    }
 
-    if (['ios', 'macos', 'ipad', 'iphone'].includes(platform)) {
-        textEl.innerText = (platform === 'macos') ? 'macOS' : 'iOS';
-    } else if (platform === 'android') {
-        textEl.innerText = 'Android';
-    } else if (['tdesktop', 'weba'].includes(platform) && navigator.userAgent.indexOf('Win') !== -1) {
-        textEl.innerText = 'Windows';
-    } else {
-        textEl.innerText = 'Device';
+    // 3. Статус подписки
+    const statusText = document.getElementById('status-text');
+    const dateText = document.getElementById('date-text-val');
+    const btnLabel = document.getElementById('btn-label');
+
+    if (statusText) {
+        if (appData.status === 'active') {
+            statusText.innerText = 'Активна';
+            statusText.style.color = '#00D68F';
+            if (btnLabel) btnLabel.innerText = 'Продлить подписку';
+        } else if (appData.status === 'expired') {
+            statusText.innerText = 'Истекла';
+            statusText.style.color = '#facc15';
+            if (btnLabel) btnLabel.innerText = 'Купить подписку';
+        } else {
+            statusText.innerText = 'Не найдена';
+            statusText.style.color = '#9ca3af';
+            if (btnLabel) btnLabel.innerText = 'Купить подписку';
+        }
+    }
+    
+    if (dateText && appData.date) {
+        dateText.innerText = appData.date;
     }
 }
 
-// === ПЕРЕХОД К НАСТРОЙКАМ ===
+// === ПЕРЕХОДЫ ===
+
 function openSetup() {
-    // ВАЖНО: Так как window.location.search может быть пустым (в режиме Mini App),
-    // мы должны сами собрать параметры для передачи на следующую страницу.
+    // Собираем ссылку для setup.html
+    // Нам нужно передать туда параметры, чтобы setup.html их увидел
     const params = new URLSearchParams();
     
-    // Перебираем все полученные данные и добавляем в ссылку
-    for (const [key, value] of Object.entries(appData)) {
-        if(value) params.append(key, value);
-    }
+    if (appData.vpn_key) params.append('vpn_key', appData.vpn_key);
     
-    // Переходим
+    // Передаем ссылки дальше
+    if (appData.links) {
+        if (appData.links.ios) params.append('link_ios', appData.links.ios);
+        if (appData.links.android) params.append('link_android', appData.links.android);
+        if (appData.links.windows) params.append('link_windows', appData.links.windows);
+        if (appData.links.macos) params.append('link_macos', appData.links.macos);
+        if (appData.links.manual) params.append('link_manual', appData.links.manual);
+    }
+
     window.location.href = 'setup.html?' + params.toString();
 }
 
-// === ОТКРЫТИЕ ПОДДЕРЖКИ ===
 function openSupport() {
-    if (links.support) tg.openLink(links.support);
-    else tg.showAlert("Контакты поддержки не настроены");
+    if (appData.links && appData.links.support) {
+        tg.openLink(appData.links.support);
+    } else {
+        tg.showAlert("Контакты поддержки не найдены");
+    }
 }
 
-// === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
-const dateTextVal = document.getElementById('date-text-val');
-const statusText = document.getElementById('status-text');
-const btnLabel = document.getElementById('btn-label');
-const headerTitleEl = document.getElementById('header-title');
-
-// Заголовок
-if (appData.title) {
-    document.title = appData.title;
-    if (headerTitleEl) headerTitleEl.innerText = appData.title;
+function openProfile() {
+    tg.showAlert("Ваш ID: " + (appData.userId || "Неизвестен"));
 }
 
-// Статус подписки
-const status = appData.status;
-const date = appData.date;
-
-if (status === 'active') {
-    statusText.innerText = 'Активна';
-    statusText.style.color = '#00D68F';
-    statusText.classList.remove('text-yellow-400');
-    statusText.classList.add('text-green');
-    if (date) dateTextVal.innerText = date;
-    
-    // Если есть кнопка "Продлить" (иногда её скрывают, если автопродление)
-    if(btnLabel) btnLabel.innerText = 'Продлить подписку';
-    
-} else if (status === 'expired') {
-    statusText.innerText = 'Истекла';
-    statusText.style.color = '#facc15';
-    statusText.classList.add('text-yellow-400');
-    statusText.classList.remove('text-green');
-    if (date) dateTextVal.innerText = date;
-    
-    if(btnLabel) btnLabel.innerText = 'Купить подписку';
-    
-} else {
-    // Если статус не пришел или unknown
-    statusText.innerText = 'Не найдена';
-    statusText.style.color = '#9ca3af';
-    statusText.classList.remove('text-green', 'text-yellow-400');
-    dateTextVal.innerText = '—';
-    
-    if(btnLabel) btnLabel.innerText = 'Купить подписку';
-}
-
-// Запускаем при загрузке
-document.addEventListener('DOMContentLoaded', () => {
-    detectDevice();
-});
-
-// Профиль (пока заглушка)
-function openProfile() { tg.showAlert("Профиль пользователя"); }
+// Запуск
+document.addEventListener('DOMContentLoaded', updateUI);
