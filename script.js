@@ -153,7 +153,25 @@ function openSupport() {
 }
 
 function openProfile() {
-    tg.showAlert("Ваш ID: " + (appData.userId || "Неизвестен"));
+    // Собираем параметры для страницы профиля
+    const params = new URLSearchParams();
+    
+    // Передаем ссылку на подписку
+    if (appData.vpn_key) {
+        // Формируем ссылку на подписку (можно изменить формат)
+        const subscriptionLink = `https://ultm.app/${appData.vpn_key}`;
+        params.append('subscription_link', subscriptionLink);
+    }
+    
+    // Передаем другие данные если нужно
+    if (appData.userId) params.append('user_id', appData.userId);
+    
+    window.location.href = 'profile.html?' + params.toString();
+}
+
+function openOrder() {
+    // Переход на страницу покупки подписки
+    window.location.href = 'order.html' + window.location.search;
 }
 
 // Запускаем логику, когда страница прогрузилась

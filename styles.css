@@ -308,3 +308,43 @@ body {
 #initial-buttons .Button-Original {
     margin-bottom: 0; 
 }
+
+/* === ORDER PAGE STYLES === */
+
+/* 
+ * Plan Card Gradient Utilities
+ * =============================
+ * Custom gradient backgrounds for subscription plan cards
+ * 
+ * Gradient specification:
+ * - Direction: 135deg (diagonal from top-left to bottom-right)
+ * - Start color: rgba(0, 214, 143, 0.1) - 10% opacity primary green
+ * - End color: rgba(0, 20, 15, 0.8) - 80% opacity dark green
+ * 
+ * Selected state uses higher opacity values (15% and 90%) for emphasis
+ */
+
+/* Plan card buttons - uniform appearance */
+.OrderPage__button {
+    width: 158.5px !important;
+    height: 144px !important;
+    min-height: 144px;
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, rgba(0, 214, 143, 0.1) 0%, rgba(0, 20, 15, 0.8) 100%) !important;
+    border: 1px solid rgba(0, 214, 143, 0.3) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 20px !important;
+    position: relative;
+}
+
+/* Selected plan card - brighter gradient */
+.OrderPage__button--selected {
+    background: linear-gradient(135deg, rgba(0, 214, 143, 0.15) 0%, rgba(0, 20, 15, 0.9) 100%) !important;
+    border-color: rgba(0, 214, 143, 0.9) !important;
+}
+
+/* Smooth transition between states */
+.OrderPage__button {
+    transition: border-color 0.3s ease, background 0.3s ease, transform 0.1s ease;
+}
