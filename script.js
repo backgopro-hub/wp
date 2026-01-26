@@ -78,7 +78,83 @@ function getAppData() {
 // Загружаем данные
 const appData = getAppData();
 
+// === ЗАГРУЗКА ДАННЫХ ИЗ API ===
+async function loadSubscriptionData() {
+    try {
+        const initData = tg.initData;
+        
+        if (!initData) {
+            console.warn("No initData available");
+            updateUIWithData({ status: 'none', date: '', vpn_key: '' });
+            return;
+        }
+        
+        // Запрос к нашему безопасному API
+        const response = await fetch('https://bot.netelusion.com/api/subscription', {
+            method: 'GET',
+            headers: {
+                'X-Telegram-Init-Data': initData,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("Subscription data loaded:", data);
+        
+        // Обновляем интерфейс
+        updateUIWithData(data);
+        
+        // Сохраняем данные глобально
+        window.subscriptionData = data;
+        
+    } catch (error) {
+        console.error("Error loading subscription:", error);
+        // Fallback на старую схему через start_param
+        const appData = getAppData();
+        updateUIWithData({
+            status: appData.status || 'none',
+            date: appData.date || '',
+            vpn_key: appData.vpn_key || ''
+        });
+    }
+}
+
 // === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
+function updateUIWithData(data) {
+    // Статус
+    const statusText = document.getElementById('status-text');
+    const dateText = document.getElementById('date-text-val');
+    const btnLabel = document.getElementById('btn-label');
+
+    if (statusText) {
+        if (data.status === 'active') {
+            statusText.innerText = 'Активна';
+            statusText.style.color = '#00D68F'; // Зеленый
+            if (btnLabel) btnLabel.innerText = 'Продлить подписку';
+        } else if (data.status === 'expired') {
+            statusText.innerText = 'Истекла';
+            statusText.style.color = '#facc15'; // Желтый
+            if (btnLabel) btnLabel.innerText = 'Купить подписку';
+        } else {
+            statusText.innerText = 'Не найдена';
+            statusText.style.color = '#9ca3af'; // Серый
+            if (btnLabel) btnLabel.innerText = 'Купить подписку';
+        }
+    }
+    
+    if (dateText) {
+        dateText.innerText = data.date || '...';
+    }
+    
+    // Сохраняем vpn_key для использования в других функциях
+    window.currentVpnKey = data.vpn_key;
+}
+
+// === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА (старая функция для совместимости) ===
 function updateUI() {
     // Заголовок
     if (appData.title) {
@@ -156,11 +232,11 @@ function openProfile() {
     // Собираем параметры для страницы профиля
     const params = new URLSearchParams();
     
-    // Передаем ссылку на подписку
-    if (appData.vpn_key) {
-        // Формируем ссылку на подписку (можно изменить формат)
-        const subscriptionLink = `https://ultm.app/${appData.vpn_key}`;
-        params.append('subscription_link', subscriptionLink);
+    // Используем актуальный ключ из API
+    const vpnKey = window.currentVpnKey || appData.vpn_key;
+    
+    if (vpnKey) {
+        params.append('vpn_key', vpnKey);
     }
     
     // Передаем другие данные если нужно
@@ -175,4 +251,7 @@ function openOrder() {
 }
 
 // Запускаем логику, когда страница прогрузилась
-document.addEventListener('DOMContentLoaded', updateUI);
+document.addEventListener('DOMContentLoaded', () => {
+    updateUI(); // Обновляем UI с базовыми данными
+    loadSubscriptionData(); // Загружаем актуальные данные из API
+});
