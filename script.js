@@ -84,17 +84,15 @@ async function loadSubscriptionData() {
         const initData = tg.initData;
         
         if (!initData) {
-            console.warn("No initData available");
-            updateUIWithData({ status: 'none', date: '', vpn_key: '' });
+            console.warn("No initData available, using fallback");
             return;
         }
         
-        // Запрос к нашему безопасному API
+        // Запрос к API через модуль бота
         const response = await fetch('https://bot.netelusion.com/api/subscription', {
             method: 'GET',
             headers: {
-                'X-Telegram-Init-Data': initData,
-                'Content-Type': 'application/json'
+                'X-Telegram-Init-Data': initData
             }
         });
         
@@ -105,27 +103,16 @@ async function loadSubscriptionData() {
         const data = await response.json();
         console.log("Subscription data loaded:", data);
         
-        // Обновляем интерфейс
-        updateUIWithData(data);
-        
-        // Сохраняем данные глобально
-        window.subscriptionData = data;
+        // Обновляем интерфейс с актуальными данными
+        updateSubscriptionUI(data);
         
     } catch (error) {
         console.error("Error loading subscription:", error);
-        // Fallback на старую схему через start_param
-        const appData = getAppData();
-        updateUIWithData({
-            status: appData.status || 'none',
-            date: appData.date || '',
-            vpn_key: appData.vpn_key || ''
-        });
+        // Используем данные от бота как fallback
     }
 }
 
-// === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
-function updateUIWithData(data) {
-    // Статус
+function updateSubscriptionUI(data) {
     const statusText = document.getElementById('status-text');
     const dateText = document.getElementById('date-text-val');
     const btnLabel = document.getElementById('btn-label');
@@ -133,28 +120,28 @@ function updateUIWithData(data) {
     if (statusText) {
         if (data.status === 'active') {
             statusText.innerText = 'Активна';
-            statusText.style.color = '#00D68F'; // Зеленый
+            statusText.style.color = '#00D68F';
             if (btnLabel) btnLabel.innerText = 'Продлить подписку';
         } else if (data.status === 'expired') {
             statusText.innerText = 'Истекла';
-            statusText.style.color = '#facc15'; // Желтый
+            statusText.style.color = '#facc15';
             if (btnLabel) btnLabel.innerText = 'Купить подписку';
         } else {
             statusText.innerText = 'Не найдена';
-            statusText.style.color = '#9ca3af'; // Серый
+            statusText.style.color = '#9ca3af';
             if (btnLabel) btnLabel.innerText = 'Купить подписку';
         }
     }
     
-    if (dateText) {
-        dateText.innerText = data.date || '...';
+    if (dateText && data.date) {
+        dateText.innerText = data.date;
     }
     
-    // Сохраняем vpn_key для использования в других функциях
+    // Сохраняем для других функций
     window.currentVpnKey = data.vpn_key;
 }
 
-// === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА (старая функция для совместимости) ===
+// === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
 function updateUI() {
     // Заголовок
     if (appData.title) {
@@ -232,11 +219,9 @@ function openProfile() {
     // Собираем параметры для страницы профиля
     const params = new URLSearchParams();
     
-    // Используем актуальный ключ из API
-    const vpnKey = window.currentVpnKey || appData.vpn_key;
-    
-    if (vpnKey) {
-        params.append('vpn_key', vpnKey);
+    // Используем ключ из данных бота
+    if (appData.vpn_key) {
+        params.append('vpn_key', appData.vpn_key);
     }
     
     // Передаем другие данные если нужно
@@ -252,6 +237,6 @@ function openOrder() {
 
 // Запускаем логику, когда страница прогрузилась
 document.addEventListener('DOMContentLoaded', () => {
-    updateUI(); // Обновляем UI с базовыми данными
-    loadSubscriptionData(); // Загружаем актуальные данные из API
+    updateUI(); // Базовые данные от бота
+    loadSubscriptionData(); // Актуальные данные из API
 });
