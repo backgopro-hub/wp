@@ -1,7 +1,7 @@
 // Файл: api.js
 
 // Ссылка на твоего бота (ОБЯЗАТЕЛЬНО полная, так как сайт на GitHub)
-export const BOT_PROXY_URL = "https://bot.netelusion.com/proxy";
+export const BOT_PROXY_URL = "https://bot.netelusion.com/proxy/";
 
 /**
  * Функция отправляет БОТУ команду (action), а бот сам решает, какой URL дергать.
