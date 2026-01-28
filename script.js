@@ -11,7 +11,7 @@ tg.setBackgroundColor('#000000');
     document.addEventListener('contextmenu', (e) => e.preventDefault());
 })();
 
-// === ГЛАВНАЯ ФУНКЦИЯ РАСПАКОВКИ (Оставляем твою логику) ===
+// === ГЛАВНАЯ ФУНКЦИЯ РАСПАКОВКИ ===
 function getAppData() {
     let raw = {};
     const startParam = tg.initDataUnsafe?.start_param;
@@ -19,21 +19,15 @@ function getAppData() {
     // 1. Если открыли как Mini App (есть start_param)
     if (startParam) {
         try {
-            // Заменяем спецсимволы URL
             let base64 = startParam.replace(/-/g, '+').replace(/_/g, '/');
-            
-            // Добавляем padding
             while (base64.length % 4) {
                 base64 += '=';
             }
-            
-            // Декодируем
             const jsonString = decodeURIComponent(escape(atob(base64)));
             raw = JSON.parse(jsonString);
-            
-            console.log("Данные успешно получены из start_param:", raw);
+            console.log("Start param data:", raw);
         } catch (e) {
-            console.error("Ошибка декодирования:", e);
+            console.error("Decode error:", e);
         }
     }
     
@@ -78,38 +72,46 @@ function getAppData() {
 // Загружаем начальные данные
 const appData = getAppData();
 
-// === ЗАГРУЗКА ДАННЫХ ИЗ API (ИСПРАВЛЕНО) ===
+// === ЗАГРУЗКА ДАННЫХ ИЗ API (ОБНОВЛЕНО) ===
 async function loadSubscriptionData() {
     try {
         const userId = tg.initDataUnsafe?.user?.id;
         
+        // Если тестируем в браузере без ТГ, userId может не быть
+        // Можно временно раскомментировать для теста:
+        // const userId = 123456789; 
+
         if (!userId) {
             console.warn("No userId available");
             return;
         }
         
-        // ЗАМЕНА: Используем requestApi вместо прямого fetch
-        // Запрашиваем ключи пользователя через твоего бота
-        const response = await requestApi(`/keys/all/${userId}`, 'GET');
+        console.log("Запрашиваем ключи для:", userId);
+
+        // ✅ ИСПРАВЛЕНИЕ: Шлем Action "get_keys", а не URL
+        // Бот сам знает, что это значит /users/{id}/keys
+        const response = await requestApi('get_keys');
         
-        console.log("API response:", response);
+        console.log("API keys response:", response);
         
-        // Логика обработки ответа (адаптируй под ответ Netelusion)
-        // Обычно приходит массив или объект с ключами
+        // Логика обработки ответа (ищет ключи в массиве или объекте)
         let keyData = null;
         
         if (Array.isArray(response) && response.length > 0) {
             keyData = response[0];
         } else if (response.keys && Array.isArray(response.keys)) {
              keyData = response.keys[0];
+        } else if (response.result && Array.isArray(response.result)) {
+             // Иногда API возвращает { result: [...] }
+             keyData = response.result[0];
         }
 
         if (keyData) {
-            // Преобразуем данные API в формат для UI
+            // Форматируем для UI
             const uiData = {
-                status: keyData.status === 'active' || keyData.is_active ? 'active' : 'expired',
+                status: (keyData.status === 'active' || keyData.is_active) ? 'active' : 'expired',
                 date: keyData.expire_at ? new Date(keyData.expire_at).toLocaleDateString() : 'Бессрочно',
-                vpn_key: keyData.access_url || keyData.link
+                vpn_key: keyData.access_url || keyData.link || keyData.key
             };
             updateSubscriptionUI(uiData);
         } else {
@@ -117,7 +119,7 @@ async function loadSubscriptionData() {
         }
         
     } catch (error) {
-        console.error("Error loading via API:", error);
+        console.error("Error loading keys:", error);
     }
 }
 
@@ -132,13 +134,10 @@ function updateSubscriptionUI(data) {
             statusText.innerText = 'Активна';
             statusText.style.color = '#00D68F';
             if (btnLabel) btnLabel.innerText = 'Продлить подписку';
-        } else if (data.status === 'expired') {
+        } else {
             statusText.innerText = 'Истекла';
             statusText.style.color = '#facc15';
             if (btnLabel) btnLabel.innerText = 'Купить подписку';
-        } else {
-            statusText.innerText = 'Не найдена';
-            statusText.style.color = '#9ca3af';
         }
     }
     
@@ -173,23 +172,19 @@ function updateUI() {
         else deviceText.innerText = 'Device';
     }
 
-    // Применяем данные из start_param (пока API грузится)
-    const uiData = {
-        status: appData.status,
-        date: appData.date,
-        vpn_key: appData.vpn_key
-    };
-    
-    // Если статус передан, обновляем UI
-    if(appData.status) updateSubscriptionUI(uiData);
+    // Применяем данные из start_param
+    if(appData.status) {
+        updateSubscriptionUI({
+            status: appData.status,
+            date: appData.date,
+            vpn_key: appData.vpn_key
+        });
+    }
 }
 
 // === ПЕРЕХОДЫ (КНОПКИ) ===
-
 function openSetup() {
     const params = new URLSearchParams();
-    
-    // Берем ключ либо из API, либо из start_param
     const keyToUse = window.currentVpnKey || appData.vpn_key;
     if (keyToUse) params.append('vpn_key', keyToUse);
     
@@ -200,8 +195,6 @@ function openSetup() {
         if (appData.links.macos) params.append('link_macos', appData.links.macos);
         if (appData.links.manual) params.append('link_manual', appData.links.manual);
     }
-
-    // ВАЖНО: Используем правильное имя файла
     window.location.href = 'setup.html?' + params.toString();
 }
 
@@ -214,9 +207,10 @@ function openSupport() {
 }
 
 function openProfile() {
+    // В профиль тоже можно переходить без параметров, если там есть свой загрузчик
+    // Но оставим передачу данных на всякий случай
     const params = new URLSearchParams();
     const keyToUse = window.currentVpnKey || appData.vpn_key;
-    
     if (keyToUse) params.append('vpn_key', keyToUse);
     if (appData.userId) params.append('user_id', appData.userId);
     
@@ -230,12 +224,10 @@ function openOrder() {
 // === ИНИЦИАЛИЗАЦИЯ ===
 document.addEventListener('DOMContentLoaded', () => {
     updateUI(); 
-    loadSubscriptionData(); // Загружаем свежие данные через API бота
+    loadSubscriptionData();
 });
 
-// =========================================================
-// ВАЖНО: ЭКСПОРТ ФУНКЦИЙ (ЧТОБЫ РАБОТАЛИ КНОПКИ В HTML)
-// =========================================================
+// ЭКСПОРТ
 window.openSetup = openSetup;
 window.openSupport = openSupport;
 window.openProfile = openProfile;
