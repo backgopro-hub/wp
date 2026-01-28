@@ -358,216 +358,265 @@
         </div>
     </div>
 
-    <script>
-        // Инициализация Telegram WebApp
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        
-        // Настройка кнопки "Назад"
-        tg.BackButton.show();
-        tg.BackButton.onClick(() => { 
-            window.location.href = 'lochi.html' + window.location.search; 
-        });
+    <script type="module">
+    import { requestApi } from './api.js';
 
-        // Получение параметров из URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const getParam = (key) => urlParams.get(key) ? decodeURIComponent(urlParams.get(key)) : '';
-        
-        const vpnKey = getParam('vpn_key');
-        
-        // Ссылки из параметров
-        const LINKS = {
-            ios: getParam('link_ios'),
-            android: getParam('link_android'),
-            windows: getParam('link_windows'),
-            macos: getParam('link_macos'),
-            manual: getParam('link_manual')
-        };
+    // === ИНИЦИАЛИЗАЦИЯ TELEGRAM ===
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.BackButton.show();
+    tg.BackButton.onClick(() => {
+        // Возвращаемся на прошлую страницу
+        window.history.back();
+    });
 
-        // Определение платформы
+    // === ПЕРЕМЕННЫЕ ===
+    let currentVpnKey = '';
+    
+    // Берем параметры из URL (для ссылок установки)
+    const urlParams = new URLSearchParams(window.location.search);
+    const getParam = (key) => urlParams.get(key) ? decodeURIComponent(urlParams.get(key)) : '';
+
+    // Ссылки на инструкции
+    const LINKS = {
+        ios: getParam('link_ios'),
+        android: getParam('link_android'),
+        windows: getParam('link_windows'),
+        macos: getParam('link_macos'),
+        manual: getParam('link_manual')
+    };
+
+    let installLink = LINKS.manual;
+
+    // === ЛОГИКА ПОЛУЧЕНИЯ КЛЮЧА (API) ===
+    async function loadVpnKey() {
+        try {
+            // 1. Проверяем, не передали ли ключ в ссылке (старый метод)
+            if (getParam('vpn_key')) {
+                currentVpnKey = getParam('vpn_key');
+                console.log("Ключ получен из URL");
+                return;
+            }
+
+            // 2. Получаем ID пользователя из WebApp
+            const userId = tg.initDataUnsafe?.user?.id;
+
+            if (!userId) {
+                console.error("Не удалось определить ID пользователя");
+                return;
+            }
+
+            // 3. Делаем запрос через прокси к API Netelusion
+            // Используем метод: GET /api/keys/all/{tg_id}
+            console.log(`Запрашиваем ключи для user_id: ${userId}`);
+            
+            // В requestApi мы передаем путь ОТНОСИТЕЛЬНО api бота
+            // Если в боте путь /api/keys/all/..., то пишем:
+            const response = await requestApi(`/keys/all/${userId}`, "GET");
+
+            console.log("Ответ от API:", response);
+
+            // 4. Парсим ответ
+            // Netelusion обычно возвращает массив ключей или объект
+            let keyObj = null;
+
+            if (Array.isArray(response) && response.length > 0) {
+                keyObj = response[0]; // Берем первый ключ
+            } else if (response && typeof response === 'object') {
+                // Если вернулся объект с ключами (зависит от версии API)
+                if (response.keys && Array.isArray(response.keys)) {
+                    keyObj = response.keys[0];
+                } else {
+                    keyObj = response;
+                }
+            }
+
+            // 5. Достаем ссылку (access_url, link или vless_link)
+            if (keyObj) {
+                currentVpnKey = keyObj.access_url || keyObj.link || keyObj.vless_link;
+                console.log("Ключ успешно найден:", currentVpnKey);
+            } else {
+                console.warn("Ключи не найдены в ответе API");
+            }
+
+        } catch (error) {
+            console.error("Ошибка при получении ключа:", error);
+        }
+    }
+
+    // === ЛОГИКА ИНТЕРФЕЙСА ===
+
+    function initPage() {
         const platform = tg.platform || 'unknown';
         let deviceName = 'этом устройстве';
-        let installLink = LINKS.manual;
 
-        // Инициализация страницы
-        function initPage() {
-            if (['ios', 'ipad', 'iphone'].includes(platform)) {
-                deviceName = 'macOS';
-                installLink = LINKS.ios;
-            } else if (platform === 'android') {
-                deviceName = 'Android';
-                installLink = LINKS.android;
-            } else if (['tdesktop', 'weba'].includes(platform) && navigator.userAgent.indexOf('Win') !== -1) {
-                deviceName = 'Windows';
-                installLink = LINKS.windows;
-            } else if (platform === 'macos') {
-                deviceName = 'macOS';
-                installLink = LINKS.macos;
-            }
-
-            // Обновляем текст на странице
-            document.getElementById('setup-title').textContent = `Настройка на ${deviceName}`;
-            document.getElementById('btn-start-text').textContent = `Начать настройку на этом устройстве`;
+        // Логика определения платформы
+        if (['ios', 'ipad', 'iphone'].includes(platform)) {
+            deviceName = 'iPhone'; 
+            installLink = LINKS.ios;
+        } else if (platform === 'android') {
+            deviceName = 'Android';
+            installLink = LINKS.android;
+        } else if (['tdesktop', 'weba'].includes(platform) && navigator.userAgent.indexOf('Win') !== -1) {
+            deviceName = 'Windows';
+            installLink = LINKS.windows;
+        } else if (platform === 'macos') {
+            deviceName = 'macOS';
+            installLink = LINKS.macos;
         }
 
-        // Запуск процесса настройки
-        function startProcess() {
-            tg.HapticFeedback.impactOccurred('medium');
-            
-            // Обновляем прогресс на 33%
-            updateProgress(33);
-            
-            // Меняем иконку на облако загрузки
-            document.getElementById('status-icon').innerHTML = `
-                <path d="M12 13v8l-4-4"></path>
-                <path d="m12 21 4-4"></path>
-                <path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path>
-            `;
-            
-            // Меняем текст
-            document.getElementById('setup-title').textContent = 'Приложение';
-            document.getElementById('setup-subtitle').innerHTML = `Установите приложение Happ <br> и вернитесь к этому экрану`;
-            
-            // Скрываем начальные кнопки и показываем кнопки шага
-            document.getElementById('initial-buttons').style.display = 'none';
-            document.getElementById('step-buttons').style.display = 'flex';
+        // Обновляем тексты
+        const titleEl = document.getElementById('setup-title');
+        const btnTextEl = document.getElementById('btn-start-text');
+        
+        if(titleEl) titleEl.textContent = `Настройка на ${deviceName}`;
+        if(btnTextEl) btnTextEl.textContent = `Начать настройку на этом устройстве`;
+    }
+
+    // Обновление круга прогресса
+    function updateProgress(percent) {
+        const progressCircle = document.getElementById('progress-circle');
+        const circumference = 99.274;
+        const offset = circumference * (1 - percent / 100);
+        if(progressCircle) progressCircle.style.strokeDashoffset = offset;
+    }
+
+    // === ФУНКЦИИ ШАГОВ ===
+
+    // Шаг 1: Старт
+    function startProcess() {
+        tg.HapticFeedback.impactOccurred('medium');
+        updateProgress(33);
+        
+        document.getElementById('status-icon').innerHTML = `
+            <path d="M12 13v8l-4-4"></path>
+            <path d="m12 21 4-4"></path>
+            <path d="M4.393 15.269A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.436 8.284"></path>
+        `;
+        
+        document.getElementById('setup-title').textContent = 'Приложение';
+        document.getElementById('setup-subtitle').innerHTML = `Установите приложение Happ <br> и вернитесь к этому экрану`;
+        
+        document.getElementById('initial-buttons').style.display = 'none';
+        document.getElementById('step-buttons').style.display = 'flex';
+    }
+
+    // Установка (открытие ссылки)
+    function performInstall() {
+        tg.HapticFeedback.impactOccurred('light');
+        if (installLink) {
+            tg.openLink(installLink);
+        } else {
+            tg.showAlert("Ссылка для установки не найдена");
+        }
+    }
+
+    // Шаг 2: Далее
+    function nextStep() {
+        tg.HapticFeedback.impactOccurred('light');
+        updateProgress(66);
+        
+        document.getElementById('status-icon').innerHTML = `
+            <path d="M12 2a10 10 0 0 1 7.38 16.75"></path>
+            <path d="M12 8v8"></path>
+            <path d="M16 12H8"></path>
+        `;
+        
+        document.getElementById('setup-title').textContent = 'Подписка';
+        document.getElementById('setup-subtitle').innerHTML = `Добавьте подписку в приложение <br> Happ с помощью кнопки ниже`;
+        
+        // Меняем кнопки
+        const stepButtons = document.getElementById('step-buttons');
+        stepButtons.innerHTML = `
+            <button class="Button bg-primary Button--variant_pulsed" style="flex: 1; gap: 8px; border-radius: 24px;" onclick="addSubscription()">
+                Добавить
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a10 10 0 0 1 7.38 16.75"></path>
+                    <path d="M12 8v8"></path>
+                    <path d="M16 12H8"></path>
+                </svg>
+            </button>
+
+            <button class="Button" style="flex: 1; background: transparent; border: 1px solid rgba(0, 214, 143, 0.3); gap: 20px; border-radius: 24px;" onclick="finalStep()">
+                Далее
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                </svg>
+            </button>
+        `;
+    }
+
+    // Действие "Добавить подписку"
+    async function addSubscription() {
+        tg.HapticFeedback.impactOccurred('light');
+        
+        // Если ключ еще не загрузился, пробуем еще раз
+        if (!currentVpnKey) {
+            tg.showAlert("Ключ загружается...");
+            await loadVpnKey();
         }
 
-        // Обновление прогресса
-        function updateProgress(percent) {
-            const progressCircle = document.getElementById('progress-circle');
-            const circumference = 99.274;
-            // Для заполнения прогресса нужно уменьшать offset от полного значения
-            const offset = circumference * (1 - percent / 100);
-            
-            console.log('Progress:', percent + '%', 'Offset:', offset); // Для отладки
-            
-            progressCircle.style.strokeDashoffset = offset;
-        }
-
-        // Инициализация - устанавливаем начальный прогресс 0%
-        window.addEventListener('DOMContentLoaded', function() {
-            updateProgress(0);
-        });
-
-        // Установка приложения
-        function performInstall() {
-            tg.HapticFeedback.impactOccurred('light');
-            
-            if (installLink) {
-                tg.openLink(installLink);
-                tg.showAlert("Открыта ссылка для установки. После установки вернитесь и нажмите 'Далее'.");
-            } else {
-                tg.showAlert("Ссылка для установки не найдена");
-            }
-        }
-
-        // Переход к следующему шагу
-        function nextStep() {
-            tg.HapticFeedback.impactOccurred('light');
-            
-            // Обновляем прогресс на 66%
-            updateProgress(66);
-            
-            // Меняем иконку на плюс в круге
-            document.getElementById('status-icon').innerHTML = `
-                <path d="M12 2a10 10 0 0 1 7.38 16.75"></path>
-                <path d="M12 8v8"></path>
-                <path d="M16 12H8"></path>
-                <path d="M2.5 8.875a10 10 0 0 0-.5 3"></path>
-                <path d="M2.83 16a10 10 0 0 0 2.43 3.4"></path>
-                <path d="M4.636 5.235a10 10 0 0 1 .891-.857"></path>
-                <path d="M8.644 21.42a10 10 0 0 0 7.631-.38"></path>
-            `;
-            
-            // Меняем текст
-            document.getElementById('setup-title').textContent = 'Подписка';
-            document.getElementById('setup-subtitle').innerHTML = `Добавьте подписку в приложение <br> Happ с помощью кнопки ниже`;
-            
-            // Меняем кнопки
-            const stepButtons = document.getElementById('step-buttons');
-            stepButtons.innerHTML = `
-                <button class="Button bg-primary Button--variant_pulsed" style="flex: 1; gap: 8px; border-radius: 24px;" onclick="addSubscription()">
-                    Добавить
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2a10 10 0 0 1 7.38 16.75"></path>
-                        <path d="M12 8v8"></path>
-                        <path d="M16 12H8"></path>
-                        <path d="M2.5 8.875a10 10 0 0 0-.5 3"></path>
-                        <path d="M2.83 16a10 10 0 0 0 2.43 3.4"></path>
-                        <path d="M4.636 5.235a10 10 0 0 1 .891-.857"></path>
-                        <path d="M8.644 21.42a10 10 0 0 0 7.631-.38"></path>
-                    </svg>
-                </button>
-
-                <button class="Button" style="flex: 1; background: transparent; border: 1px solid rgba(0, 214, 143, 0.3); gap: 20px; border-radius: 24px;" onclick="finalStep()">
-                    Далее
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14"></path>
-                        <path d="m12 5 7 7-7 7"></path>
-                    </svg>
-                </button>
-            `;
-        }
-
-        // Добавление подписки
-        function addSubscription() {
-            tg.HapticFeedback.impactOccurred('light');
-            
-            if (vpnKey) {
-                // Копируем ключ в буфер обмена
-                navigator.clipboard.writeText(vpnKey).then(() => {
-                    tg.showAlert("Ключ скопирован! Вставьте его в приложение.");
-                }).catch(() => {
-                    tg.showAlert("Ключ: " + vpnKey);
+        if (currentVpnKey) {
+            // Копируем в буфер
+            navigator.clipboard.writeText(currentVpnKey).then(() => {
+                tg.showAlert("Ключ скопирован! Вставьте его в Happ.");
+            }).catch(() => {
+                // Если буфер недоступен
+                tg.showPopup({
+                    title: "Ваш ключ",
+                    message: currentVpnKey,
+                    buttons: [{type: "ok"}]
                 });
-            } else {
-                tg.showAlert("Ключ подписки не найден");
-            }
+            });
+        } else {
+            tg.showAlert("У вас пока нет активных подписок.");
         }
+    }
 
-        // Финальный шаг
-        function finalStep() {
-            tg.HapticFeedback.impactOccurred('light');
-            
-            // Обновляем прогресс на 100%
-            updateProgress(100);
-            
-            // Меняем иконку на галочку
-            document.getElementById('status-icon').innerHTML = `
-                <path d="M20 6 9 17l-5-5"></path>
-            `;
-            
-            // Меняем текст
-            document.getElementById('setup-title').textContent = 'Готово!';
-            document.getElementById('setup-subtitle').innerHTML = `Нажмите на круглую кнопку включения VPN в приложении&nbsp;Happ`;
-            
-            // Меняем кнопки на одну финальную
-            const stepButtons = document.getElementById('step-buttons');
-            stepButtons.innerHTML = `
-                <button class="Button" style="width: 100%; background: transparent; border: 1px solid rgba(0, 214, 143, 0.3); border-radius: 24px;" onclick="completeSetup()">
-                    Завершить настройку
-                </button>
-            `;
-        }
+    // Шаг 3: Финал
+    function finalStep() {
+        tg.HapticFeedback.impactOccurred('light');
+        updateProgress(100);
+        
+        document.getElementById('status-icon').innerHTML = `<path d="M20 6 9 17l-5-5"></path>`;
+        document.getElementById('setup-title').textContent = 'Готово!';
+        document.getElementById('setup-subtitle').innerHTML = `Нажмите кнопку включения в приложении Happ`;
+        
+        document.getElementById('step-buttons').innerHTML = `
+            <button class="Button" style="width: 100%; background: transparent; border: 1px solid rgba(0, 214, 143, 0.3); border-radius: 24px;" onclick="completeSetup()">
+                Завершить настройку
+            </button>
+        `;
+    }
 
-        // Завершение настройки
-        function completeSetup() {
-            tg.HapticFeedback.notificationOccurred('success');
-            window.location.href = 'lochi.html' + window.location.search;
-        }
+    function completeSetup() {
+        tg.HapticFeedback.notificationOccurred('success');
+        // Возвращаемся в меню
+        window.location.href = 'lochi.html'; 
+    }
 
-        // Открытие мануала для другого устройства
-        function openManual() {
-            if (LINKS.manual) {
-                tg.openLink(LINKS.manual);
-            } else {
-                tg.showAlert("Инструкция не найдена");
-            }
-        }
+    function openManual() {
+        if (LINKS.manual) tg.openLink(LINKS.manual);
+        else tg.showAlert("Инструкция не найдена");
+    }
 
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', initPage);
-    </script>
+    // === ПРИВЯЗКА К ГЛОБАЛЬНОЙ ОБЛАСТИ (WINDOW) ===
+    // Это обязательно, чтобы работали onclick="..." в HTML при type="module"
+    window.startProcess = startProcess;
+    window.performInstall = performInstall;
+    window.nextStep = nextStep;
+    window.addSubscription = addSubscription;
+    window.finalStep = finalStep;
+    window.completeSetup = completeSetup;
+    window.openManual = openManual;
+
+    // === СТАРТ ПРИ ЗАГРУЗКЕ ===
+    window.addEventListener('DOMContentLoaded', () => {
+        updateProgress(0);
+        initPage();
+        loadVpnKey(); // Сразу запускаем поиск ключа
+    });
+</script>
 </body>
 </html>
