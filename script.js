@@ -1,3 +1,6 @@
+// 1. ИМПОРТ ФУНКЦИИ API (ОБЯЗАТЕЛЬНО ПЕРВАЯ СТРОКА)
+import { requestApi } from './api.js';
+
 const tg = window.Telegram.WebApp;
 tg.expand();
 tg.setHeaderColor('#000000');
@@ -8,7 +11,7 @@ tg.setBackgroundColor('#000000');
     document.addEventListener('contextmenu', (e) => e.preventDefault());
 })();
 
-// === ГЛАВНАЯ ФУНКЦИЯ РАСПАКОВКИ ===
+// === ГЛАВНАЯ ФУНКЦИЯ РАСПАКОВКИ (Оставляем твою логику) ===
 function getAppData() {
     let raw = {};
     const startParam = tg.initDataUnsafe?.start_param;
@@ -16,24 +19,21 @@ function getAppData() {
     // 1. Если открыли как Mini App (есть start_param)
     if (startParam) {
         try {
-            // === ВОТ ТУТ БЫЛА ПРОБЛЕМА ===
-            // 1. Заменяем спецсимволы URL
+            // Заменяем спецсимволы URL
             let base64 = startParam.replace(/-/g, '+').replace(/_/g, '/');
             
-            // 2. ДОБАВЛЯЕМ ОБРАТНО PADDING (=), который мы убрали в Python
-            // Без этого atob() падает с ошибкой и приложение не грузится
+            // Добавляем padding
             while (base64.length % 4) {
                 base64 += '=';
             }
             
-            // 3. Декодируем
+            // Декодируем
             const jsonString = decodeURIComponent(escape(atob(base64)));
             raw = JSON.parse(jsonString);
             
-            console.log("Данные успешно получены:", raw);
+            console.log("Данные успешно получены из start_param:", raw);
         } catch (e) {
-            console.error("Критическая ошибка декодирования:", e);
-            tg.showAlert("Ошибка чтения данных: " + e.message);
+            console.error("Ошибка декодирования:", e);
         }
     }
     
@@ -57,7 +57,7 @@ function getAppData() {
         };
     }
 
-    // 3. Возвращаем распакованный объект (из коротких ключей Python в нормальные)
+    // 3. Возвращаем распакованный объект
     return {
         title: raw.t,
         userId: raw.u,
@@ -75,40 +75,49 @@ function getAppData() {
     };
 }
 
-// Загружаем данные
+// Загружаем начальные данные
 const appData = getAppData();
 
-// === ЗАГРУЗКА ДАННЫХ ИЗ API ===
+// === ЗАГРУЗКА ДАННЫХ ИЗ API (ИСПРАВЛЕНО) ===
 async function loadSubscriptionData() {
     try {
-        const initData = tg.initData;
+        const userId = tg.initDataUnsafe?.user?.id;
         
-        if (!initData) {
-            console.warn("No initData available, using fallback");
+        if (!userId) {
+            console.warn("No userId available");
             return;
         }
         
-        // Запрос к API через модуль бота
-        const response = await fetch('https://bot.netelusion.com/api/subscription', {
-            method: 'GET',
-            headers: {
-                'X-Telegram-Init-Data': initData
-            }
-        });
+        // ЗАМЕНА: Используем requestApi вместо прямого fetch
+        // Запрашиваем ключи пользователя через твоего бота
+        const response = await requestApi(`/keys/all/${userId}`, 'GET');
         
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`);
+        console.log("API response:", response);
+        
+        // Логика обработки ответа (адаптируй под ответ Netelusion)
+        // Обычно приходит массив или объект с ключами
+        let keyData = null;
+        
+        if (Array.isArray(response) && response.length > 0) {
+            keyData = response[0];
+        } else if (response.keys && Array.isArray(response.keys)) {
+             keyData = response.keys[0];
+        }
+
+        if (keyData) {
+            // Преобразуем данные API в формат для UI
+            const uiData = {
+                status: keyData.status === 'active' || keyData.is_active ? 'active' : 'expired',
+                date: keyData.expire_at ? new Date(keyData.expire_at).toLocaleDateString() : 'Бессрочно',
+                vpn_key: keyData.access_url || keyData.link
+            };
+            updateSubscriptionUI(uiData);
+        } else {
+            console.log("Активные подписки не найдены");
         }
         
-        const data = await response.json();
-        console.log("Subscription data loaded:", data);
-        
-        // Обновляем интерфейс с актуальными данными
-        updateSubscriptionUI(data);
-        
     } catch (error) {
-        console.error("Error loading subscription:", error);
-        // Используем данные от бота как fallback
+        console.error("Error loading via API:", error);
     }
 }
 
@@ -117,6 +126,7 @@ function updateSubscriptionUI(data) {
     const dateText = document.getElementById('date-text-val');
     const btnLabel = document.getElementById('btn-label');
 
+    // Обновляем статус
     if (statusText) {
         if (data.status === 'active') {
             statusText.innerText = 'Активна';
@@ -129,16 +139,19 @@ function updateSubscriptionUI(data) {
         } else {
             statusText.innerText = 'Не найдена';
             statusText.style.color = '#9ca3af';
-            if (btnLabel) btnLabel.innerText = 'Купить подписку';
         }
     }
     
+    // Обновляем дату
     if (dateText && data.date) {
         dateText.innerText = data.date;
     }
     
-    // Сохраняем для других функций
-    window.currentVpnKey = data.vpn_key;
+    // Обновляем глобальный ключ для кнопок
+    if (data.vpn_key) {
+        appData.vpn_key = data.vpn_key;
+        window.currentVpnKey = data.vpn_key;
+    }
 }
 
 // === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
@@ -160,42 +173,26 @@ function updateUI() {
         else deviceText.innerText = 'Device';
     }
 
-    // Статус
-    const statusText = document.getElementById('status-text');
-    const dateText = document.getElementById('date-text-val');
-    const btnLabel = document.getElementById('btn-label');
-
-    if (statusText) {
-        if (appData.status === 'active') {
-            statusText.innerText = 'Активна';
-            statusText.style.color = '#00D68F'; // Зеленый
-            if (btnLabel) btnLabel.innerText = 'Продлить подписку';
-        } else if (appData.status === 'expired') {
-            statusText.innerText = 'Истекла';
-            statusText.style.color = '#facc15'; // Желтый
-            if (btnLabel) btnLabel.innerText = 'Купить подписку';
-        } else {
-            statusText.innerText = 'Не найдена';
-            statusText.style.color = '#9ca3af'; // Серый
-            if (btnLabel) btnLabel.innerText = 'Купить подписку';
-        }
-    }
+    // Применяем данные из start_param (пока API грузится)
+    const uiData = {
+        status: appData.status,
+        date: appData.date,
+        vpn_key: appData.vpn_key
+    };
     
-    if (dateText && appData.date) {
-        dateText.innerText = appData.date;
-    }
+    // Если статус передан, обновляем UI
+    if(appData.status) updateSubscriptionUI(uiData);
 }
 
-// === ПЕРЕХОДЫ (Кнопки) ===
+// === ПЕРЕХОДЫ (КНОПКИ) ===
 
 function openSetup() {
-    // Собираем ссылку для перехода на setup.html
     const params = new URLSearchParams();
     
-    // Передаем ключ, если есть
-    if (appData.vpn_key) params.append('vpn_key', appData.vpn_key);
+    // Берем ключ либо из API, либо из start_param
+    const keyToUse = window.currentVpnKey || appData.vpn_key;
+    if (keyToUse) params.append('vpn_key', keyToUse);
     
-    // Передаем все ссылки
     if (appData.links) {
         if (appData.links.ios) params.append('link_ios', appData.links.ios);
         if (appData.links.android) params.append('link_android', appData.links.android);
@@ -204,6 +201,7 @@ function openSetup() {
         if (appData.links.manual) params.append('link_manual', appData.links.manual);
     }
 
+    // ВАЖНО: Используем правильное имя файла
     window.location.href = 'setup.html?' + params.toString();
 }
 
@@ -216,27 +214,29 @@ function openSupport() {
 }
 
 function openProfile() {
-    // Собираем параметры для страницы профиля
     const params = new URLSearchParams();
+    const keyToUse = window.currentVpnKey || appData.vpn_key;
     
-    // Используем ключ из данных бота
-    if (appData.vpn_key) {
-        params.append('vpn_key', appData.vpn_key);
-    }
-    
-    // Передаем другие данные если нужно
+    if (keyToUse) params.append('vpn_key', keyToUse);
     if (appData.userId) params.append('user_id', appData.userId);
     
     window.location.href = 'profile.html?' + params.toString();
 }
 
 function openOrder() {
-    // Переход на страницу покупки подписки
     window.location.href = 'order.html' + window.location.search;
 }
 
-// Запускаем логику, когда страница прогрузилась
+// === ИНИЦИАЛИЗАЦИЯ ===
 document.addEventListener('DOMContentLoaded', () => {
-    updateUI(); // Базовые данные от бота
-    loadSubscriptionData(); // Актуальные данные из API
+    updateUI(); 
+    loadSubscriptionData(); // Загружаем свежие данные через API бота
 });
+
+// =========================================================
+// ВАЖНО: ЭКСПОРТ ФУНКЦИЙ (ЧТОБЫ РАБОТАЛИ КНОПКИ В HTML)
+// =========================================================
+window.openSetup = openSetup;
+window.openSupport = openSupport;
+window.openProfile = openProfile;
+window.openOrder = openOrder;
