@@ -1,5 +1,8 @@
-// 1. ИМПОРТ ФУНКЦИИ API (ОБЯЗАТЕЛЬНО ПЕРВАЯ СТРОКА)
-import { requestApi } from './api.js';
+// НОВАЯ ВЕРСИЯ script.js - только новый API
+// URL бота загружается динамически через /api/settings для безопасности
+
+// Импорт функций API
+import { initializeApi, getSubscription, getQRCodeUrl } from './api-integration.js';
 
 const tg = window.Telegram.WebApp;
 tg.expand();
@@ -40,6 +43,7 @@ function getAppData() {
             status: p.get('status'),
             date: p.get('date'),
             vpn_key: p.get('vpn_key'),
+            key_name: p.get('key_name'), // ✅ НОВОЕ: поддержка key_name
             links: {
                 ios: p.get('link_ios'),
                 android: p.get('link_android'),
@@ -58,6 +62,7 @@ function getAppData() {
         status: raw.s,
         date: raw.d,
         vpn_key: raw.k,
+        key_name: raw.kn, // ✅ НОВОЕ: key_name из start_param
         links: {
             ios: raw.li,
             android: raw.la,
@@ -72,54 +77,67 @@ function getAppData() {
 // Загружаем начальные данные
 const appData = getAppData();
 
-// === ЗАГРУЗКА ДАННЫХ ИЗ API (ОБНОВЛЕНО) ===
+// === ЗАГРУЗКА ДАННЫХ ИЗ API ===
 async function loadSubscriptionData() {
     try {
-        const userId = tg.initDataUnsafe?.user?.id;
+        // Инициализируем API (загружаем URL бота с сервера)
+        const settings = await initializeApi();
         
-        // Если тестируем в браузере без ТГ, userId может не быть
-        // Можно временно раскомментировать для теста:
-        // const userId = 123456789; 
-
-        if (!userId) {
-            console.warn("No userId available");
+        // Обновляем название приложения из настроек
+        if (settings && settings.app_name) {
+            updateAppName(settings.app_name);
+        }
+        
+        // Проверяем наличие key_name
+        if (!appData.key_name) {
+            console.warn("No key_name available");
+            const statusText = document.getElementById('status-text');
+            if (statusText) {
+                statusText.innerText = 'Нет данных';
+                statusText.style.color = '#999';
+            }
             return;
         }
         
-        console.log("Запрашиваем ключи для:", userId);
-
-        // ✅ ИСПРАВЛЕНИЕ: Шлем Action "get_keys", а не URL
-        // Бот сам знает, что это значит /users/{id}/keys
-        const response = await requestApi('get_keys');
-        
-        console.log("API keys response:", response);
-        
-        // Логика обработки ответа (ищет ключи в массиве или объекте)
-        let keyData = null;
-        
-        if (Array.isArray(response) && response.length > 0) {
-            keyData = response[0];
-        } else if (response.keys && Array.isArray(response.keys)) {
-             keyData = response.keys[0];
-        } else if (response.result && Array.isArray(response.result)) {
-             // Иногда API возвращает { result: [...] }
-             keyData = response.result[0];
-        }
-
-        if (keyData) {
-            // Форматируем для UI
-            const uiData = {
-                status: (keyData.status === 'active' || keyData.is_active) ? 'active' : 'expired',
-                date: keyData.expire_at ? new Date(keyData.expire_at).toLocaleDateString() : 'Бессрочно',
-                vpn_key: keyData.access_url || keyData.link || keyData.key
-            };
-            updateSubscriptionUI(uiData);
-        } else {
-            console.log("Активные подписки не найдены");
-        }
+        console.log("Загрузка данных для key_name:", appData.key_name);
+        await loadFromApi(appData.key_name);
         
     } catch (error) {
-        console.error("Error loading keys:", error);
+        console.error("Error loading subscription:", error);
+        const statusText = document.getElementById('status-text');
+        if (statusText) {
+            statusText.innerText = 'Ошибка загрузки';
+            statusText.style.color = '#ef4444';
+        }
+    }
+}
+
+// Загрузка через API
+async function loadFromApi(keyName) {
+    try {
+        const data = await getSubscription(keyName);
+        console.log("API subscription data:", data);
+        
+        // Форматируем дату
+        const expiryDate = new Date(data.expiry);
+        const formattedDate = expiryDate.toLocaleDateString('ru-RU');
+        
+        // Обновляем UI
+        const uiData = {
+            status: 'active', // Если ключ найден, значит активен
+            date: formattedDate,
+            vpn_key: data.link,
+            email: data.email
+        };
+        
+        updateSubscriptionUI(uiData);
+        
+        // Сохраняем для использования в других функциях
+        window.currentSubscriptionData = data;
+        
+    } catch (error) {
+        console.error("Error loading from API:", error);
+        throw error;
     }
 }
 
@@ -154,22 +172,40 @@ function updateSubscriptionUI(data) {
 }
 
 // === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
+function updateAppName(appName) {
+    // Обновляем title страницы
+    document.title = appName;
+    
+    // Обновляем заголовок в интерфейсе
+    const headerEl = document.getElementById('header-title');
+    if (headerEl) {
+        headerEl.innerText = appName;
+    }
+}
+
 function updateUI() {
-    // Заголовок
+    // Заголовок (если передан через start_param)
     if (appData.title) {
-        document.title = appData.title;
-        const headerEl = document.getElementById('header-title');
-        if (headerEl) headerEl.innerText = appData.title;
+        updateAppName(appData.title);
     }
 
     // Устройство
     const deviceText = document.getElementById('device-text');
     if (deviceText) {
         const platform = tg.platform || 'unknown';
-        if (['ios', 'macos', 'ipad', 'iphone'].includes(platform)) deviceText.innerText = 'iOS/macOS';
-        else if (platform === 'android') deviceText.innerText = 'Android';
-        else if (['tdesktop', 'weba'].includes(platform)) deviceText.innerText = 'Windows';
-        else deviceText.innerText = 'Device';
+        
+        // Определяем устройство более точно
+        if (platform === 'ios' || platform === 'ipad' || platform === 'iphone') {
+            deviceText.innerText = 'iOS';
+        } else if (platform === 'macos') {
+            deviceText.innerText = 'macOS';
+        } else if (platform === 'android') {
+            deviceText.innerText = 'Android';
+        } else if (platform === 'tdesktop' || platform === 'weba') {
+            deviceText.innerText = 'Windows';
+        } else {
+            deviceText.innerText = 'Device';
+        }
     }
 
     // Применяем данные из start_param
@@ -187,6 +223,9 @@ function openSetup() {
     const params = new URLSearchParams();
     const keyToUse = window.currentVpnKey || appData.vpn_key;
     if (keyToUse) params.append('vpn_key', keyToUse);
+    
+    // Передаем key_name
+    if (appData.key_name) params.append('key_name', appData.key_name);
     
     if (appData.links) {
         if (appData.links.ios) params.append('link_ios', appData.links.ios);
@@ -207,12 +246,11 @@ function openSupport() {
 }
 
 function openProfile() {
-    // В профиль тоже можно переходить без параметров, если там есть свой загрузчик
-    // Но оставим передачу данных на всякий случай
     const params = new URLSearchParams();
     const keyToUse = window.currentVpnKey || appData.vpn_key;
     if (keyToUse) params.append('vpn_key', keyToUse);
     if (appData.userId) params.append('user_id', appData.userId);
+    if (appData.key_name) params.append('key_name', appData.key_name);
     
     window.location.href = 'profile.html?' + params.toString();
 }
