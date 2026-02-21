@@ -1,8 +1,8 @@
-/**
+/***
  * Elusion VPN - API Integration
  * Интеграция с API бэкендом
  * 
- * URL бота загружается динамически через /api/settings для безопасности
+ * URL бота загружается динамически через /elusion/api/settings для безопасности
  */
 
 // API URL будет загружен динамически
@@ -17,33 +17,36 @@ export async function initializeApi() {
     if (API_BASE_URL) {
         return; // Уже инициализирован
     }
-    
+
     try {
         // Получаем настройки с сервера
-        // Используем относительный путь, чтобы работало на любом домене
-        const response = await fetch('/api/settings');
+        // Используем новый путь /elusion/api/
+        const response = await fetch('/elusion/api/settings');
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
-        
+
         const settings = await response.json();
         
-        // Извлекаем URL бота из настроек
+        // Извлекаем URL бота и base_path из настроек
         BOT_URL = settings.webhook_host || settings.bot_url;
-        API_BASE_URL = `${BOT_URL}/api`;
+        const basePath = settings.base_path || settings.api_path_prefix || '/elusion/api/';
+        
+        // Убираем trailing slash если есть
+        API_BASE_URL = `${BOT_URL}${basePath}`.replace(/\/$/, '');
         
         console.log('[API] Initialized with bot URL:', BOT_URL);
+        console.log('[API] Base path:', basePath);
         
         // Сохраняем настройки глобально для доступа из других модулей
         window.apiSettings = settings;
         
         return settings;
-        
     } catch (error) {
         console.error('[API] Failed to initialize:', error);
-        // Fallback на относительный путь
-        API_BASE_URL = '/api';
+        // Fallback на новый путь
+        API_BASE_URL = '/elusion/api';
         console.warn('[API] Using relative path as fallback');
     }
 }
@@ -58,7 +61,7 @@ export async function getSubscription(keyName) {
     if (!API_BASE_URL) {
         await initializeApi();
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/sub?key_name=${encodeURIComponent(keyName)}`);
         
@@ -73,7 +76,7 @@ export async function getSubscription(keyName) {
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
-        
+
         const data = await response.json();
         
         // Возвращаем данные
@@ -85,7 +88,6 @@ export async function getSubscription(keyName) {
             is_crypto_link: data.is_crypto_link,
             remnawave_link: data.remnawave_link
         };
-        
     } catch (error) {
         console.error('[API] Error getting subscription:', error);
         throw error;
@@ -98,7 +100,7 @@ export async function getSubscription(keyName) {
  * @returns {string} URL QR кода
  */
 export function getQRCodeUrl(keyName) {
-    const baseUrl = API_BASE_URL || '/api';
+    const baseUrl = API_BASE_URL || '/elusion/api';
     return `${baseUrl}/qr?key_name=${encodeURIComponent(keyName)}`;
 }
 
@@ -108,7 +110,7 @@ export function getQRCodeUrl(keyName) {
  */
 export async function getSettings() {
     try {
-        const baseUrl = API_BASE_URL || '/api';
+        const baseUrl = API_BASE_URL || '/elusion/api';
         const response = await fetch(`${baseUrl}/settings`);
         
         if (!response.ok) {
@@ -116,7 +118,6 @@ export async function getSettings() {
         }
         
         return await response.json();
-        
     } catch (error) {
         console.error('[API] Error getting settings:', error);
         throw error;
@@ -132,17 +133,16 @@ export async function getTexts(language = 'ru') {
     if (!API_BASE_URL) {
         await initializeApi();
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/texts?language=${language}`);
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
-        
+
         const data = await response.json();
         return data.texts;
-        
     } catch (error) {
         console.error('[API] Error getting texts:', error);
         throw error;
@@ -159,7 +159,7 @@ export async function sendToTV(code, subscriptionLink) {
     if (!API_BASE_URL) {
         await initializeApi();
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/tv`, {
             method: 'POST',
@@ -171,15 +171,14 @@ export async function sendToTV(code, subscriptionLink) {
                 data: subscriptionLink
             })
         });
-        
+
         const result = await response.json();
         
         if (!result.success) {
             throw new Error(result.error || 'Ошибка отправки');
         }
-        
+
         return result;
-        
     } catch (error) {
         console.error('[API] Error sending to TV:', error);
         throw error;
@@ -192,7 +191,7 @@ export async function sendToTV(code, subscriptionLink) {
  */
 export async function checkHealth() {
     try {
-        const baseUrl = API_BASE_URL || '/api';
+        const baseUrl = API_BASE_URL || '/elusion/api';
         const response = await fetch(`${baseUrl}/health`);
         return await response.json();
     } catch (error) {
