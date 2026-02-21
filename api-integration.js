@@ -2,12 +2,15 @@
  * Elusion VPN - API Integration
  * Интеграция с API бэкендом
  * 
- * URL бота загружается динамически через /elusion/api/settings для безопасности
+ * URL бота: https://bot.netelusion.com
  */
 
 // API URL будет загружен динамически
 let API_BASE_URL = null;
 let BOT_URL = null;
+
+// Константа с доменом бота
+const BOT_DOMAIN = 'https://bot.netelusion.com';
 
 /**
  * Инициализирует API - загружает настройки с сервера
@@ -15,13 +18,13 @@ let BOT_URL = null;
  */
 export async function initializeApi() {
     if (API_BASE_URL) {
-        return; // Уже инициализирован
+        return window.apiSettings; // Уже инициализирован
     }
 
     try {
         // Получаем настройки с сервера
-        // Используем новый путь /elusion/api/
-        const response = await fetch('/elusion/api/settings');
+        // Используем полный URL, т.к. фронтенд на GitHub Pages
+        const response = await fetch(`${BOT_DOMAIN}/elusion/api/settings`);
         
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -37,7 +40,7 @@ export async function initializeApi() {
         API_BASE_URL = `${BOT_URL}${basePath}`.replace(/\/$/, '');
         
         console.log('[API] Initialized with bot URL:', BOT_URL);
-        console.log('[API] Base path:', basePath);
+        console.log('[API] API Base URL:', API_BASE_URL);
         
         // Сохраняем настройки глобально для доступа из других модулей
         window.apiSettings = settings;
@@ -45,9 +48,11 @@ export async function initializeApi() {
         return settings;
     } catch (error) {
         console.error('[API] Failed to initialize:', error);
-        // Fallback на новый путь
-        API_BASE_URL = '/elusion/api';
-        console.warn('[API] Using relative path as fallback');
+        // Fallback на хардкод URL
+        BOT_URL = BOT_DOMAIN;
+        API_BASE_URL = `${BOT_DOMAIN}/elusion/api`;
+        console.warn('[API] Using hardcoded URL as fallback');
+        return null;
     }
 }
 
@@ -100,7 +105,7 @@ export async function getSubscription(keyName) {
  * @returns {string} URL QR кода
  */
 export function getQRCodeUrl(keyName) {
-    const baseUrl = API_BASE_URL || '/elusion/api';
+    const baseUrl = API_BASE_URL || `${BOT_DOMAIN}/elusion/api`;
     return `${baseUrl}/qr?key_name=${encodeURIComponent(keyName)}`;
 }
 
@@ -110,7 +115,7 @@ export function getQRCodeUrl(keyName) {
  */
 export async function getSettings() {
     try {
-        const baseUrl = API_BASE_URL || '/elusion/api';
+        const baseUrl = API_BASE_URL || `${BOT_DOMAIN}/elusion/api`;
         const response = await fetch(`${baseUrl}/settings`);
         
         if (!response.ok) {
@@ -191,7 +196,7 @@ export async function sendToTV(code, subscriptionLink) {
  */
 export async function checkHealth() {
     try {
-        const baseUrl = API_BASE_URL || '/elusion/api';
+        const baseUrl = API_BASE_URL || `${BOT_DOMAIN}/elusion/api`;
         const response = await fetch(`${baseUrl}/health`);
         return await response.json();
     } catch (error) {
